@@ -1,0 +1,70 @@
+import { router, usePage } from '@inertiajs/react';
+import { useState } from 'react';
+import UserShell from '@/inertia/layouts/UserShell';
+import { InvitationDesignPage } from '@/pages/user/InvitationDesignPage';
+
+interface DesignProps {
+  coupleMainImage: string | null;
+  coupleGalleryImages: string[];
+}
+
+interface AuthWedding {
+  template_key?: string;
+  typography_key?: string;
+  event_token?: string;
+  bride_name?: string;
+  groom_name?: string;
+  event_date?: string;
+  venue_name?: string;
+}
+
+export default function Design({ coupleMainImage, coupleGalleryImages }: DesignProps) {
+  const { auth } = usePage<{ auth: { wedding: AuthWedding | null } }>().props;
+  const [preferences, setPreferences] = useState(() => ({
+    templateKey: sessionStorage.getItem('invitation.templateKey') ?? auth?.wedding?.template_key ?? 'faded-picture-overlay',
+    typographyKey: sessionStorage.getItem('invitation.typographyKey') ?? auth?.wedding?.typography_key ?? 'classic-grace',
+  }));
+
+  const weddingData = auth?.wedding ? {
+    bride_name: auth.wedding.bride_name,
+    groom_name: auth.wedding.groom_name,
+    event_date: auth.wedding.event_date,
+    venue_name: auth.wedding.venue_name,
+  } : undefined;
+
+  return (
+    <UserShell currentPage="design">
+      <InvitationDesignPage
+        onNavigate={(page) => {
+          if (page === 'invitation') {
+            const token = auth?.wedding?.event_token;
+            if (token) {
+              const params = new URLSearchParams({
+                template: preferences.templateKey,
+                typography: preferences.typographyKey,
+              });
+              router.visit(`/invitation/${token}?${params.toString()}`);
+            } else {
+              router.visit('/design');
+            }
+          } else {
+            router.visit('/design');
+          }
+        }}
+        selectedTemplate={preferences.templateKey}
+        selectedTypography={preferences.typographyKey}
+        weddingData={weddingData}
+        coupleMainImage={coupleMainImage ?? ''}
+        coupleGalleryImages={coupleGalleryImages}
+        onTemplateChange={(templateKey) => {
+          sessionStorage.setItem('invitation.templateKey', templateKey);
+          setPreferences((current) => ({ ...current, templateKey }));
+        }}
+        onTypographyChange={(typographyKey) => {
+          sessionStorage.setItem('invitation.typographyKey', typographyKey);
+          setPreferences((current) => ({ ...current, typographyKey }));
+        }}
+      />
+    </UserShell>
+  );
+}
