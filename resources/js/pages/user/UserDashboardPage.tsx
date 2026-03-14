@@ -48,9 +48,10 @@ interface UserDashboardPageProps {
   pendingGuests: PendingGuest[];
   recentActivity: ActivityItem[];
   latestMemories: LatestMemory[];
+  eventToken?: string;
 }
 
-export const UserDashboardPage = ({ onNavigate, wedding, stats, pendingGuests, recentActivity, latestMemories }: UserDashboardPageProps) => {
+export const UserDashboardPage = ({ onNavigate, wedding, stats, pendingGuests, recentActivity, latestMemories, eventToken }: UserDashboardPageProps) => {
   const [daysLeft, setDaysLeft] = useState(0);
 
   useEffect(() => {
@@ -111,12 +112,18 @@ export const UserDashboardPage = ({ onNavigate, wedding, stats, pendingGuests, r
           { label: "Add Guest", icon: Plus, page: "guests" },
           { label: "Import Guests", icon: FileSpreadsheet, page: "guests" },
           { label: "Edit Settings", icon: Settings, page: "settings" },
-          { label: "Preview Invite", icon: Eye, page: "invitation" },
+          { label: "Preview Invite", icon: Eye, page: "preview" },
           { label: "QR Search", icon: QrCode, page: "qr-search" },
         ].map((action) => (
           <button
             key={action.label}
-            onClick={() => onNavigate(action.page)}
+            onClick={() => {
+              if (action.page === "preview") {
+                window.open(eventToken ? `/invitation/${eventToken}` : "/invitation", "_blank");
+              } else {
+                onNavigate(action.page);
+              }
+            }}
             className="flex flex-col items-center gap-2 p-4 rounded-xl border border-border bg-card hover:bg-muted/50 hover:border-primary/20 transition-all shadow-card"
           >
             <action.icon className="h-5 w-5 text-primary" />

@@ -12,6 +12,9 @@ type User = {
   expire_date: string;
   created_at: string;
   updated_at: string;
+  table_management: boolean;
+  share_memory: boolean;
+  image_count: number;
 };
 import { motion } from "framer-motion";
 import { format } from "date-fns";
@@ -56,6 +59,9 @@ type CreateUserFormState = {
     venue_name: string;
     template_key: string;
     typography_key: string;
+    table_management: boolean;
+    share_memory: boolean;
+    image_count: 20 | 30;
 };
 
 type EditUserFormState = {
@@ -73,6 +79,9 @@ type EditUserFormState = {
     venue_name: string;
     template_key: string;
     typography_key: string;
+    table_management: boolean;
+    share_memory: boolean;
+    image_count: 20 | 30;
 };
 
 const DatePickerField = ({
@@ -151,6 +160,9 @@ export const AdminUsersPage = ({
         event_date: "",
         rsvp_deadline: "",
         venue_name: "",
+        table_management: false,
+        share_memory: false,
+        image_count: 20,
     });
     const [editForm, setEditForm] = useState<EditUserFormState | null>(null);
 
@@ -212,6 +224,9 @@ export const AdminUsersPage = ({
             venue_name: wedding?.venue_name ?? "",
             template_key: wedding?.template_key ?? (invitationTemplates[0]?.key || "sri-lankan-traditional"),
             typography_key: wedding?.typography_key ?? (typographyOptions[0]?.key || "traditional-elegant"),
+            table_management: user.table_management ?? false,
+            share_memory: user.share_memory ?? false,
+            image_count: (user.image_count === 30 ? 30 : 20) as 20 | 30,
         });
     };
 
@@ -262,6 +277,9 @@ export const AdminUsersPage = ({
             event_date: "",
             rsvp_deadline: "",
             venue_name: "",
+            table_management: false,
+            share_memory: false,
+            image_count: 20,
         });
         setShowCreatePassword(false);
     };
@@ -470,6 +488,67 @@ export const AdminUsersPage = ({
                                 onChange={(v) => updateCreateField("expire_date", v)}
                             />
                         </div>
+                        <div className="grid grid-cols-2 gap-3">
+                            <FormField label="Table Management">
+                                <div className="flex gap-2">
+                                    {([true, false] as const).map((val) => (
+                                        <button
+                                            key={String(val)}
+                                            type="button"
+                                            onClick={() => updateCreateField("table_management", val)}
+                                            className={cn(
+                                                "flex-1 py-2 rounded-lg border text-sm font-medium transition-colors",
+                                                createForm.table_management === val
+                                                    ? "border-primary bg-primary text-primary-foreground"
+                                                    : "border-input bg-background text-muted-foreground hover:bg-muted"
+                                            )}
+                                        >
+                                            {val ? "Yes" : "No"}
+                                        </button>
+                                    ))}
+                                </div>
+                            </FormField>
+                            <FormField label="Share Memory">
+                                <div className="flex gap-2">
+                                    {([true, false] as const).map((val) => (
+                                        <button
+                                            key={String(val)}
+                                            type="button"
+                                            onClick={() => updateCreateField("share_memory", val)}
+                                            className={cn(
+                                                "flex-1 py-2 rounded-lg border text-sm font-medium transition-colors",
+                                                createForm.share_memory === val
+                                                    ? "border-primary bg-primary text-primary-foreground"
+                                                    : "border-input bg-background text-muted-foreground hover:bg-muted"
+                                            )}
+                                        >
+                                            {val ? "Yes" : "No"}
+                                        </button>
+                                    ))}
+                                </div>
+                            </FormField>
+                        </div>
+                        {createForm.share_memory && (
+                            <FormField label="Image Count">
+                                <div className="flex gap-2">
+                                    {([20, 30] as const).map((val) => (
+                                        <button
+                                            key={val}
+                                            type="button"
+                                            onClick={() => updateCreateField("image_count", val)}
+                                            className={cn(
+                                                "flex-1 py-2 rounded-lg border text-sm font-medium transition-colors",
+                                                createForm.image_count === val
+                                                    ? "border-primary bg-primary text-primary-foreground"
+                                                    : "border-input bg-background text-muted-foreground hover:bg-muted"
+                                            )}
+                                        >
+                                            {val}
+                                        </button>
+                                    ))}
+                                </div>
+                            </FormField>
+                        )}
                     </div>
 
                     {/* Wedding Setup */}
@@ -632,6 +711,67 @@ export const AdminUsersPage = ({
                                     onChange={(v) => updateEditField("expire_date", v)}
                                 />
                             </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <FormField label="Table Management">
+                                    <div className="flex gap-2">
+                                        {([true, false] as const).map((val) => (
+                                            <button
+                                                key={String(val)}
+                                                type="button"
+                                                onClick={() => updateEditField("table_management", val)}
+                                                className={cn(
+                                                    "flex-1 py-2 rounded-lg border text-sm font-medium transition-colors",
+                                                    editForm.table_management === val
+                                                        ? "border-primary bg-primary text-primary-foreground"
+                                                        : "border-input bg-background text-muted-foreground hover:bg-muted"
+                                                )}
+                                            >
+                                                {val ? "Yes" : "No"}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </FormField>
+                                <FormField label="Share Memory">
+                                    <div className="flex gap-2">
+                                        {([true, false] as const).map((val) => (
+                                            <button
+                                                key={String(val)}
+                                                type="button"
+                                                onClick={() => updateEditField("share_memory", val)}
+                                                className={cn(
+                                                    "flex-1 py-2 rounded-lg border text-sm font-medium transition-colors",
+                                                    editForm.share_memory === val
+                                                        ? "border-primary bg-primary text-primary-foreground"
+                                                        : "border-input bg-background text-muted-foreground hover:bg-muted"
+                                                )}
+                                            >
+                                                {val ? "Yes" : "No"}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </FormField>
+                            </div>
+                            {editForm.share_memory && (
+                                <FormField label="Image Count">
+                                    <div className="flex gap-2">
+                                        {([20, 30] as const).map((val) => (
+                                            <button
+                                                key={val}
+                                                type="button"
+                                                onClick={() => updateEditField("image_count", val)}
+                                                className={cn(
+                                                    "flex-1 py-2 rounded-lg border text-sm font-medium transition-colors",
+                                                    editForm.image_count === val
+                                                        ? "border-primary bg-primary text-primary-foreground"
+                                                        : "border-input bg-background text-muted-foreground hover:bg-muted"
+                                                )}
+                                            >
+                                                {val}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </FormField>
+                            )}
                         </div>
 
                         {/* Wedding Setup */}

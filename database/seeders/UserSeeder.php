@@ -12,12 +12,15 @@ class UserSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'test@gmail.com'],
             [
-                'name'        => 'Test User',
-                'email'       => 'test@gmail.com',
-                'password'    => bcrypt('test@321'),
-                'phone'       => '0773488696',
-                'status'      => 'active',
-                'expire_date' => now()->addYear(),
+                'name'              => 'Test User',
+                'email'             => 'test@gmail.com',
+                'password'          => bcrypt('test@321'),
+                'phone'             => '0773488696',
+                'ceremony_type_id'  => 1,
+                'status'            => 'active',
+                'expire_date'       => now()->addYear(),
+                'created_at'       => now(),
+                'updated_at'       => now(),
             ]
         );
     }

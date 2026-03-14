@@ -75,6 +75,7 @@ Route::middleware('auth')->group(function () {
 
     // Design
     Route::get('/design', [DesignController::class, 'index'])->name('design.index');
+    Route::get('/design/preview', [DesignController::class, 'preview'])->name('design.preview');
 });
 
 // ─── Admin Panel ─────────────────────────────────────────────────────────────

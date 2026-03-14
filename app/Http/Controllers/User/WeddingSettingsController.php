@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\CeremonyType;
 use App\Models\WeddingGalleryImage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -63,9 +64,16 @@ class WeddingSettingsController extends Controller
                 ->values();
         }
 
+        $ceremonyTypes = CeremonyType::orderBy('id')->get()->map(fn (CeremonyType $ct) => [
+            'id'   => (string) $ct->id,
+            'name' => $ct->name,
+        ])->values();
+
         return Inertia::render('user/Settings', [
-            'wedding'       => $weddingData,
-            'galleryImages' => $galleryImages,
+            'wedding'        => $weddingData,
+            'galleryImages'  => $galleryImages,
+            'ceremonyTypes'  => $ceremonyTypes,
+            'ceremonyTypeId' => (string) ($user?->ceremony_type_id ?? ''),
         ]);
     }
 
@@ -80,6 +88,7 @@ class WeddingSettingsController extends Controller
             'rsvp_deadline'       => ['nullable', 'date'],
             'start_time'          => ['nullable', 'regex:/^\d{2}:\d{2}(:\d{2})?$/'],
             'end_time'            => ['nullable', 'regex:/^\d{2}:\d{2}(:\d{2})?$/'],
+            'ceremony_type_id'    => ['nullable', 'exists:ceremony_types,id'],
             'poruwa_time'         => ['nullable', 'regex:/^\d{2}:\d{2}(:\d{2})?$/'],
             'venue_name'          => ['required', 'string', 'max:255'],
             'venue_address'       => ['nullable', 'string'],
@@ -103,7 +112,9 @@ class WeddingSettingsController extends Controller
             return back()->withErrors(['wedding' => 'No wedding found for your account.']);
         }
 
-        $wedding->update($validated);
+        $user->update(['ceremony_type_id' => $validated['ceremony_type_id'] ?: null]);
+
+        $wedding->update(collect($validated)->except('ceremony_type_id')->toArray());
 
         return back()->with('success', 'Wedding settings saved successfully.');
     }

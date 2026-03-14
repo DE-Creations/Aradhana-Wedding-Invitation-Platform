@@ -31,17 +31,29 @@ type GalleryImage = {
 	sort_order: number;
 };
 
+type CeremonyType = {
+	id: string;
+	name: string;
+};
+
 type SettingsPageProps = PageProps<{
 	wedding: WeddingData | null;
 	galleryImages: GalleryImage[];
+	ceremonyTypes: CeremonyType[];
+	ceremonyTypeId: string;
 }>;
 
 export default function Settings() {
-	const { wedding, galleryImages } = usePage<SettingsPageProps>().props;
+	const { wedding, galleryImages, ceremonyTypes, ceremonyTypeId } = usePage<SettingsPageProps>().props;
 
 	return (
 		<UserShell currentPage="settings">
-			<WeddingSettingsPage wedding={wedding} galleryImages={galleryImages} />
+			<WeddingSettingsPage
+				wedding={wedding}
+				galleryImages={galleryImages}
+				ceremonyTypes={ceremonyTypes ?? []}
+				ceremonyTypeId={ceremonyTypeId ?? ""}
+			/>
 		</UserShell>
 	);
 }

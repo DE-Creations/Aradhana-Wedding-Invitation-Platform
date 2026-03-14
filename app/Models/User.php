@@ -25,6 +25,9 @@ class User extends Authenticatable
         'status',
         'expire_date',
         'password',
+        'table_management',
+        'share_memory',
+        'image_count',
     ];
 
     /**
@@ -44,8 +47,11 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'expire_date' => 'datetime',
-            'password' => 'hashed',
+            'expire_date'      => 'datetime',
+            'password'         => 'hashed',
+            'table_management' => 'boolean',
+            'share_memory'     => 'boolean',
+            'image_count'      => 'integer',
         ];
     }
 

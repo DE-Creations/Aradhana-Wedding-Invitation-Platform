@@ -37,9 +37,16 @@ type GalleryImage = {
   sort_order: number;
 };
 
+type CeremonyType = {
+  id: string;
+  name: string;
+};
+
 interface WeddingSettingsPageProps {
   wedding: WeddingData | null;
   galleryImages: GalleryImage[];
+  ceremonyTypes: CeremonyType[];
+  ceremonyTypeId: string;
 }
 
 const TimePickerField = ({ value, onChange, label }: { value: string; onChange: (val: string) => void; label: string }) => {
@@ -121,7 +128,7 @@ const DatePickerField = ({ value, onChange, label }: { value: string; onChange: 
   );
 };
 
-export const WeddingSettingsPage = ({ wedding, galleryImages }: WeddingSettingsPageProps) => {
+export const WeddingSettingsPage = ({ wedding, galleryImages, ceremonyTypes, ceremonyTypeId }: WeddingSettingsPageProps) => {
   const [form, setForm] = useState({
     bride_name: wedding?.bride_name ?? "",
     groom_name: wedding?.groom_name ?? "",
@@ -131,6 +138,7 @@ export const WeddingSettingsPage = ({ wedding, galleryImages }: WeddingSettingsP
     rsvp_deadline: wedding?.rsvp_deadline ?? "",
     start_time: wedding?.start_time ?? "09:00",
     end_time: wedding?.end_time ?? "16:00",
+    ceremony_type_id: ceremonyTypeId ?? "",
     poruwa_time: wedding?.poruwa_time ?? "10:30",
     venue_name: wedding?.venue_name ?? "",
     venue_address: wedding?.venue_address ?? "",
@@ -206,7 +214,7 @@ export const WeddingSettingsPage = ({ wedding, galleryImages }: WeddingSettingsP
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in pb-20">
       <ConfirmModal
         open={confirmDeleteMain}
         onClose={() => setConfirmDeleteMain(false)}
@@ -249,7 +257,16 @@ export const WeddingSettingsPage = ({ wedding, galleryImages }: WeddingSettingsP
             <DatePickerField label="RSVP Deadline" value={form.rsvp_deadline} onChange={(v) => updateField("rsvp_deadline", v)} />
             <TimePickerField label="Start Time" value={form.start_time} onChange={(v) => updateField("start_time", v)} />
             <TimePickerField label="End Time" value={form.end_time} onChange={(v) => updateField("end_time", v)} />
-            <TimePickerField label="Poruwa Ceremony Time" value={form.poruwa_time} onChange={(v) => updateField("poruwa_time", v)} />
+            <FormField label="Ceremony Type">
+              <SearchableSelect
+                value={form.ceremony_type_id}
+                onChange={(v) => updateField("ceremony_type_id", v)}
+                options={ceremonyTypes.map((ct) => ({ value: ct.id, label: ct.name }))}
+                searchPlaceholder="Select ceremony type..."
+                searchable={false}
+              />
+            </FormField>
+            <TimePickerField label="Ceremony Time" value={form.poruwa_time} onChange={(v) => updateField("poruwa_time", v)} />
           </div>
           <div className="grid md:grid-cols-1 gap-4 mt-4">
             <FormField label="Venue Name" required>
@@ -378,7 +395,7 @@ export const WeddingSettingsPage = ({ wedding, galleryImages }: WeddingSettingsP
       </div>
 
       {/* Sticky Save Bar */}
-      <div className="sticky bottom-0 bg-card/95 backdrop-blur-sm border-t border-border py-4 px-6 -mx-4 md:-mx-6 lg:-mx-8 flex justify-end">
+      <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-t border-border py-4 px-6 flex justify-end z-50">
         <button
           type="button"
           onClick={handleSave}

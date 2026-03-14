@@ -1,5 +1,5 @@
 import { useForm } from "@inertiajs/react";
-import { Heart, Mail, Lock, ArrowRight } from "lucide-react";
+import { Mail, Lock, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 export const UserLoginPage = () => {
@@ -54,14 +54,13 @@ export const UserLoginPage = () => {
         >
           {/* Brand */}
           <div className="mb-10">
-            <Heart className="h-10 w-10 text-primary fill-primary mx-auto mb-4" />
-            <h1 className="font-display text-4xl md:text-5xl font-bold text-[hsl(40,33%,95%)] tracking-wide">Aradhana</h1>
+            <img src="/images/logo-text.png" alt="Aradhana" className="h-44 sm:h-56 md:h-72 w-auto mx-auto mb-4 object-contain" />
             <p className="font-serif text-sm italic text-[hsl(40,20%,70%)] mt-2">
               "Where every love story becomes a beautifully crafted invitation"
             </p>
             <div className="flex items-center justify-center gap-3 mt-4">
               <div className="h-px w-16 bg-primary/30" />
-              <span className="text-xs uppercase tracking-[0.3em] text-primary/80 font-sans">Sri Lanka's Premier Wedding Platform</span>
+              <span className="text-xs uppercase tracking-[0.3em] text-primary/80 font-sans">Sri Lanka's Premium Wedding Invitation Platform</span>
               <div className="h-px w-16 bg-primary/30" />
             </div>
           </div>

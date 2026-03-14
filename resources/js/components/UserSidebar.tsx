@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Settings, Grid3X3, Image, Palette, QrCode, LogOut, Heart, ExternalLink } from "lucide-react";
+import { LayoutDashboard, Users, Settings, Grid3X3, Image, Palette, QrCode, LogOut, ExternalLink } from "lucide-react";
 
 interface UserSidebarProps {
   currentPage: string;
@@ -11,9 +11,9 @@ const navItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "guests", label: "Guests", icon: Users },
   { id: "settings", label: "Settings", icon: Settings },
+  { id: "design", label: "Invitation Design", icon: Palette },
   { id: "tables", label: "Table Management", icon: Grid3X3 },
   { id: "memories", label: "Memories", icon: Image },
-  { id: "design", label: "Invitation Design", icon: Palette },
 ];
 
 export const UserSidebar = ({ currentPage, onNavigate, onLogout, eventToken }: UserSidebarProps) => {
@@ -22,14 +22,9 @@ export const UserSidebar = ({ currentPage, onNavigate, onLogout, eventToken }: U
       <aside className="hidden md:flex w-64 flex-col border-r border-border bg-sidebar h-screen sticky top-0">
         {/* Brand */}
         <div className="p-6 border-b border-sidebar-border shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-lg bg-gradient-gold flex items-center justify-center">
-              <Heart className="h-4 w-4 text-primary-foreground fill-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="font-display text-xl font-bold text-sidebar-foreground tracking-wide">Aradhana</h1>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-sans">User Panel</p>
-            </div>
+          <div className="flex flex-col items-start gap-1.5">
+            <img src="/images/logo-text.png" alt="Aradhana" className="h-20 w-full object-contain object-left" />
+            <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-sans">User Panel</p>
           </div>
         </div>
 

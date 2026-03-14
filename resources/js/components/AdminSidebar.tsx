@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, LogOut, Heart } from "lucide-react";
+import { LayoutDashboard, Users, LogOut } from "lucide-react";
 
 interface AdminSidebarProps {
   currentPage: string;
@@ -17,14 +17,9 @@ export const AdminSidebar = ({ currentPage, onNavigate, onLogout }: AdminSidebar
       <aside className="hidden md:flex w-64 flex-col border-r border-border bg-sidebar h-screen sticky top-0">
         {/* Brand */}
         <div className="p-6 border-b border-sidebar-border shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-lg bg-gradient-gold flex items-center justify-center">
-              <Heart className="h-4 w-4 text-primary-foreground fill-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="font-display text-xl font-bold text-sidebar-foreground tracking-wide">Aradhana</h1>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-sans">Admin Panel</p>
-            </div>
+          <div className="flex flex-col items-start gap-1.5">
+            <img src="/images/logo-text.png" alt="Aradhana" className="h-20 w-full object-contain object-left" />
+            <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-sans">Admin Panel</p>
           </div>
         </div>
 

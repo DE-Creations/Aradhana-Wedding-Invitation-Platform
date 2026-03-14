@@ -37,16 +37,11 @@ export default function Design({ coupleMainImage, coupleGalleryImages }: DesignP
       <InvitationDesignPage
         onNavigate={(page) => {
           if (page === 'invitation') {
-            const token = auth?.wedding?.event_token;
-            if (token) {
-              const params = new URLSearchParams({
-                template: preferences.templateKey,
-                typography: preferences.typographyKey,
-              });
-              router.visit(`/invitation/${token}?${params.toString()}`);
-            } else {
-              router.visit('/design');
-            }
+            const params = new URLSearchParams({
+              template: preferences.templateKey,
+              typography: preferences.typographyKey,
+            });
+            window.open(`/design/preview?${params.toString()}`, '_blank');
           } else {
             router.visit('/design');
           }

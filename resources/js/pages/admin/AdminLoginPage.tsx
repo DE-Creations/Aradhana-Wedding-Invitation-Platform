@@ -1,5 +1,5 @@
 import { useForm } from "@inertiajs/react";
-import { Heart, Mail, Lock, ArrowRight } from "lucide-react";
+import { Mail, Lock, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 export const AdminLoginPage = () => {
@@ -23,10 +23,7 @@ export const AdminLoginPage = () => {
         <div className="rounded-2xl border border-border bg-card shadow-elevated p-8">
           {/* Brand */}
           <div className="text-center mb-8">
-            <div className="w-14 h-14 rounded-xl bg-gradient-gold flex items-center justify-center mx-auto mb-4">
-              <Heart className="h-6 w-6 text-primary-foreground fill-primary-foreground" />
-            </div>
-            <h1 className="font-display text-3xl font-bold text-foreground">Aradhana</h1>
+            <img src="/images/logo-text.png" alt="Aradhana" className="h-36 sm:h-44 md:h-48 w-auto mx-auto mb-4 object-contain" />
             <p className="text-sm text-muted-foreground font-body mt-1">Admin Login</p>
           </div>
 

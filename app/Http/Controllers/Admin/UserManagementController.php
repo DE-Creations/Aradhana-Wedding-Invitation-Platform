@@ -30,6 +30,9 @@ class UserManagementController extends Controller
                 'expire_date' => $user->expire_date?->toDateString() ?? '',
                 'created_at' => $user->created_at?->toDateString() ?? '',
                 'updated_at' => $user->updated_at?->toDateString() ?? '',
+                'table_management' => (bool) $user->table_management,
+                'share_memory' => (bool) $user->share_memory,
+                'image_count' => (int) $user->image_count,
             ])
             ->values();
 
@@ -83,6 +86,9 @@ class UserManagementController extends Controller
             'rsvp_deadline' => ['nullable', 'date'],
             'template_key' => ['nullable', 'string', 'max:120'],
             'typography_key' => ['nullable', 'string', 'max:120'],
+            'table_management' => ['boolean'],
+            'share_memory' => ['boolean'],
+            'image_count' => ['nullable', 'integer', 'in:0,20,30'],
             'main_image' => [
                 'nullable',
                 'image',
@@ -105,6 +111,7 @@ class UserManagementController extends Controller
         }
 
         DB::transaction(function () use ($validated, $request, $weddingRequested): void {
+            $shareMemory = (bool) ($validated['share_memory'] ?? false);
             $user = User::create([
                 'name' => $validated['name'],
                 'email' => $validated['email'],
@@ -112,6 +119,9 @@ class UserManagementController extends Controller
                 'phone' => $validated['phone'],
                 'status' => $validated['status'],
                 'expire_date' => $validated['expire_date'] ?: null,
+                'table_management' => (bool) ($validated['table_management'] ?? false),
+                'share_memory' => $shareMemory,
+                'image_count' => $shareMemory ? (int) ($validated['image_count'] ?? 20) : 0,
             ]);
 
             if ($weddingRequested) {
@@ -153,6 +163,9 @@ class UserManagementController extends Controller
             'phone'              => ['required', 'string', 'max:40'],
             'status'             => ['required', 'in:active,inactive,expired'],
             'expire_date'        => ['nullable', 'date'],
+            'table_management'   => ['boolean'],
+            'share_memory'       => ['boolean'],
+            'image_count'        => ['nullable', 'integer', 'in:0,20,30'],
 
             'bride_name'         => ['nullable', 'string', 'max:255'],
             'groom_name'         => ['nullable', 'string', 'max:255'],
@@ -177,12 +190,16 @@ class UserManagementController extends Controller
         }
 
         DB::transaction(function () use ($validated, $user, $weddingRequested): void {
+            $shareMemory = (bool) ($validated['share_memory'] ?? false);
             $userPayload = [
-                'name'        => $validated['name'],
-                'email'       => $validated['email'],
-                'phone'       => $validated['phone'],
-                'status'      => $validated['status'],
-                'expire_date' => $validated['expire_date'] ?: null,
+                'name'             => $validated['name'],
+                'email'            => $validated['email'],
+                'phone'            => $validated['phone'],
+                'status'           => $validated['status'],
+                'expire_date'      => $validated['expire_date'] ?: null,
+                'table_management' => (bool) ($validated['table_management'] ?? false),
+                'share_memory'     => $shareMemory,
+                'image_count'      => $shareMemory ? (int) ($validated['image_count'] ?? 20) : 0,
             ];
 
             if (!empty($validated['password'])) {

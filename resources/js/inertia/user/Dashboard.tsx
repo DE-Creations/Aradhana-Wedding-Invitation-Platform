@@ -15,7 +15,7 @@ const routeMap: Record<string, string> = {
 
 export default function Dashboard() {
   const { wedding, stats, pendingGuests, recentActivity, latestMemories } = usePage<{
-    wedding: { bride_name: string; groom_name: string; venue_name: string; event_date: string } | null;
+    wedding: { bride_name: string; groom_name: string; venue_name: string; event_date: string; event_token: string } | null;
     stats: { totalGuests: number; rsvpClicks: number; confirmed: number; pending: number; declined: number; headCount: number; totalSeats: number; assignedSeats: number } | null;
     pendingGuests: Array<{ id: string; guest_name: string; phone: string; rsvp_status: string }>;
     recentActivity: Array<{ id: string; text: string; time: string; type: string }>;
@@ -31,6 +31,7 @@ export default function Dashboard() {
         pendingGuests={pendingGuests}
         recentActivity={recentActivity}
         latestMemories={latestMemories}
+        eventToken={wedding?.event_token}
       />
     </UserShell>
   );

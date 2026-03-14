@@ -77,6 +77,7 @@ class DashboardController extends Controller
                 'groom_name'  => $wedding->groom_name,
                 'venue_name'  => $wedding->venue_name,
                 'event_date'  => $wedding->event_date?->toDateString(),
+                'event_token' => $wedding->event_token,
             ],
             'stats'          => $stats,
             'pendingGuests'  => $pendingGuests,
