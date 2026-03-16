@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\WelcomeClientMail;
+use App\Models\EmailLog;
 use App\Models\InvitationView;
 use App\Models\Rsvp;
 use App\Models\TableAssignment;
@@ -13,6 +15,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -136,7 +139,20 @@ class UserManagementController extends Controller
                     'status'          => 'draft',
                 ]);
             }
+
+            // Capture user ID for post-transaction email dispatch.
+            $newUserId = $user->id;
         });
+
+        // Send welcome email after the transaction completes successfully.
+        // Re-fetch with wedding so the email can include couple names if a wedding was created.
+        $newUserId = User::where('email', $validated['email'])->value('id');
+        if ($newUserId) {
+            $createdUser = User::with('wedding')->find($newUserId);
+            Mail::to($createdUser->email)
+                ->send(new WelcomeClientMail($createdUser, $createdUser->wedding));
+            EmailLog::record($newUserId, EmailLog::TYPE_WELCOME);
+        }
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }

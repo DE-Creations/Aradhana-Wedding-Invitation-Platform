@@ -24,7 +24,7 @@ export const UserLayout = ({ children, currentPage, onNavigate, onLogout }: User
           title={title}
           subtitle="Wedding Dashboard"
         />
-        <main className="flex-1 overflow-y-auto p-4 pb-24 md:p-6 md:pb-6 lg:p-8 lg:pb-8">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 pb-24 md:p-6 md:pb-2 lg:p-8 lg:pb-1">{children}</main>
       </div>
     </div>
   );

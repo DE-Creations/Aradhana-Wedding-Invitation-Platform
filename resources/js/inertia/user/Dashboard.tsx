@@ -29,15 +29,15 @@ export default function Dashboard() {
   return (
     <UserShell currentPage="dashboard">
       <UserDashboardPage
-        onNavigate={(page) => router.visit(routeMap[page] ?? '/dashboard')}
-        wedding={wedding}
-        stats={stats}
-        pendingGuests={pendingGuests}
-        recentActivity={recentActivity}
-        latestMemories={latestMemories}
-        eventToken={wedding?.event_token}
-        tableManagement={tableManagement}
-        shareMemory={shareMemory}
+          onNavigate={(page) => router.visit(routeMap[page] ?? '/dashboard')}
+          wedding={wedding}
+          stats={stats}
+          pendingGuests={pendingGuests}
+          recentActivity={recentActivity}
+          latestMemories={latestMemories}
+          eventToken={wedding?.event_token}
+          tableManagement={tableManagement}
+          shareMemory={shareMemory}
       />
     </UserShell>
   );

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Calendar, Users, MousePointerClick, UserCheck, Clock, UserX, Hash, Plus, FileSpreadsheet, Settings, Eye, QrCode, Image, Lock } from "lucide-react";
 import { StatsCard, SectionCard, StatusBadge } from "@/components/ui-components";
+import { WatermarkFooter } from "@/components/WatermarkFooter";
 import { motion } from "framer-motion";
 
 interface WeddingInfo {
@@ -213,6 +214,7 @@ export const UserDashboardPage = ({ onNavigate, wedding, stats, pendingGuests, r
           </div>
         )}
       </SectionCard>
+      <WatermarkFooter />
     </div>
   );
 };

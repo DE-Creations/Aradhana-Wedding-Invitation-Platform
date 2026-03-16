@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -84,5 +85,44 @@ class Wedding extends Model
     public function memories(): HasMany
     {
         return $this->hasMany(Memory::class);
+    }
+
+    /**
+     * Return the primary event date for this wedding regardless of type.
+     *
+     * Logic:
+     *  - Sinhala  → sinhala_wedding.event_date
+     *  - Christian → church_event_date (falls back to reception_event_date)
+     *  - Tamil     → muhurtham_event_date (falls back to reception_event_date)
+     *  - Muslim    → nikkah_event_date (falls back to reception_event_date)
+     */
+    public function primaryEventDate(): ?Carbon
+    {
+        if ($this->sinhalaDetails) {
+            return $this->sinhalaDetails->event_date instanceof Carbon
+                ? $this->sinhalaDetails->event_date
+                : ($this->sinhalaDetails->event_date
+                    ? Carbon::parse($this->sinhalaDetails->event_date) : null);
+        }
+
+        if ($this->christianDetails) {
+            $date = $this->christianDetails->church_event_date
+                ?? $this->christianDetails->reception_event_date;
+            return $date ? Carbon::parse($date) : null;
+        }
+
+        if ($this->tamilDetails) {
+            $date = $this->tamilDetails->muhurtham_event_date
+                ?? $this->tamilDetails->reception_event_date;
+            return $date ? Carbon::parse($date) : null;
+        }
+
+        if ($this->muslimDetails) {
+            $date = $this->muslimDetails->nikkah_event_date
+                ?? $this->muslimDetails->reception_event_date;
+            return $date ? Carbon::parse($date) : null;
+        }
+
+        return null;
     }
 }
