@@ -14,13 +14,17 @@ const routeMap: Record<string, string> = {
 };
 
 export default function Dashboard() {
-  const { wedding, stats, pendingGuests, recentActivity, latestMemories } = usePage<{
+  const { wedding, stats, pendingGuests, recentActivity, latestMemories, auth } = usePage<{
     wedding: { bride_name: string; groom_name: string; venue_name: string; event_date: string; event_token: string } | null;
     stats: { totalGuests: number; rsvpClicks: number; confirmed: number; pending: number; declined: number; headCount: number; totalSeats: number; assignedSeats: number } | null;
     pendingGuests: Array<{ id: string; guest_name: string; phone: string; rsvp_status: string }>;
     recentActivity: Array<{ id: string; text: string; time: string; type: string }>;
     latestMemories: Array<{ id: string; image_path: string; file_name: string }>;
+    auth: { user: { table_management: boolean; share_memory: boolean } | null };
   }>().props;
+
+  const tableManagement = auth?.user?.table_management ?? true;
+  const shareMemory = auth?.user?.share_memory ?? true;
 
   return (
     <UserShell currentPage="dashboard">
@@ -32,6 +36,8 @@ export default function Dashboard() {
         recentActivity={recentActivity}
         latestMemories={latestMemories}
         eventToken={wedding?.event_token}
+        tableManagement={tableManagement}
+        shareMemory={shareMemory}
       />
     </UserShell>
   );

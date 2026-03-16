@@ -1,5 +1,4 @@
 import { usePage } from '@inertiajs/react';
-import { PageProps } from '@inertiajs/core';
 import UserShell from '@/inertia/layouts/UserShell';
 import { WeddingSettingsPage } from '@/pages/user/WeddingSettingsPage';
 
@@ -9,14 +8,9 @@ type WeddingData = {
 	groom_name: string;
 	bride_parents_names: string;
 	groom_parents_names: string;
-	event_date: string;
+	wedding_type_id: string;
+	wedding_type_name: string;
 	rsvp_deadline: string;
-	start_time: string;
-	end_time: string;
-	poruwa_time: string;
-	venue_name: string;
-	venue_address: string;
-	google_maps_link: string;
 	contact_number_1: string;
 	contact_number_2: string;
 	template_key: string;
@@ -31,28 +25,22 @@ type GalleryImage = {
 	sort_order: number;
 };
 
-type CeremonyType = {
-	id: string;
-	name: string;
-};
-
-type SettingsPageProps = PageProps<{
+type SettingsPageProps = {
 	wedding: WeddingData | null;
 	galleryImages: GalleryImage[];
-	ceremonyTypes: CeremonyType[];
-	ceremonyTypeId: string;
-}>;
+	eventDetails: Record<string, string | boolean> | null;
+	[key: string]: unknown;
+};
 
 export default function Settings() {
-	const { wedding, galleryImages, ceremonyTypes, ceremonyTypeId } = usePage<SettingsPageProps>().props;
+	const { wedding, galleryImages, eventDetails } = usePage<SettingsPageProps>().props;
 
 	return (
-		<UserShell currentPage="settings">
+		<UserShell currentPage="setup">
 			<WeddingSettingsPage
 				wedding={wedding}
 				galleryImages={galleryImages}
-				ceremonyTypes={ceremonyTypes ?? []}
-				ceremonyTypeId={ceremonyTypeId ?? ""}
+				eventDetails={eventDetails ?? null}
 			/>
 		</UserShell>
 	);

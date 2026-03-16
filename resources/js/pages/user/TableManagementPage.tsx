@@ -2,6 +2,16 @@ import { useState } from "react";
 import { router } from "@inertiajs/react";
 import { Plus, Edit, Trash2, Users, UserPlus, AlertTriangle, X } from "lucide-react";
 import { SectionCard, StatusBadge, Modal, FormField, EmptyState } from "@/components/ui-components";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { motion } from "framer-motion";
 
 interface TableGuest {
@@ -238,17 +248,25 @@ export const TableManagementPage = ({ tables, guests }: TableManagementPageProps
         </div>
       </Modal>
 
-      <Modal open={!!deleteTable} onClose={() => setDeleteTable(null)} title="Delete Table" size="sm">
-        {deleteTable && (
-          <div className="text-center space-y-4">
-            <p className="text-sm text-muted-foreground">Delete <strong className="text-foreground">{deleteTable.table_name}</strong>?</p>
-            <div className="flex justify-center gap-3">
-              <button onClick={() => setDeleteTable(null)} className="px-4 py-2 rounded-lg border border-border text-sm hover:bg-muted">Cancel</button>
-              <button onClick={() => handleDeleteTable(deleteTable.id)} className="px-4 py-2 rounded-lg bg-destructive text-destructive-foreground text-sm hover:opacity-90">Delete</button>
-            </div>
-          </div>
-        )}
-      </Modal>
+      <AlertDialog open={!!deleteTable} onOpenChange={(v) => !v && setDeleteTable(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Table</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete <strong>{deleteTable?.table_name}</strong>? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteTable(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteTable && handleDeleteTable(deleteTable.id)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

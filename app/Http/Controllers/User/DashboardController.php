@@ -26,6 +26,59 @@ class DashboardController extends Controller
 
         $guests = $wedding->guests()->get();
 
+        // Resolve primary event date & venue from type-specific table
+        $eventDate = null;
+        $venueName = null;
+
+        switch ($wedding->wedding_type_id) {
+            case 1: // Sinhala
+                $details = $wedding->sinhalaDetails;
+                if ($details) {
+                    $eventDate = $details->event_date?->format('Y-m-d');
+                    $venueName = $details->venue;
+                }
+                break;
+
+            case 2: // Christian
+                $details = $wedding->christianDetails;
+                if ($details) {
+                    if ($details->is_church_ceremony && $details->church_event_date) {
+                        $eventDate = $details->church_event_date->format('Y-m-d');
+                        $venueName = $details->church_venue;
+                    } elseif ($details->is_reception && $details->reception_event_date) {
+                        $eventDate = $details->reception_event_date->format('Y-m-d');
+                        $venueName = $details->reception_venue;
+                    }
+                }
+                break;
+
+            case 3: // Tamil
+                $details = $wedding->tamilDetails;
+                if ($details) {
+                    if ($details->is_muhurtham && $details->muhurtham_event_date) {
+                        $eventDate = $details->muhurtham_event_date->format('Y-m-d');
+                        $venueName = $details->muhurtham_event_venue;
+                    } elseif ($details->is_reception && $details->reception_event_date) {
+                        $eventDate = $details->reception_event_date->format('Y-m-d');
+                        $venueName = $details->reception_venue;
+                    }
+                }
+                break;
+
+            case 4: // Muslim
+                $details = $wedding->muslimDetails;
+                if ($details) {
+                    if ($details->is_nikkah && $details->nikkah_event_date) {
+                        $eventDate = $details->nikkah_event_date->format('Y-m-d');
+                        $venueName = $details->nikkah_event_venue;
+                    } elseif ($details->is_reception && $details->reception_event_date) {
+                        $eventDate = $details->reception_event_date->format('Y-m-d');
+                        $venueName = $details->reception_venue;
+                    }
+                }
+                break;
+        }
+
         $stats = [
             'totalGuests'    => $guests->count(),
             'rsvpClicks'     => $guests->whereNotNull('rsvp_clicked_at')->count(),
@@ -75,9 +128,9 @@ class DashboardController extends Controller
             'wedding' => [
                 'bride_name'  => $wedding->bride_name,
                 'groom_name'  => $wedding->groom_name,
-                'venue_name'  => $wedding->venue_name,
-                'event_date'  => $wedding->event_date?->toDateString(),
                 'event_token' => $wedding->event_token,
+                'venue_name'  => $venueName,
+                'event_date'  => $eventDate,
             ],
             'stats'          => $stats,
             'pendingGuests'  => $pendingGuests,

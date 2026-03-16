@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Calendar, Users, MousePointerClick, UserCheck, Clock, UserX, Hash, Plus, FileSpreadsheet, Settings, Eye, QrCode, Image } from "lucide-react";
+import { Calendar, Users, MousePointerClick, UserCheck, Clock, UserX, Hash, Plus, FileSpreadsheet, Settings, Eye, QrCode, Image, Lock } from "lucide-react";
 import { StatsCard, SectionCard, StatusBadge } from "@/components/ui-components";
 import { motion } from "framer-motion";
 
@@ -49,9 +49,11 @@ interface UserDashboardPageProps {
   recentActivity: ActivityItem[];
   latestMemories: LatestMemory[];
   eventToken?: string;
+  tableManagement?: boolean;
+  shareMemory?: boolean;
 }
 
-export const UserDashboardPage = ({ onNavigate, wedding, stats, pendingGuests, recentActivity, latestMemories, eventToken }: UserDashboardPageProps) => {
+export const UserDashboardPage = ({ onNavigate, wedding, stats, pendingGuests, recentActivity, latestMemories, eventToken, tableManagement = true, shareMemory = true }: UserDashboardPageProps) => {
   const [daysLeft, setDaysLeft] = useState(0);
 
   useEffect(() => {
@@ -101,32 +103,46 @@ export const UserDashboardPage = ({ onNavigate, wedding, stats, pendingGuests, r
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         <StatsCard icon={<UserX className="h-5 w-5" />} label="Declined" value={stats?.declined ?? 0} variant="destructive" />
         <StatsCard icon={<Hash className="h-5 w-5" />} label="Head Count" value={stats?.headCount ?? 0} subtitle="Total attendees" variant="info" />
-        <div className="hidden lg:block">
+        <div className="hidden lg:block relative">
           <StatsCard icon={<Calendar className="h-5 w-5" />} label="Table Progress" value={`${assignProgress}%`} subtitle={`${stats?.assignedSeats ?? 0}/${stats?.totalSeats ?? 0} seats assigned`} variant="primary" />
+          {!tableManagement && (
+            <div className="absolute inset-0 rounded-xl bg-background/70 backdrop-blur-[1px] flex items-center justify-center gap-1.5">
+              <Lock className="h-4 w-4 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground font-medium">Not available</span>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Quick Actions */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {[
-          { label: "Add Guest", icon: Plus, page: "guests" },
-          { label: "Import Guests", icon: FileSpreadsheet, page: "guests" },
-          { label: "Edit Settings", icon: Settings, page: "settings" },
-          { label: "Preview Invite", icon: Eye, page: "preview" },
-          { label: "QR Search", icon: QrCode, page: "qr-search" },
+          { label: "Add Guest", icon: Plus, page: "guests", disabled: false },
+          { label: "Import Guests", icon: FileSpreadsheet, page: "guests", disabled: false },
+          { label: "Edit Settings", icon: Settings, page: "settings", disabled: false },
+          { label: "Preview Invite", icon: Eye, page: "preview", disabled: false },
+          { label: "QR Search", icon: QrCode, page: "qr-search", disabled: !tableManagement && !shareMemory },
         ].map((action) => (
           <button
             key={action.label}
+            disabled={action.disabled}
             onClick={() => {
+              if (action.disabled) return;
               if (action.page === "preview") {
                 window.open(eventToken ? `/invitation/${eventToken}` : "/invitation", "_blank");
+              } else if (action.page === "qr-search") {
+                window.open(eventToken ? `/guest-search?token=${eventToken}` : "/guest-search", "_blank");
               } else {
                 onNavigate(action.page);
               }
             }}
-            className="flex flex-col items-center gap-2 p-4 rounded-xl border border-border bg-card hover:bg-muted/50 hover:border-primary/20 transition-all shadow-card"
+            className={`flex flex-col items-center gap-2 p-4 rounded-xl border transition-all shadow-card ${
+              action.disabled
+                ? "border-border bg-card/50 opacity-40 cursor-not-allowed"
+                : "border-border bg-card hover:bg-muted/50 hover:border-primary/20 cursor-pointer"
+            }`}
           >
-            <action.icon className="h-5 w-5 text-primary" />
+            <action.icon className={`h-5 w-5 ${action.disabled ? "text-muted-foreground" : "text-primary"}`} />
             <span className="text-xs font-medium text-foreground font-body">{action.label}</span>
           </button>
         ))}
@@ -178,9 +194,14 @@ export const UserDashboardPage = ({ onNavigate, wedding, stats, pendingGuests, r
       <SectionCard
         title="Latest Memories"
         description="Recent photo uploads from guests"
-        action={<button onClick={() => onNavigate("memories")} className="text-sm text-primary hover:text-primary/80 font-medium">View All</button>}
+        action={shareMemory ? <button onClick={() => onNavigate("memories")} className="text-sm text-primary hover:text-primary/80 font-medium">View All</button> : undefined}
       >
-        {latestMemories.length === 0 ? (
+        {!shareMemory ? (
+          <div className="flex flex-col items-center justify-center py-8 gap-2">
+            <Lock className="h-6 w-6 text-muted-foreground opacity-40" />
+            <p className="text-sm text-muted-foreground text-center">This feature is not available in your plan.</p>
+          </div>
+        ) : latestMemories.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-6">No memories yet.</p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

@@ -7,6 +7,7 @@ type RecentUser = {
   name: string;
   email: string;
   status: "active" | "inactive" | "expired";
+  last_login: string;
   expire_date: string;
   created_at: string;
 };
@@ -66,6 +67,7 @@ export const AdminDashboardPage = ({ stats, recentUsers, onNavigate }: AdminDash
                 <th className="text-left py-3 px-2 font-medium text-muted-foreground font-body">Name</th>
                 <th className="text-left py-3 px-2 font-medium text-muted-foreground font-body hidden md:table-cell">Email</th>
                 <th className="text-left py-3 px-2 font-medium text-muted-foreground font-body">Status</th>
+                <th className="text-left py-3 px-2 font-medium text-muted-foreground font-body hidden lg:table-cell">Last Login</th>
                 <th className="text-left py-3 px-2 font-medium text-muted-foreground font-body hidden lg:table-cell">Expire Date</th>
               </tr>
             </thead>
@@ -81,6 +83,7 @@ export const AdminDashboardPage = ({ stats, recentUsers, onNavigate }: AdminDash
                   <td className="py-3 px-2 font-medium text-foreground">{user.name}</td>
                   <td className="py-3 px-2 text-muted-foreground hidden md:table-cell">{user.email}</td>
                   <td className="py-3 px-2"><StatusBadge status={user.status} /></td>
+                  <td className="py-3 px-2 text-muted-foreground hidden lg:table-cell">{user.last_login || "Never"}</td>
                   <td className="py-3 px-2 text-muted-foreground hidden lg:table-cell">{user.expire_date}</td>
                 </motion.tr>
               ))}

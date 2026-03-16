@@ -21,6 +21,8 @@ class UserAuthController extends Controller
 
         $request->session()->regenerate();
 
+        Auth::user()->update(['last_login' => now()]);
+
         return redirect()->intended(route('dashboard'));
     }
 

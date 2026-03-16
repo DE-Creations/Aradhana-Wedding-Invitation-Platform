@@ -21,13 +21,14 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'password',
         'phone',
         'status',
         'expire_date',
-        'password',
+        'image_count',
         'table_management',
         'share_memory',
-        'image_count',
+        'last_login',
     ];
 
     /**
@@ -52,6 +53,7 @@ class User extends Authenticatable
             'table_management' => 'boolean',
             'share_memory'     => 'boolean',
             'image_count'      => 'integer',
+            'last_login'       => 'datetime',
         ];
     }
 

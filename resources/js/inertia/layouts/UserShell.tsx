@@ -8,7 +8,7 @@ import { UserLayout } from '@/layouts/UserLayout';
 const routeMap: Record<string, string> = {
   dashboard: '/dashboard',
   guests: '/guests',
-  settings: '/settings',
+  setup: '/settings',
   tables: '/tables',
   memories: '/memories',
   design: '/design',

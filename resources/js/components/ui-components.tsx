@@ -1,5 +1,15 @@
 import { ReactNode } from "react";
-import { AlertTriangle, X } from "lucide-react";
+import { X } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface StatsCardProps {
   icon: ReactNode;
@@ -133,58 +143,28 @@ export const ConfirmModal = ({
   cancelLabel = "Cancel",
   variant = "destructive",
 }: ConfirmModalProps) => {
-  if (!open) return null;
   const isDestructive = variant === "destructive";
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-foreground/30 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative max-w-sm w-full bg-card rounded-2xl shadow-wedding border border-border animate-in fade-in zoom-in-95 duration-150">
-        {/* Close */}
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 w-7 h-7 rounded-lg hover:bg-muted flex items-center justify-center transition-colors"
-        >
-          <X className="h-3.5 w-3.5 text-muted-foreground" />
-        </button>
-
-        <div className="p-6">
-          {/* Icon */}
-          <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
-            isDestructive ? "bg-destructive/10" : "bg-warning/10"
-          }`}>
-            <AlertTriangle className={`h-6 w-6 ${
-              isDestructive ? "text-destructive" : "text-warning"
-            }`} />
-          </div>
-
-          {/* Content */}
-          <h3 className="font-display text-lg font-semibold text-foreground">{title}</h3>
-          <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{description}</p>
-
-          {/* Actions */}
-          <div className="flex gap-2.5 mt-6">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 px-4 py-2.5 rounded-xl border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors"
-            >
-              {cancelLabel}
-            </button>
-            <button
-              type="button"
-              onClick={() => { onConfirm(); onClose(); }}
-              className={`flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-white transition-opacity hover:opacity-90 ${
-                isDestructive
-                  ? "bg-destructive shadow-[0_4px_14px_rgba(var(--destructive),0.35)]"
-                  : "bg-warning shadow-[0_4px_14px_rgba(var(--warning),0.35)]"
-              }`}
-            >
-              {confirmLabel}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <AlertDialog open={open} onOpenChange={(v) => !v && onClose()}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={onClose}>{cancelLabel}</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => { onConfirm(); onClose(); }}
+            className={isDestructive
+              ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              : "bg-warning text-warning-foreground hover:bg-warning/90"
+            }
+          >
+            {confirmLabel}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
 

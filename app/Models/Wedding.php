@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Wedding extends Model
 {
@@ -18,13 +19,7 @@ class Wedding extends Model
         'groom_name',
         'bride_parents_names',
         'groom_parents_names',
-        'event_date',
-        'start_time',
-        'end_time',
-        'poruwa_time',
-        'venue_name',
-        'venue_address',
-        'google_maps_link',
+        'wedding_type_id',
         'rsvp_deadline',
         'contact_number_1',
         'contact_number_2',
@@ -37,7 +32,6 @@ class Wedding extends Model
     protected function casts(): array
     {
         return [
-            'event_date' => 'date',
             'rsvp_deadline' => 'date',
         ];
     }
@@ -45,6 +39,31 @@ class Wedding extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function weddingType(): BelongsTo
+    {
+        return $this->belongsTo(WeddingType::class);
+    }
+
+    public function sinhalaDetails(): HasOne
+    {
+        return $this->hasOne(SinhalaWedding::class);
+    }
+
+    public function christianDetails(): HasOne
+    {
+        return $this->hasOne(ChristianWedding::class);
+    }
+
+    public function tamilDetails(): HasOne
+    {
+        return $this->hasOne(TamilWedding::class);
+    }
+
+    public function muslimDetails(): HasOne
+    {
+        return $this->hasOne(MuslimWedding::class);
     }
 
     public function galleryImages(): HasMany

@@ -16,6 +16,7 @@ class PublicInvitationController extends Controller
     {
         $wedding = Wedding::where('event_token', $token)
             ->where('status', '!=', 'draft')
+            ->with(['weddingType', 'sinhalaDetails', 'christianDetails', 'tamilDetails', 'muslimDetails'])
             ->firstOrFail();
 
         $guestToken = $request->query('guest');
@@ -55,18 +56,15 @@ class PublicInvitationController extends Controller
                 'groom_name'          => $wedding->groom_name,
                 'bride_parents_names' => $wedding->bride_parents_names,
                 'groom_parents_names' => $wedding->groom_parents_names,
-                'event_date'          => $wedding->event_date?->toDateString(),
-                'start_time'          => $wedding->start_time,
-                'end_time'            => $wedding->end_time,
-                'poruwa_time'         => $wedding->poruwa_time,
-                'venue_name'          => $wedding->venue_name,
-                'venue_address'       => $wedding->venue_address,
-                'google_maps_link'    => $wedding->google_maps_link,
+                'wedding_type_id'     => (string) ($wedding->wedding_type_id ?? ''),
+                'rsvp_deadline'       => $wedding->rsvp_deadline?->toDateString(),
                 'contact_number_1'    => $wedding->contact_number_1,
                 'contact_number_2'    => $wedding->contact_number_2,
                 'template_key'        => $wedding->template_key ?? 'faded-picture-overlay',
                 'typography_key'      => $wedding->typography_key ?? 'classic',
             ],
+            'ceremonyEvents'     => $this->buildCeremonyEvents($wedding),
+            'googleMapsLink'     => null,
             'guest' => $guest ? [
                 'id'            => $guest->id,
                 'guest_name'    => $guest->guest_name,
@@ -74,8 +72,8 @@ class PublicInvitationController extends Controller
                 'max_attendees' => $guest->max_attendees,
                 'rsvp_status'   => $guest->rsvp_status,
             ] : null,
-            'eventToken'         => $wedding->event_token,
-            'coupleMainImage'    => $wedding->main_image ? asset('storage/' . $wedding->main_image) : null,
+            'eventToken'          => $wedding->event_token,
+            'coupleMainImage'     => $wedding->main_image ? asset('storage/' . $wedding->main_image) : null,
             'coupleGalleryImages' => $galleryImages,
         ]);
     }
@@ -153,5 +151,107 @@ class PublicInvitationController extends Controller
         ]);
 
         return response()->json(['success' => true]);
+    }
+
+    private function buildCeremonyEvents(Wedding $wedding): array
+    {
+        $events = [];
+
+        switch ((int) $wedding->wedding_type_id) {
+            case 1: // Sinhala
+                $d = $wedding->sinhalaDetails;
+                if ($d) {
+                    $events[] = [
+                        'label'            => 'Wedding Ceremony',
+                        'date'             => $d->event_date?->toDateString() ?? '',
+                        'venue'            => $d->venue ?? '',
+                        'start_time'       => $d->start_time ?? '',
+                        'end_time'         => $d->end_time ?? '',
+                        'poruwa_time'      => $d->poruwa_time ?? '',
+                        'google_maps_link' => $d->google_maps_link ?? '',
+                    ];
+                }
+                break;
+
+            case 2: // Christian
+                $d = $wedding->christianDetails;
+                if ($d) {
+                    if ($d->is_church_ceremony) {
+                        $events[] = [
+                            'label'            => 'Church Ceremony',
+                            'date'             => $d->church_event_date?->toDateString() ?? '',
+                            'venue'            => $d->church_venue ?? '',
+                            'start_time'       => $d->ceremony_time ?? '',
+                            'end_time'         => '',
+                            'google_maps_link' => $d->church_event_google_maps_link ?? '',
+                        ];
+                    }
+                    if ($d->is_reception) {
+                        $events[] = [
+                            'label'            => 'Reception',
+                            'date'             => $d->reception_event_date?->toDateString() ?? '',
+                            'venue'            => $d->reception_venue ?? '',
+                            'start_time'       => $d->reception_start_time ?? '',
+                            'end_time'         => $d->reception_end_time ?? '',
+                            'google_maps_link' => $d->reception_event_google_maps_link ?? '',
+                        ];
+                    }
+                }
+                break;
+
+            case 3: // Tamil
+                $d = $wedding->tamilDetails;
+                if ($d) {
+                    if ($d->is_muhurtham) {
+                        $events[] = [
+                            'label'            => 'Muhurtham Ceremony',
+                            'date'             => $d->muhurtham_event_date?->toDateString() ?? '',
+                            'venue'            => $d->muhurtham_event_venue ?? '',
+                            'start_time'       => $d->muhurtham_start_time ?? '',
+                            'end_time'         => $d->muhurtham_end_time ?? '',
+                            'google_maps_link' => $d->muhurtham_event_google_maps_link ?? '',
+                        ];
+                    }
+                    if ($d->is_reception) {
+                        $events[] = [
+                            'label'            => 'Reception',
+                            'date'             => $d->reception_event_date?->toDateString() ?? '',
+                            'venue'            => $d->reception_venue ?? '',
+                            'start_time'       => $d->reception_start_time ?? '',
+                            'end_time'         => '',
+                            'google_maps_link' => $d->reception_event_google_maps_link ?? '',
+                        ];
+                    }
+                }
+                break;
+
+            case 4: // Muslim
+                $d = $wedding->muslimDetails;
+                if ($d) {
+                    if ($d->is_nikkah) {
+                        $events[] = [
+                            'label'            => 'Nikkah Ceremony',
+                            'date'             => $d->nikkah_event_date?->toDateString() ?? '',
+                            'venue'            => $d->nikkah_event_venue ?? '',
+                            'start_time'       => $d->nikkah_start_time ?? '',
+                            'end_time'         => '',
+                            'google_maps_link' => $d->nikkah_event_google_maps_link ?? '',
+                        ];
+                    }
+                    if ($d->is_reception) {
+                        $events[] = [
+                            'label'            => 'Reception',
+                            'date'             => $d->reception_event_date?->toDateString() ?? '',
+                            'venue'            => $d->reception_venue ?? '',
+                            'start_time'       => $d->reception_start_time ?? '',
+                            'end_time'         => '',
+                            'google_maps_link' => $d->reception_event_google_maps_link ?? '',
+                        ];
+                    }
+                }
+                break;
+        }
+
+        return $events;
     }
 }

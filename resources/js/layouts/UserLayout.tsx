@@ -11,12 +11,14 @@ interface UserLayoutProps {
 }
 
 export const UserLayout = ({ children, currentPage, onNavigate, onLogout }: UserLayoutProps) => {
-  const { auth } = usePage<{ auth: { wedding: { bride_name: string; groom_name: string; event_token: string } | null } }>().props;
+  const { auth } = usePage<{ auth: { user: { table_management: boolean; share_memory: boolean } | null; wedding: { bride_name: string; groom_name: string; event_token: string } | null } }>().props;
   const title = auth?.wedding ? `${auth.wedding.bride_name} & ${auth.wedding.groom_name}` : "My Wedding";
+  const tableManagement = auth?.user?.table_management ?? true;
+  const shareMemory = auth?.user?.share_memory ?? true;
 
   return (
     <div className="h-screen flex w-full bg-background overflow-hidden">
-      <UserSidebar currentPage={currentPage} onNavigate={onNavigate} onLogout={onLogout} eventToken={auth?.wedding?.event_token} />
+      <UserSidebar currentPage={currentPage} onNavigate={onNavigate} onLogout={onLogout} eventToken={auth?.wedding?.event_token} tableManagement={tableManagement} shareMemory={shareMemory} />
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         <AppTopbar
           title={title}

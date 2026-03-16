@@ -6,6 +6,16 @@ import { InvitationDesignPage } from '@/pages/user/InvitationDesignPage';
 interface DesignProps {
   coupleMainImage: string | null;
   coupleGalleryImages: string[];
+  ceremonyEvents: CeremonyEvent[];
+}
+
+interface CeremonyEvent {
+  label: string;
+  date: string;
+  venue: string;
+  start_time: string;
+  end_time: string;
+  google_maps_link?: string;
 }
 
 interface AuthWedding {
@@ -18,11 +28,11 @@ interface AuthWedding {
   venue_name?: string;
 }
 
-export default function Design({ coupleMainImage, coupleGalleryImages }: DesignProps) {
+export default function Design({ coupleMainImage, coupleGalleryImages, ceremonyEvents }: DesignProps) {
   const { auth } = usePage<{ auth: { wedding: AuthWedding | null } }>().props;
   const [preferences, setPreferences] = useState(() => ({
     templateKey: sessionStorage.getItem('invitation.templateKey') ?? auth?.wedding?.template_key ?? 'faded-picture-overlay',
-    typographyKey: sessionStorage.getItem('invitation.typographyKey') ?? auth?.wedding?.typography_key ?? 'classic-grace',
+    typographyKey: sessionStorage.getItem('invitation.typographyKey') ?? auth?.wedding?.typography_key ?? 'gilded-garamond',
   }));
 
   const weddingData = auth?.wedding ? {
@@ -51,6 +61,7 @@ export default function Design({ coupleMainImage, coupleGalleryImages }: DesignP
         weddingData={weddingData}
         coupleMainImage={coupleMainImage ?? ''}
         coupleGalleryImages={coupleGalleryImages}
+        ceremonyEvents={ceremonyEvents}
         onTemplateChange={(templateKey) => {
           sessionStorage.setItem('invitation.templateKey', templateKey);
           setPreferences((current) => ({ ...current, templateKey }));

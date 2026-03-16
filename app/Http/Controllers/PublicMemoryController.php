@@ -11,8 +11,7 @@ use Illuminate\Support\Str;
 
 class PublicMemoryController extends Controller
 {
-    private const MAX_IMAGES_PER_GUEST = 20;
-    private const MAX_FILE_SIZE_MB     = 5;
+    private const MAX_FILE_SIZE_MB = 15;
 
     public function upload(Request $request)
     {
@@ -22,10 +21,16 @@ class PublicMemoryController extends Controller
         // Resolve wedding
         $wedding = Wedding::where('event_token', $token)
             ->where('status', '!=', 'draft')
+            ->with('user')
             ->first();
 
         if (! $wedding) {
             return response()->json(['error' => 'Invalid event token.'], 422);
+        }
+
+        // Enforce share_memory feature flag
+        if (! $wedding->user || ! $wedding->user->share_memory) {
+            return response()->json(['error' => 'Memory sharing is not enabled for this event.'], 403);
         }
 
         // Resolve guest
@@ -51,16 +56,18 @@ class PublicMemoryController extends Controller
 
         $files = $request->file('images');
 
-        // Enforce total-upload cap per guest
+        // Enforce total-upload cap per guest (use the user's configured image_count)
+        $maxImagesPerGuest = max(1, (int) $wedding->user->image_count);
+
         $existing = Memory::where('wedding_id', $wedding->id)
             ->where('guest_id', $guest->id)
             ->count();
 
-        $remaining = self::MAX_IMAGES_PER_GUEST - $existing;
+        $remaining = $maxImagesPerGuest - $existing;
 
         if ($remaining <= 0) {
             return response()->json([
-                'error' => 'You have already reached the maximum of ' . self::MAX_IMAGES_PER_GUEST . ' uploads.',
+                'error' => 'You have already reached the maximum of ' . $maxImagesPerGuest . ' uploads.',
             ], 422);
         }
 
@@ -98,7 +105,8 @@ class PublicMemoryController extends Controller
             ];
         }
 
-        $skipped = count(array_slice($request->file('images'), $remaining));
+        $originalCount = count($request->file('images'));
+        $skipped = max(0, $originalCount - count($files));
 
         return response()->json([
             'uploaded' => count($uploaded),

@@ -15,14 +15,9 @@ type WeddingData = {
   groom_name: string;
   bride_parents_names: string;
   groom_parents_names: string;
-  event_date: string;
+  wedding_type_id: string;
+  wedding_type_name: string;
   rsvp_deadline: string;
-  start_time: string;
-  end_time: string;
-  poruwa_time: string;
-  venue_name: string;
-  venue_address: string;
-  google_maps_link: string;
   contact_number_1: string;
   contact_number_2: string;
   template_key: string;
@@ -37,16 +32,12 @@ type GalleryImage = {
   sort_order: number;
 };
 
-type CeremonyType = {
-  id: string;
-  name: string;
-};
+type EventDetails = Record<string, string | boolean>;
 
 interface WeddingSettingsPageProps {
   wedding: WeddingData | null;
   galleryImages: GalleryImage[];
-  ceremonyTypes: CeremonyType[];
-  ceremonyTypeId: string;
+  eventDetails: EventDetails | null;
 }
 
 const TimePickerField = ({ value, onChange, label }: { value: string; onChange: (val: string) => void; label: string }) => {
@@ -100,7 +91,7 @@ const TimePickerField = ({ value, onChange, label }: { value: string; onChange: 
 
 const DatePickerField = ({ value, onChange, label }: { value: string; onChange: (val: string) => void; label: string }) => {
   const [open, setOpen] = useState(false);
-  const dateValue = value ? new Date(value) : undefined;
+  const dateValue = value ? (() => { const [y, m, d] = value.split('-').map(Number); return new Date(y, m - 1, d); })() : undefined;
 
   return (
     <FormField label={label} required>
@@ -128,26 +119,22 @@ const DatePickerField = ({ value, onChange, label }: { value: string; onChange: 
   );
 };
 
-export const WeddingSettingsPage = ({ wedding, galleryImages, ceremonyTypes, ceremonyTypeId }: WeddingSettingsPageProps) => {
+export const WeddingSettingsPage = ({ wedding, galleryImages, eventDetails }: WeddingSettingsPageProps) => {
   const [form, setForm] = useState({
-    bride_name: wedding?.bride_name ?? "",
-    groom_name: wedding?.groom_name ?? "",
     bride_parents_names: wedding?.bride_parents_names ?? "",
     groom_parents_names: wedding?.groom_parents_names ?? "",
-    event_date: wedding?.event_date ?? "",
     rsvp_deadline: wedding?.rsvp_deadline ?? "",
-    start_time: wedding?.start_time ?? "09:00",
-    end_time: wedding?.end_time ?? "16:00",
-    ceremony_type_id: ceremonyTypeId ?? "",
-    poruwa_time: wedding?.poruwa_time ?? "10:30",
-    venue_name: wedding?.venue_name ?? "",
-    venue_address: wedding?.venue_address ?? "",
-    google_maps_link: wedding?.google_maps_link ?? "",
     contact_number_1: wedding?.contact_number_1 ?? "",
     contact_number_2: wedding?.contact_number_2 ?? "",
     template_key: wedding?.template_key ?? (invitationTemplates[0]?.key ?? ""),
     typography_key: wedding?.typography_key ?? (typographyOptions[0]?.key ?? ""),
     status: (wedding?.status ?? "draft") as "draft" | "active" | "completed",
+  });
+
+  const [eventForm, setEventForm] = useState<Record<string, string | boolean>>(() => {
+    if (!eventDetails) return {};
+    const { type: _type, ...fields } = eventDetails as { type: string } & Record<string, string | boolean>;
+    return fields;
   });
 
   const [isSaving, setIsSaving] = useState(false);
@@ -161,9 +148,13 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, ceremonyTypes, cer
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  const updateEventField = (field: string, value: string | boolean) => {
+    setEventForm((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleSave = () => {
     setIsSaving(true);
-    router.post("/settings", form, {
+    router.post("/settings", { ...form, ...eventForm }, {
       preserveScroll: true,
       onFinish: () => setIsSaving(false),
     });
@@ -235,11 +226,15 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, ceremonyTypes, cer
         {/* Couple & Family */}
         <SectionCard title="Couple & Family" description="Names and family details">
           <div className="grid md:grid-cols-2 gap-4">
-            <FormField label="Bride Name" required>
-              <input value={form.bride_name} onChange={(e) => updateField("bride_name", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
+            <FormField label="Bride Name">
+              <div className="px-3 py-2 rounded-lg border border-input bg-muted text-sm text-muted-foreground">
+                {wedding.bride_name || "—"}
+              </div>
             </FormField>
-            <FormField label="Groom Name" required>
-              <input value={form.groom_name} onChange={(e) => updateField("groom_name", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
+            <FormField label="Groom Name">
+              <div className="px-3 py-2 rounded-lg border border-input bg-muted text-sm text-muted-foreground">
+                {wedding.groom_name || "—"}
+              </div>
             </FormField>
             <FormField label="Bride's Parents">
               <input value={form.bride_parents_names} onChange={(e) => updateField("bride_parents_names", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
@@ -250,36 +245,152 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, ceremonyTypes, cer
           </div>
         </SectionCard>
 
-        {/* Event Details */}
-        <SectionCard title="Event Details" description="Date, time, and venue information">
+        {/* Event Details — type-specific */}
+        <SectionCard title="Event Details" description="Date, time, and venue information for your ceremony">
+          {wedding.wedding_type_id === "1" && (
+            <div className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <DatePickerField label="Event Date" value={(eventForm.event_date as string) ?? ""} onChange={(v) => updateEventField("event_date", v)} />
+                <DatePickerField label="RSVP Deadline" value={form.rsvp_deadline} onChange={(v) => updateField("rsvp_deadline", v)} />
+              </div>
+              <div className="grid md:grid-cols-2 gap-4">
+                <TimePickerField label="Start Time" value={(eventForm.start_time as string) ?? "09:00"} onChange={(v) => updateEventField("start_time", v)} />
+                <TimePickerField label="Poruwa Time" value={(eventForm.poruwa_time as string) ?? "10:30"} onChange={(v) => updateEventField("poruwa_time", v)} />
+                <TimePickerField label="End Time" value={(eventForm.end_time as string) ?? "16:00"} onChange={(v) => updateEventField("end_time", v)} />
+              </div>
+              <FormField label="Venue">
+                <input value={(eventForm.venue as string) ?? ""} onChange={(e) => updateEventField("venue", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
+              </FormField>
+              <FormField label="Google Maps Link">
+                <input value={(eventForm.google_maps_link as string) ?? ""} onChange={(e) => updateEventField("google_maps_link", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" placeholder="https://maps.google.com/..." />
+              </FormField>
+            </div>
+          )}
+
+          {wedding.wedding_type_id === "2" && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <input type="checkbox" id="is_church_ceremony" checked={!!(eventForm.is_church_ceremony)} onChange={(e) => updateEventField("is_church_ceremony", e.target.checked)} className="h-4 w-4 rounded border-input" />
+                <label htmlFor="is_church_ceremony" className="text-sm font-medium text-foreground">Include Church Ceremony</label>
+              </div>
+              {eventForm.is_church_ceremony && (
+                <div className="grid md:grid-cols-2 gap-4 pl-6 border-l-2 border-border">
+                  <DatePickerField label="Church Date" value={(eventForm.church_event_date as string) ?? ""} onChange={(v) => updateEventField("church_event_date", v)} />
+                  <TimePickerField label="Ceremony Time" value={(eventForm.ceremony_time as string) ?? "10:00"} onChange={(v) => updateEventField("ceremony_time", v)} />
+                  <FormField label="Church Venue">
+                    <input value={(eventForm.church_venue as string) ?? ""} onChange={(e) => updateEventField("church_venue", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
+                  </FormField>
+                  <FormField label="Church Google Maps Link">
+                    <input value={(eventForm.church_event_google_maps_link as string) ?? ""} onChange={(e) => updateEventField("church_event_google_maps_link", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" placeholder="https://maps.google.com/..." />
+                  </FormField>
+                </div>
+              )}
+              <div className="flex items-center gap-3">
+                <input type="checkbox" id="is_reception" checked={!!(eventForm.is_reception)} onChange={(e) => updateEventField("is_reception", e.target.checked)} className="h-4 w-4 rounded border-input" />
+                <label htmlFor="is_reception" className="text-sm font-medium text-foreground">Include Reception</label>
+              </div>
+              {eventForm.is_reception && (
+                <div className="grid md:grid-cols-2 gap-4 pl-6 border-l-2 border-border">
+                  <DatePickerField label="Reception Date" value={(eventForm.reception_event_date as string) ?? ""} onChange={(v) => updateEventField("reception_event_date", v)} />
+                  <TimePickerField label="Start Time" value={(eventForm.reception_start_time as string) ?? "18:00"} onChange={(v) => updateEventField("reception_start_time", v)} />
+                  <TimePickerField label="End Time" value={(eventForm.reception_end_time as string) ?? "22:00"} onChange={(v) => updateEventField("reception_end_time", v)} />
+                  <FormField label="Reception Venue">
+                    <input value={(eventForm.reception_venue as string) ?? ""} onChange={(e) => updateEventField("reception_venue", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
+                  </FormField>
+                  <FormField label="Reception Google Maps Link">
+                    <input value={(eventForm.reception_event_google_maps_link as string) ?? ""} onChange={(e) => updateEventField("reception_event_google_maps_link", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" placeholder="https://maps.google.com/..." />
+                  </FormField>
+                </div>
+              )}
+              <DatePickerField label="RSVP Deadline" value={form.rsvp_deadline} onChange={(v) => updateField("rsvp_deadline", v)} />
+            </div>
+          )}
+
+          {wedding.wedding_type_id === "3" && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <input type="checkbox" id="is_muhurtham" checked={!!(eventForm.is_muhurtham)} onChange={(e) => updateEventField("is_muhurtham", e.target.checked)} className="h-4 w-4 rounded border-input" />
+                <label htmlFor="is_muhurtham" className="text-sm font-medium text-foreground">Include Muhurtham Ceremony</label>
+              </div>
+              {eventForm.is_muhurtham && (
+                <div className="grid md:grid-cols-2 gap-4 pl-6 border-l-2 border-border">
+                  <DatePickerField label="Muhurtham Date" value={(eventForm.muhurtham_event_date as string) ?? ""} onChange={(v) => updateEventField("muhurtham_event_date", v)} />
+                  <TimePickerField label="Start Time" value={(eventForm.muhurtham_start_time as string) ?? "09:00"} onChange={(v) => updateEventField("muhurtham_start_time", v)} />
+                  <TimePickerField label="End Time" value={(eventForm.muhurtham_end_time as string) ?? "11:00"} onChange={(v) => updateEventField("muhurtham_end_time", v)} />
+                  <FormField label="Venue">
+                    <input value={(eventForm.muhurtham_event_venue as string) ?? ""} onChange={(e) => updateEventField("muhurtham_event_venue", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
+                  </FormField>
+                  <FormField label="Muhurtham Google Maps Link">
+                    <input value={(eventForm.muhurtham_event_google_maps_link as string) ?? ""} onChange={(e) => updateEventField("muhurtham_event_google_maps_link", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" placeholder="https://maps.google.com/..." />
+                  </FormField>
+                </div>
+              )}
+              <div className="flex items-center gap-3">
+                <input type="checkbox" id="is_reception" checked={!!(eventForm.is_reception)} onChange={(e) => updateEventField("is_reception", e.target.checked)} className="h-4 w-4 rounded border-input" />
+                <label htmlFor="is_reception" className="text-sm font-medium text-foreground">Include Reception</label>
+              </div>
+              {eventForm.is_reception && (
+                <div className="grid md:grid-cols-2 gap-4 pl-6 border-l-2 border-border">
+                  <DatePickerField label="Reception Date" value={(eventForm.reception_event_date as string) ?? ""} onChange={(v) => updateEventField("reception_event_date", v)} />
+                  <TimePickerField label="Start Time" value={(eventForm.reception_start_time as string) ?? "18:00"} onChange={(v) => updateEventField("reception_start_time", v)} />
+                  <FormField label="Reception Venue">
+                    <input value={(eventForm.reception_venue as string) ?? ""} onChange={(e) => updateEventField("reception_venue", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
+                  </FormField>
+                  <FormField label="Reception Google Maps Link">
+                    <input value={(eventForm.reception_event_google_maps_link as string) ?? ""} onChange={(e) => updateEventField("reception_event_google_maps_link", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" placeholder="https://maps.google.com/..." />
+                  </FormField>
+                </div>
+              )}
+              <DatePickerField label="RSVP Deadline" value={form.rsvp_deadline} onChange={(v) => updateField("rsvp_deadline", v)} />
+            </div>
+          )}
+
+          {wedding.wedding_type_id === "4" && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <input type="checkbox" id="is_nikkah" checked={!!(eventForm.is_nikkah)} onChange={(e) => updateEventField("is_nikkah", e.target.checked)} className="h-4 w-4 rounded border-input" />
+                <label htmlFor="is_nikkah" className="text-sm font-medium text-foreground">Include Nikkah Ceremony</label>
+              </div>
+              {eventForm.is_nikkah && (
+                <div className="grid md:grid-cols-2 gap-4 pl-6 border-l-2 border-border">
+                  <DatePickerField label="Nikkah Date" value={(eventForm.nikkah_event_date as string) ?? ""} onChange={(v) => updateEventField("nikkah_event_date", v)} />
+                  <TimePickerField label="Start Time" value={(eventForm.nikkah_start_time as string) ?? "10:00"} onChange={(v) => updateEventField("nikkah_start_time", v)} />
+                  <FormField label="Venue">
+                    <input value={(eventForm.nikkah_event_venue as string) ?? ""} onChange={(e) => updateEventField("nikkah_event_venue", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
+                  </FormField>
+                  <FormField label="Nikkah Google Maps Link">
+                    <input value={(eventForm.nikkah_event_google_maps_link as string) ?? ""} onChange={(e) => updateEventField("nikkah_event_google_maps_link", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" placeholder="https://maps.google.com/..." />
+                  </FormField>
+                </div>
+              )}
+              <div className="flex items-center gap-3">
+                <input type="checkbox" id="is_reception" checked={!!(eventForm.is_reception)} onChange={(e) => updateEventField("is_reception", e.target.checked)} className="h-4 w-4 rounded border-input" />
+                <label htmlFor="is_reception" className="text-sm font-medium text-foreground">Include Reception</label>
+              </div>
+              {eventForm.is_reception && (
+                <div className="grid md:grid-cols-2 gap-4 pl-6 border-l-2 border-border">
+                  <DatePickerField label="Reception Date" value={(eventForm.reception_event_date as string) ?? ""} onChange={(v) => updateEventField("reception_event_date", v)} />
+                  <TimePickerField label="Start Time" value={(eventForm.reception_start_time as string) ?? "18:00"} onChange={(v) => updateEventField("reception_start_time", v)} />
+                  <FormField label="Reception Venue">
+                    <input value={(eventForm.reception_venue as string) ?? ""} onChange={(e) => updateEventField("reception_venue", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
+                  </FormField>
+                  <FormField label="Reception Google Maps Link">
+                    <input value={(eventForm.reception_event_google_maps_link as string) ?? ""} onChange={(e) => updateEventField("reception_event_google_maps_link", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" placeholder="https://maps.google.com/..." />
+                  </FormField>
+                </div>
+              )}
+              <DatePickerField label="RSVP Deadline" value={form.rsvp_deadline} onChange={(v) => updateField("rsvp_deadline", v)} />
+            </div>
+          )}
+
+          {!["1","2","3","4"].includes(wedding.wedding_type_id) && (
+            <p className="text-sm text-muted-foreground">Event details are not configured. Contact your administrator.</p>
+          )}
+        </SectionCard>
+
+        {/* Contact Numbers */}
+        <SectionCard title="Contact Numbers" description="Numbers guests can use to reach you">
           <div className="grid md:grid-cols-2 gap-4">
-            <DatePickerField label="Event Date" value={form.event_date} onChange={(v) => updateField("event_date", v)} />
-            <DatePickerField label="RSVP Deadline" value={form.rsvp_deadline} onChange={(v) => updateField("rsvp_deadline", v)} />
-            <TimePickerField label="Start Time" value={form.start_time} onChange={(v) => updateField("start_time", v)} />
-            <TimePickerField label="End Time" value={form.end_time} onChange={(v) => updateField("end_time", v)} />
-            <FormField label="Ceremony Type">
-              <SearchableSelect
-                value={form.ceremony_type_id}
-                onChange={(v) => updateField("ceremony_type_id", v)}
-                options={ceremonyTypes.map((ct) => ({ value: ct.id, label: ct.name }))}
-                searchPlaceholder="Select ceremony type..."
-                searchable={false}
-              />
-            </FormField>
-            <TimePickerField label="Ceremony Time" value={form.poruwa_time} onChange={(v) => updateField("poruwa_time", v)} />
-          </div>
-          <div className="grid md:grid-cols-1 gap-4 mt-4">
-            <FormField label="Venue Name" required>
-              <input value={form.venue_name} onChange={(e) => updateField("venue_name", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
-            </FormField>
-            <FormField label="Venue Address">
-              <input value={form.venue_address} onChange={(e) => updateField("venue_address", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
-            </FormField>
-            <FormField label="Google Maps Link">
-              <input value={form.google_maps_link} onChange={(e) => updateField("google_maps_link", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
-            </FormField>
-          </div>
-          <div className="grid md:grid-cols-2 gap-4 mt-4">
             <FormField label="Contact Number 1">
               <input value={form.contact_number_1} onChange={(e) => updateField("contact_number_1", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
             </FormField>
@@ -310,6 +421,12 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, ceremonyTypes, cer
                 searchable={false}
               />
             </FormField>
+          </div>
+        </SectionCard>
+
+        {/* Wedding Status */}
+        <SectionCard title="Wedding Status" description="Set your invitation's visibility status">
+          <div className="max-w-xs">
             <FormField label="Status">
               <SearchableSelect
                 value={form.status}
@@ -353,7 +470,7 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, ceremonyTypes, cer
                 <p className="text-sm font-medium text-foreground">
                   {isUploadingMain ? "Uploading..." : "Click to upload main image"}
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WebP up to 10MB</p>
+                <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WebP up to 15MB</p>
               </button>
             </div>
           </div>

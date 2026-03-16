@@ -15,6 +15,7 @@ type DashboardPageProps = PageProps<{
     name: string;
     email: string;
     status: 'active' | 'inactive' | 'expired';
+    last_login: string;
     expire_date: string;
     created_at: string;
   }>;

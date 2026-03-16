@@ -19,13 +19,7 @@ return new class extends Migration
             $table->string('groom_name');
             $table->string('bride_parents_names')->nullable();
             $table->string('groom_parents_names')->nullable();
-            $table->date('event_date');
-            $table->time('start_time')->nullable();
-            $table->time('end_time')->nullable();
-            $table->time('poruwa_time')->nullable();
-            $table->string('venue_name');
-            $table->text('venue_address')->nullable();
-            $table->string('google_maps_link')->nullable();
+            $table->unsignedBigInteger('wedding_type_id')->nullable();
             $table->date('rsvp_deadline')->nullable();
             $table->string('contact_number_1')->nullable();
             $table->string('contact_number_2')->nullable();
@@ -36,6 +30,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('wedding_type_id')->references('id')->on('wedding_types');
         });
     }
 

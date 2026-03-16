@@ -2,6 +2,16 @@ import { useState, useRef } from "react";
 import { router } from "@inertiajs/react";
 import { Plus, Search, Edit, Trash2, Copy, Users, AlertTriangle, ArrowUpDown, FileSpreadsheet, Download, Upload, X as XIcon } from "lucide-react";
 import { SectionCard, StatusBadge, Modal, FormField, EmptyState } from "@/components/ui-components";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { motion } from "framer-motion";
 
 interface Guest {
@@ -308,17 +318,25 @@ export const GuestManagementPage = ({ guests, tables, event_token }: GuestManage
       </Modal>
 
       {/* Delete Confirmation */}
-      <Modal open={!!deleteGuest} onClose={() => setDeleteGuest(null)} title="Delete Guest" size="sm">
-        {deleteGuest && (
-          <div className="text-center space-y-4">
-            <p className="text-sm text-muted-foreground">Delete <strong className="text-foreground">{deleteGuest.guest_name}</strong>?</p>
-            <div className="flex justify-center gap-3">
-              <button onClick={() => setDeleteGuest(null)} className="px-4 py-2 rounded-lg border border-border text-sm font-medium hover:bg-muted">Cancel</button>
-              <button onClick={() => handleDelete(deleteGuest.id)} className="px-4 py-2 rounded-lg bg-destructive text-destructive-foreground text-sm font-medium hover:opacity-90">Delete</button>
-            </div>
-          </div>
-        )}
-      </Modal>
+      <AlertDialog open={!!deleteGuest} onOpenChange={(v) => !v && setDeleteGuest(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Guest</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete <strong>{deleteGuest?.guest_name}</strong>? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteGuest(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteGuest && handleDelete(deleteGuest.id)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

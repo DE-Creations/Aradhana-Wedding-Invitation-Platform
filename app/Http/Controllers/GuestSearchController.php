@@ -19,11 +19,17 @@ class GuestSearchController extends Controller
 
         $wedding = Wedding::where('event_token', $token)
             ->where('status', '!=', 'draft')
+            ->with('user')
             ->first();
 
         if (! $wedding) {
             return Inertia::render('public/GuestSearch', ['wedding' => null, 'guests' => []]);
         }
+
+        $user            = $wedding->user;
+        $tableManagement = (bool) ($user?->table_management ?? true);
+        $shareMemory     = (bool) ($user?->share_memory ?? true);
+        $imageCount      = (int)  ($user?->image_count ?? 20);
 
         $guests = Guest::where('guests.wedding_id', $wedding->id)
             ->leftJoin('table_assignments', 'guests.id', '=', 'table_assignments.guest_id')
@@ -42,10 +48,12 @@ class GuestSearchController extends Controller
             'wedding' => [
                 'bride_name' => $wedding->bride_name,
                 'groom_name' => $wedding->groom_name,
-                'venue_name' => $wedding->venue_name,
             ],
-            'guests' => $guests,
-            'token'  => $token,
+            'guests'          => $guests,
+            'token'           => $token,
+            'tableManagement' => $tableManagement,
+            'shareMemory'     => $shareMemory,
+            'imageCount'      => $imageCount,
         ]);
     }
 

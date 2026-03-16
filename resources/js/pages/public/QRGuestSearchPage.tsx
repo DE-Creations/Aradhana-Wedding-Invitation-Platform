@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Search, Upload, Check, Heart, Image, ChevronDown, X, Loader2, AlertCircle } from "lucide-react";
+import { Search, Upload, Check, Image, ChevronDown, X, Loader2, AlertCircle, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface WeddingInfo {
@@ -19,13 +19,17 @@ interface QRGuestSearchPageProps {
   wedding?: WeddingInfo | null;
   guests?: GuestEntry[];
   token?: string;
+  tableManagement?: boolean;
+  shareMemory?: boolean;
+  imageCount?: number;
 }
 
-const MAX_IMAGES = 20;
-const MAX_MB = 5;
+const MAX_MB = 15;
 
-export const QRGuestSearchPage = ({ onBack, wedding, guests = [], token = "" }: QRGuestSearchPageProps) => {
-  const [tab, setTab] = useState<"table" | "memories">("table");
+export const QRGuestSearchPage = ({ onBack, wedding, guests = [], token = "", tableManagement = true, shareMemory = true, imageCount = 20 }: QRGuestSearchPageProps) => {
+  const MAX_IMAGES = imageCount;
+  const bothDisabled = !tableManagement && !shareMemory;
+  const [tab, setTab] = useState<"table" | "memories">(tableManagement ? "table" : "memories");
 
   // Table search state
   const [search, setSearch] = useState("");
@@ -36,8 +40,11 @@ export const QRGuestSearchPage = ({ onBack, wedding, guests = [], token = "" }: 
 
   // Memories upload state
   const [selectedGuest, setSelectedGuest] = useState("");
-  const [guestSearch, setGuestSearch] = useState("");
-  const [showGuestDropdown, setShowGuestDropdown] = useState(false);
+  const [selectedGuestName, setSelectedGuestName] = useState("");
+  const [memGuestSearch, setMemGuestSearch] = useState("");
+  const [memGuestResults, setMemGuestResults] = useState<GuestEntry[]>([]);
+  const [isMemSearching, setIsMemSearching] = useState(false);
+  const [hasMemSearched, setHasMemSearched] = useState(false);
   const [pendingFiles, setPendingFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -48,7 +55,7 @@ export const QRGuestSearchPage = ({ onBack, wedding, guests = [], token = "" }: 
 
   const w = wedding;
 
-  // Debounced AJAX guest search
+  // Debounced AJAX guest search (Find My Table tab)
   useEffect(() => {
     if (search.trim().length < 2) {
       setSearchResults([]);
@@ -74,9 +81,37 @@ export const QRGuestSearchPage = ({ onBack, wedding, guests = [], token = "" }: 
     return () => clearTimeout(timer);
   }, [search, token]);
 
-  const filteredGuests = guestSearch.trim()
-    ? guests.filter((g) => g.guest_name.toLowerCase().includes(guestSearch.toLowerCase()))
-    : guests;
+  // Debounced AJAX guest search (Share Memories tab)
+  useEffect(() => {
+    if (memGuestSearch.trim().length < 2) {
+      setMemGuestResults([]);
+      setHasMemSearched(false);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      setIsMemSearching(true);
+      try {
+        const res = await fetch(
+          `/guest-search/search?token=${encodeURIComponent(token)}&q=${encodeURIComponent(memGuestSearch.trim())}`
+        );
+        if (res.ok) setMemGuestResults(await res.json());
+        setHasMemSearched(true);
+      } catch {
+        setHasMemSearched(true);
+      } finally {
+        setIsMemSearching(false);
+      }
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [memGuestSearch, token]);
+
+  const clearMemGuestSearch = () => {
+    setSelectedGuest("");
+    setSelectedGuestName("");
+    setMemGuestSearch("");
+    setMemGuestResults([]);
+    setHasMemSearched(false);
+  };
 
   const addFiles = (incoming: FileList | File[]) => {
     setUploadError("");
@@ -128,15 +163,13 @@ export const QRGuestSearchPage = ({ onBack, wedding, guests = [], token = "" }: 
       setUploadSuccess(true);
       setPendingFiles([]);
       setPreviewUrls([]);
-      setSelectedGuest("");
+      clearMemGuestSearch();
     } catch (err: any) {
       setUploadError(err.message || "Upload failed. Please try again.");
     } finally {
       setIsUploading(false);
     }
   };
-
-  const selectedGuestName = guests.find((g) => g.id === selectedGuest)?.guest_name;
 
   return (
     <div className="min-h-screen bg-gradient-ivory">
@@ -147,20 +180,40 @@ export const QRGuestSearchPage = ({ onBack, wedding, guests = [], token = "" }: 
       <div className="max-w-lg mx-auto px-6 py-10">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-          <Heart className="h-7 w-7 text-primary fill-primary mx-auto mb-3" />
+          <img src="/images/logo-text.png" alt="Aradhana" className="h-[14rem] w-auto mx-auto mb-3 object-contain" />
           <h1 className="font-display text-3xl font-bold text-foreground">{w?.bride_name} & {w?.groom_name}</h1>
           <p className="text-sm text-muted-foreground mt-1">{w?.venue_name}</p>
         </motion.div>
 
         {/* Tabs */}
-        <div className="flex rounded-xl bg-muted p-1 mb-8">
-          <button onClick={() => setTab("table")} className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1.5 ${tab === "table" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}>
-            <Search className="h-4 w-4" /> Find My Table
-          </button>
-          <button onClick={() => setTab("memories")} className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1.5 ${tab === "memories" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}>
-            <Image className="h-4 w-4" /> Share Memories
-          </button>
-        </div>
+        {bothDisabled ? (
+          <div className="rounded-2xl border border-border bg-card p-8 text-center">
+            <Search className="h-10 w-10 text-muted-foreground mx-auto mb-3 opacity-40" />
+            <h2 className="font-display text-xl font-semibold text-foreground mb-1">Features Unavailable</h2>
+            <p className="text-sm text-muted-foreground">Table search and memory sharing are not enabled for this event.</p>
+          </div>
+        ) : (
+          <>
+            <div className="flex rounded-xl bg-muted p-1 mb-8">
+              {tableManagement ? (
+                <button onClick={() => setTab("table")} className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1.5 ${tab === "table" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}>
+                  <Search className="h-4 w-4" /> Find My Table
+                </button>
+              ) : (
+                <div className="flex-1 py-2.5 rounded-lg text-sm font-medium flex items-center justify-center gap-1.5 text-muted-foreground/40 cursor-not-allowed select-none">
+                  <Lock className="h-4 w-4" /> Find My Table
+                </div>
+              )}
+              {shareMemory ? (
+                <button onClick={() => setTab("memories")} className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1.5 ${tab === "memories" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}>
+                  <Image className="h-4 w-4" /> Share Memories
+                </button>
+              ) : (
+                <div className="flex-1 py-2.5 rounded-lg text-sm font-medium flex items-center justify-center gap-1.5 text-muted-foreground/40 cursor-not-allowed select-none">
+                  <Lock className="h-4 w-4" /> Share Memories
+                </div>
+              )}
+            </div>
 
         {/* Table Search Tab */}
         {tab === "table" && (
@@ -260,49 +313,51 @@ export const QRGuestSearchPage = ({ onBack, wedding, guests = [], token = "" }: 
               </div>
             ) : (
               <>
-                {/* Guest Selector */}
+                {/* Guest Search */}
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-foreground">Who are you?</label>
-                  <div className="relative">
-                    <button
-                      onClick={() => setShowGuestDropdown(!showGuestDropdown)}
-                      className="w-full px-4 py-2.5 rounded-xl border border-input bg-card text-sm text-left flex items-center justify-between"
-                    >
-                      <span className={selectedGuestName ? "text-foreground" : "text-muted-foreground"}>
-                        {selectedGuestName || "Select your name..."}
-                      </span>
-                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                    </button>
-
-                    {showGuestDropdown && (
-                      <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-elevated z-20 max-h-60 overflow-hidden">
-                        <div className="p-2 border-b border-border">
-                          <input
-                            value={guestSearch}
-                            onChange={(e) => setGuestSearch(e.target.value)}
-                            placeholder="Search guest..."
-                            className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm outline-none"
-                            autoFocus
-                          />
-                        </div>
-                        <div className="max-h-44 overflow-y-auto">
-                          {filteredGuests.map((g) => (
+                  {selectedGuest ? (
+                    <div className="flex items-center justify-between px-4 py-2.5 rounded-xl border border-primary/30 bg-card">
+                      <span className="text-sm font-medium text-foreground">{selectedGuestName}</span>
+                      <button
+                        onClick={clearMemGuestSearch}
+                        className="text-xs text-muted-foreground hover:text-destructive flex items-center gap-1 transition-colors"
+                      >
+                        <X className="h-3 w-3" /> Change
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="relative">
+                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                      <input
+                        value={memGuestSearch}
+                        onChange={(e) => setMemGuestSearch(e.target.value)}
+                        placeholder="Type your name to search..."
+                        className="w-full pl-10 pr-10 py-3 rounded-xl border border-input bg-card text-sm outline-none focus:ring-2 focus:ring-primary/20"
+                      />
+                      {isMemSearching && (
+                        <Loader2 className="absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground animate-spin" />
+                      )}
+                      {memGuestResults.length > 0 && (
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-elevated z-20 overflow-hidden">
+                          {memGuestResults.map((g) => (
                             <button
                               key={g.id}
-                              onClick={() => { setSelectedGuest(g.id); setShowGuestDropdown(false); setGuestSearch(""); }}
-                              className="w-full px-4 py-2.5 text-left text-sm hover:bg-muted transition-colors flex items-center justify-between"
+                              onClick={() => { setSelectedGuest(g.id); setSelectedGuestName(g.guest_name); setMemGuestSearch(""); setMemGuestResults([]); setHasMemSearched(false); }}
+                              className="w-full px-4 py-2.5 text-left text-sm hover:bg-muted transition-colors border-b border-border last:border-b-0"
                             >
                               <span className="text-foreground">{g.guest_name}</span>
-                              {selectedGuest === g.id && <Check className="h-3.5 w-3.5 text-primary" />}
                             </button>
                           ))}
-                          {filteredGuests.length === 0 && (
-                            <p className="px-4 py-3 text-sm text-muted-foreground text-center">No guests found</p>
-                          )}
                         </div>
-                      </div>
-                    )}
-                  </div>
+                      )}
+                      {hasMemSearched && !isMemSearching && memGuestResults.length === 0 && (
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-xl shadow-elevated z-20 px-4 py-3">
+                          <p className="text-sm text-muted-foreground text-center">No guests found</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <p className="text-xs text-muted-foreground">So we know who captured these beautiful moments</p>
                 </div>
 
@@ -367,6 +422,8 @@ export const QRGuestSearchPage = ({ onBack, wedding, guests = [], token = "" }: 
               </>
             )}
           </motion.div>
+        )}
+          </>
         )}
       </div>
     </div>

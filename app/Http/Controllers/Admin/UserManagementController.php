@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\InvitationView;
+use App\Models\Rsvp;
+use App\Models\TableAssignment;
 use App\Models\User;
 use App\Models\Wedding;
+use App\Models\WeddingType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -37,91 +41,79 @@ class UserManagementController extends Controller
             ->values();
 
         $weddingsByUserId = Wedding::query()
+            ->with('weddingType')
             ->get()
             ->mapWithKeys(fn (Wedding $wedding) => [
                 (string) $wedding->user_id => [
                     'id' => (string) $wedding->id,
                     'bride_name' => $wedding->bride_name,
                     'groom_name' => $wedding->groom_name,
-                    'bride_parents_names' => $wedding->bride_parents_names,
-                    'groom_parents_names' => $wedding->groom_parents_names,
-                    'event_date' => $wedding->event_date?->toDateString() ?? '',
-                    'start_time' => $wedding->start_time,
-                    'end_time' => $wedding->end_time,
-                    'poruwa_time' => $wedding->poruwa_time,
-                    'venue_name' => $wedding->venue_name,
-                    'venue_address' => $wedding->venue_address,
-                    'google_maps_link' => $wedding->google_maps_link,
+                    'wedding_type_id' => (string) ($wedding->wedding_type_id ?? ''),
+                    'wedding_type_name' => $wedding->weddingType?->name ?? '',
                     'rsvp_deadline' => $wedding->rsvp_deadline?->toDateString() ?? '',
                     'contact_number_1' => $wedding->contact_number_1,
                     'contact_number_2' => $wedding->contact_number_2,
                     'template_key' => $wedding->template_key,
                     'typography_key' => $wedding->typography_key,
-                    'main_image' => $wedding->main_image,
                     'main_image_url' => $this->resolveMainImageUrl($wedding->main_image),
                     'event_token' => $wedding->event_token,
+                    'status' => $wedding->status,
                 ],
             ]);
+
+        $weddingTypes = WeddingType::orderBy('id')->get()->map(fn (WeddingType $wt) => [
+            'id' => (string) $wt->id,
+            'name' => $wt->name,
+        ])->values();
 
         return Inertia::render('admin/Users', [
             'users' => $users,
             'weddingsByUserId' => $weddingsByUserId,
+            'weddingTypes' => $weddingTypes,
         ]);
     }
 
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8'],
-            'phone' => ['required', 'string', 'max:40'],
-            'status' => ['required', 'in:active,inactive,expired'],
-            'expire_date' => ['nullable', 'date'],
-
-            'bride_name' => ['nullable', 'string', 'max:255'],
-            'groom_name' => ['nullable', 'string', 'max:255'],
-            'event_date' => ['nullable', 'date'],
-            'venue_name' => ['nullable', 'string', 'max:255'],
-            'rsvp_deadline' => ['nullable', 'date'],
-            'template_key' => ['nullable', 'string', 'max:120'],
-            'typography_key' => ['nullable', 'string', 'max:120'],
+            'name'             => ['required', 'string', 'max:255'],
+            'email'            => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'password'         => ['required', 'string', 'min:8'],
+            'phone'            => ['required', 'string', 'max:40'],
+            'status'           => ['required', 'in:active,deactive,expired'],
+            'expire_date'      => ['nullable', 'date'],
             'table_management' => ['boolean'],
-            'share_memory' => ['boolean'],
-            'image_count' => ['nullable', 'integer', 'in:0,20,30'],
-            'main_image' => [
-                'nullable',
-                'image',
-                'max:10240',
-                'mimes:jpg,jpeg,png,webp',
-            ],
+            'share_memory'     => ['boolean'],
+            'image_count'      => ['nullable', 'integer', 'in:0,20,30'],
+            'bride_name'       => ['nullable', 'string', 'max:255'],
+            'groom_name'       => ['nullable', 'string', 'max:255'],
+            'wedding_type_id'  => ['nullable', 'exists:wedding_types,id'],
+            'main_image'       => ['nullable', 'image', 'max:15360', 'mimes:jpg,jpeg,png,webp'],
         ]);
 
-        $weddingRequested = $this->hasWeddingDetails($validated) || $request->hasFile('main_image');
+        $weddingRequested = !empty($validated['bride_name'])
+            || !empty($validated['groom_name'])
+            || $request->hasFile('main_image');
 
         if ($weddingRequested) {
-            $weddingRequired = $request->validate([
+            $request->validate([
                 'bride_name' => ['required', 'string', 'max:255'],
                 'groom_name' => ['required', 'string', 'max:255'],
-                'event_date' => ['required', 'date'],
-                'venue_name' => ['required', 'string', 'max:255'],
             ]);
-
-            $validated = [...$validated, ...$weddingRequired];
         }
 
         DB::transaction(function () use ($validated, $request, $weddingRequested): void {
             $shareMemory = (bool) ($validated['share_memory'] ?? false);
             $user = User::create([
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'password' => $validated['password'],
-                'phone' => $validated['phone'],
-                'status' => $validated['status'],
-                'expire_date' => $validated['expire_date'] ?: null,
+                'name'             => $validated['name'],
+                'email'            => $validated['email'],
+                'password'         => $validated['password'],
+                'phone'            => $validated['phone'],
+                'status'           => $validated['status'],
+                'expire_date'      => $validated['expire_date'] ?: null,
                 'table_management' => (bool) ($validated['table_management'] ?? false),
-                'share_memory' => $shareMemory,
-                'image_count' => $shareMemory ? (int) ($validated['image_count'] ?? 20) : 0,
+                'share_memory'     => $shareMemory,
+                'image_count'      => $shareMemory ? (int) ($validated['image_count'] ?? 20) : 0,
             ]);
 
             if ($weddingRequested) {
@@ -132,21 +124,16 @@ class UserManagementController extends Controller
                 }
 
                 Wedding::create([
-                    'user_id' => $user->id,
-                    'event_token' => $this->buildUniqueEventToken(
+                    'user_id'         => $user->id,
+                    'event_token'     => $this->buildUniqueEventToken(
                         $validated['bride_name'],
-                        $validated['groom_name'],
-                        $validated['event_date']
+                        $validated['groom_name']
                     ),
-                    'bride_name' => $validated['bride_name'],
-                    'groom_name' => $validated['groom_name'],
-                    'event_date' => $validated['event_date'],
-                    'venue_name' => $validated['venue_name'],
-                    'rsvp_deadline' => $validated['rsvp_deadline'] ?: null,
-                    'template_key' => $validated['template_key'] ?: null,
-                    'typography_key' => $validated['typography_key'] ?: null,
-                    'main_image' => $mainImagePath,
-                    'status' => 'draft',
+                    'bride_name'      => $validated['bride_name'],
+                    'groom_name'      => $validated['groom_name'],
+                    'wedding_type_id' => $validated['wedding_type_id'] ?: null,
+                    'main_image'      => $mainImagePath,
+                    'status'          => 'draft',
                 ]);
             }
         });
@@ -157,36 +144,29 @@ class UserManagementController extends Controller
     public function update(Request $request, User $user): RedirectResponse
     {
         $validated = $request->validate([
-            'name'               => ['required', 'string', 'max:255'],
-            'email'              => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'password'           => ['nullable', 'string', 'min:8'],
-            'phone'              => ['required', 'string', 'max:40'],
-            'status'             => ['required', 'in:active,inactive,expired'],
-            'expire_date'        => ['nullable', 'date'],
-            'table_management'   => ['boolean'],
-            'share_memory'       => ['boolean'],
-            'image_count'        => ['nullable', 'integer', 'in:0,20,30'],
-
-            'bride_name'         => ['nullable', 'string', 'max:255'],
-            'groom_name'         => ['nullable', 'string', 'max:255'],
-            'event_date'         => ['nullable', 'date'],
-            'venue_name'         => ['nullable', 'string', 'max:255'],
-            'rsvp_deadline'      => ['nullable', 'date'],
-            'template_key'       => ['nullable', 'string', 'max:120'],
-            'typography_key'     => ['nullable', 'string', 'max:120'],
+            'name'             => ['required', 'string', 'max:255'],
+            'email'            => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'password'         => ['nullable', 'string', 'min:8'],
+            'phone'            => ['required', 'string', 'max:40'],
+            'status'           => ['required', 'in:active,deactive,expired'],
+            'expire_date'      => ['nullable', 'date'],
+            'table_management' => ['boolean'],
+            'share_memory'     => ['boolean'],
+            'image_count'      => ['nullable', 'integer', 'in:0,20,30'],
+            'bride_name'       => ['nullable', 'string', 'max:255'],
+            'groom_name'       => ['nullable', 'string', 'max:255'],
+            'wedding_type_id'  => ['nullable', 'exists:wedding_types,id'],
         ]);
 
-        $weddingRequested = $this->hasWeddingDetails($validated) || $user->wedding()->exists();
+        $weddingRequested = !empty($validated['bride_name'])
+            || !empty($validated['groom_name'])
+            || $user->wedding()->exists();
 
         if ($weddingRequested) {
-            $weddingRequired = $request->validate([
+            $request->validate([
                 'bride_name' => ['required', 'string', 'max:255'],
                 'groom_name' => ['required', 'string', 'max:255'],
-                'event_date' => ['required', 'date'],
-                'venue_name' => ['required', 'string', 'max:255'],
             ]);
-
-            $validated = [...$validated, ...$weddingRequired];
         }
 
         DB::transaction(function () use ($validated, $user, $weddingRequested): void {
@@ -212,14 +192,10 @@ class UserManagementController extends Controller
                 $wedding = $user->wedding;
 
                 $weddingPayload = [
-                    'bride_name'     => $validated['bride_name'],
-                    'groom_name'     => $validated['groom_name'],
-                    'event_date'     => $validated['event_date'],
-                    'venue_name'     => $validated['venue_name'],
-                    'rsvp_deadline'  => $validated['rsvp_deadline'] ?: null,
-                    'template_key'   => $validated['template_key'] ?: null,
-                    'typography_key' => $validated['typography_key'] ?: null,
-                    'status'         => $wedding?->status ?? 'draft',
+                    'bride_name'      => $validated['bride_name'] ?? '',
+                    'groom_name'      => $validated['groom_name'] ?? '',
+                    'wedding_type_id' => $validated['wedding_type_id'] ?: null,
+                    'status'          => $wedding?->status ?? 'draft',
                 ];
 
                 if ($wedding) {
@@ -229,9 +205,8 @@ class UserManagementController extends Controller
                         ...$weddingPayload,
                         'user_id'     => $user->id,
                         'event_token' => $this->buildUniqueEventToken(
-                            $validated['bride_name'],
-                            $validated['groom_name'],
-                            $validated['event_date']
+                            $validated['bride_name'] ?? 'bride',
+                            $validated['groom_name'] ?? 'groom'
                         ),
                     ]);
                 }
@@ -243,10 +218,10 @@ class UserManagementController extends Controller
 
     public function toggleStatus(User $user): RedirectResponse
     {
-        $user->status = $user->status === 'active' ? 'inactive' : 'active';
+        $user->status = $user->status === 'active' ? 'deactive' : 'active';
         $user->save();
 
-        return redirect()->route('admin.users.index')->with('success', 'User status updated successfully.');
+        return redirect()->route('admin.users.index')->with('success', 'User status updated.');
     }
 
     public function destroy(User $user): RedirectResponse
@@ -254,17 +229,9 @@ class UserManagementController extends Controller
         return $this->deleteUser($user);
     }
 
-    private function hasWeddingDetails(array $validated): bool
+    private function buildUniqueEventToken(string $brideName, string $groomName): string
     {
-        return !empty($validated['bride_name'])
-            || !empty($validated['groom_name'])
-            || !empty($validated['event_date'])
-            || !empty($validated['venue_name']);
-    }
-
-    private function buildUniqueEventToken(string $brideName, string $groomName, string $eventDate): string
-    {
-        $year = date('Y', strtotime($eventDate));
+        $year = date('Y');
         $baseToken = Str::slug("{$brideName}-{$groomName}-{$year}");
         $token = $baseToken;
         $suffix = 1;
@@ -280,11 +247,44 @@ class UserManagementController extends Controller
     private function deleteUser(User $user): RedirectResponse
     {
         DB::transaction(function () use ($user): void {
-            if ($user->wedding && !empty($user->wedding->main_image)) {
-                $this->deleteMainImagePath($user->wedding->main_image);
+            $wedding = $user->wedding;
+
+            if ($wedding) {
+                // Delete main image file
+                if (!empty($wedding->main_image)) {
+                    $this->deleteMainImagePath($wedding->main_image);
+                }
+
+                // Delete memory files
+                foreach ($wedding->memories as $memory) {
+                    Storage::disk('public')->delete($memory->image_path);
+                }
+
+                // Delete gallery image files
+                foreach ($wedding->galleryImages as $img) {
+                    if (Storage::disk('public')->exists($img->image_path)) {
+                        Storage::disk('public')->delete($img->image_path);
+                    }
+                }
+
+                // Delete dependent DB records in FK-safe order
+                Rsvp::where('wedding_id', $wedding->id)->delete();
+                InvitationView::where('wedding_id', $wedding->id)->delete();
+                TableAssignment::where('wedding_id', $wedding->id)->delete();
+                $wedding->memories()->delete();
+                $wedding->guests()->delete();
+                $wedding->galleryImages()->delete();
+                $wedding->tables()->delete();
+
+                // Delete wedding-type-specific detail records
+                $wedding->sinhalaDetails()->delete();
+                $wedding->christianDetails()->delete();
+                $wedding->tamilDetails()->delete();
+                $wedding->muslimDetails()->delete();
+
+                $wedding->delete();
             }
 
-            $user->wedding()->delete();
             $user->delete();
         });
 

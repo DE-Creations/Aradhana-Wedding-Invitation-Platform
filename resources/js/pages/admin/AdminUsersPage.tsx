@@ -1,14 +1,30 @@
 import { useState } from "react";
 import { Plus, Search, Edit, Trash2, Power, Users as UsersIcon, CalendarIcon, Eye, EyeOff } from "lucide-react";
-import { StatsCard, StatusBadge, SectionCard, Modal, FormField, EmptyState } from "@/components/ui-components";
-import { invitationTemplates, typographyOptions } from "@/data/invitationConstants";
+import { StatsCard, StatusBadge, SectionCard, FormField, EmptyState } from "@/components/ui-components";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
 
 type User = {
   id: string;
   name: string;
   email: string;
   phone: string;
-  status: "active" | "inactive" | "expired";
+  status: "active" | "deactive" | "expired";
   expire_date: string;
   created_at: string;
   updated_at: string;
@@ -28,21 +44,10 @@ type WeddingSummary = {
     id: string;
     bride_name: string;
     groom_name: string;
-    bride_parents_names?: string | null;
-    groom_parents_names?: string | null;
-    event_date: string;
-    start_time?: string | null;
-    end_time?: string | null;
-    poruwa_time?: string | null;
-    venue_name?: string | null;
-    venue_address?: string | null;
-    google_maps_link?: string | null;
-    rsvp_deadline?: string | null;
-    contact_number_1?: string | null;
-    contact_number_2?: string | null;
-    template_key?: string | null;
-    typography_key?: string | null;
+    wedding_type_id: string;
+    wedding_type_name: string;
     event_token: string;
+    status: string;
 };
 
 type CreateUserFormState = {
@@ -50,15 +55,11 @@ type CreateUserFormState = {
     email: string;
     password: string;
     phone: string;
-    status: "active" | "inactive" | "expired";
+    status: "active" | "deactive" | "expired";
     expire_date: string;
     bride_name: string;
     groom_name: string;
-    event_date: string;
-    rsvp_deadline: string;
-    venue_name: string;
-    template_key: string;
-    typography_key: string;
+    wedding_type_id: string;
     table_management: boolean;
     share_memory: boolean;
     image_count: 20 | 30;
@@ -70,15 +71,11 @@ type EditUserFormState = {
     email: string;
     password: string;
     phone: string;
-    status: "active" | "inactive" | "expired";
+    status: "active" | "deactive" | "expired";
     expire_date: string;
     bride_name: string;
     groom_name: string;
-    event_date: string;
-    rsvp_deadline: string;
-    venue_name: string;
-    template_key: string;
-    typography_key: string;
+    wedding_type_id: string;
     table_management: boolean;
     share_memory: boolean;
     image_count: 20 | 30;
@@ -127,11 +124,13 @@ const DatePickerField = ({
 };
 
 export const AdminUsersPage = ({
-    users: initialUsers,
-    weddingsByUserId,
+    users: initialUsers = [],
+    weddingsByUserId = {},
+    weddingTypes = [],
 }: {
     users: User[];
     weddingsByUserId: Record<string, WeddingSummary>;
+    weddingTypes: { id: string; name: string }[];
 }) => {
     const { errors } = usePage<{ errors: Record<string, string> }>().props;
     const users = initialUsers;
@@ -152,14 +151,10 @@ export const AdminUsersPage = ({
         password: "",
         phone: "",
         status: "active",
-        template_key: invitationTemplates[0]?.key || "sri-lankan-traditional",
-        typography_key: typographyOptions[0]?.key || "traditional-elegant",
         expire_date: "",
         bride_name: "",
         groom_name: "",
-        event_date: "",
-        rsvp_deadline: "",
-        venue_name: "",
+        wedding_type_id: "",
         table_management: false,
         share_memory: false,
         image_count: 20,
@@ -219,11 +214,7 @@ export const AdminUsersPage = ({
             expire_date: user.expire_date || "",
             bride_name: wedding?.bride_name ?? "",
             groom_name: wedding?.groom_name ?? "",
-            event_date: wedding?.event_date ?? "",
-            rsvp_deadline: wedding?.rsvp_deadline ?? "",
-            venue_name: wedding?.venue_name ?? "",
-            template_key: wedding?.template_key ?? (invitationTemplates[0]?.key || "sri-lankan-traditional"),
-            typography_key: wedding?.typography_key ?? (typographyOptions[0]?.key || "traditional-elegant"),
+            wedding_type_id: wedding?.wedding_type_id ?? "",
             table_management: user.table_management ?? false,
             share_memory: user.share_memory ?? false,
             image_count: (user.image_count === 30 ? 30 : 20) as 20 | 30,
@@ -269,14 +260,10 @@ export const AdminUsersPage = ({
             password: "",
             phone: "",
             status: "active",
-            template_key: invitationTemplates[0]?.key || "sri-lankan-traditional",
-            typography_key: typographyOptions[0]?.key || "traditional-elegant",
             expire_date: "",
             bride_name: "",
             groom_name: "",
-            event_date: "",
-            rsvp_deadline: "",
-            venue_name: "",
+            wedding_type_id: "",
             table_management: false,
             share_memory: false,
             image_count: 20,
@@ -301,7 +288,7 @@ export const AdminUsersPage = ({
 
     const statusOptions: SelectOption[] = [
         { value: "active", label: "Active" },
-        { value: "inactive", label: "Inactive" },
+        { value: "deactive", label: "Inactive" },
         { value: "expired", label: "Expired" },
     ];
 
@@ -355,7 +342,7 @@ export const AdminUsersPage = ({
                         <table className="w-full text-sm min-w-[800px]">
                             <thead>
                                 <tr className="border-b border-border">
-                                    {["Name", "Email", "Phone", "Status", "Expire Date", "Bride & Groom", "Wedding Date", "Event Token", "Actions"].map((h) => (
+                                    {["Name", "Email", "Phone", "Status", "Expire Date", "Bride & Groom", "Wedding Type", "Event Token", "Actions"].map((h) => (
                                         <th key={h} className="text-left py-3 px-3 font-medium text-muted-foreground font-body text-xs uppercase tracking-wider">{h}</th>
                                     ))}
                                 </tr>
@@ -377,7 +364,7 @@ export const AdminUsersPage = ({
                                             <td className="py-3 px-3"><StatusBadge status={user.status} /></td>
                                             <td className="py-3 px-3 text-muted-foreground">{user.expire_date}</td>
                                             <td className="py-3 px-3 text-muted-foreground">{wedding ? `${wedding.bride_name} & ${wedding.groom_name}` : "—"}</td>
-                                            <td className="py-3 px-3 text-muted-foreground">{wedding?.event_date || "—"}</td>
+                                            <td className="py-3 px-3 text-muted-foreground">{wedding?.wedding_type_name || "—"}</td>
                                             <td className="py-3 px-3 text-muted-foreground font-mono text-xs">{wedding?.event_token || "—"}</td>
                                             <td className="py-3 px-3">
                                                 <div className="flex items-center gap-1">
@@ -412,14 +399,11 @@ export const AdminUsersPage = ({
             </SectionCard>
 
             {/* Create User Modal */}
-            <Modal
-                open={showCreateModal}
-                onClose={() => setShowCreateModal(false)}
-                title="Create User"
-                size="xl"
-                panelClassName="shadow-card border-border/80"
-                bodyClassName="bg-muted/20"
-            >
+            <Dialog open={showCreateModal} onOpenChange={(v) => !v && setShowCreateModal(false)}>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-card">
+                <DialogHeader>
+                  <DialogTitle>Create User</DialogTitle>
+                </DialogHeader>
                 <div className="grid md:grid-cols-2 gap-6">
                     {/* User Account */}
                     <div className="space-y-4 rounded-xl border border-border bg-card p-4 md:p-5">
@@ -572,52 +556,16 @@ export const AdminUsersPage = ({
                                 {errors?.groom_name && <p className="text-xs text-destructive mt-1">{errors.groom_name}</p>}
                             </FormField>
                         </div>
-                        <div className="grid grid-cols-2 gap-3">
-                            <div>
-                                <DatePickerField
-                                    label="Event Date"
-                                    value={createForm.event_date}
-                                    onChange={(v) => updateCreateField("event_date", v)}
-                                />
-                                {errors?.event_date && <p className="text-xs text-destructive mt-1">{errors.event_date}</p>}
-                            </div>
-                            <div>
-                                <DatePickerField
-                                    label="RSVP Deadline"
-                                    value={createForm.rsvp_deadline}
-                                    onChange={(v) => updateCreateField("rsvp_deadline", v)}
-                                />
-                                {errors?.rsvp_deadline && <p className="text-xs text-destructive mt-1">{errors.rsvp_deadline}</p>}
-                            </div>
-                        </div>
-                        <FormField label="Venue Name">
-                            <input
-                                value={createForm.venue_name}
-                                onChange={(e) => updateCreateField("venue_name", e.target.value)}
-                                className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm"
+                        <FormField label="Wedding Type">
+                            <SearchableSelect
+                                value={createForm.wedding_type_id}
+                                onChange={(v) => updateCreateField("wedding_type_id", v)}
+                                searchPlaceholder="Search type..."
+                                options={weddingTypes.map((wt) => ({ value: wt.id, label: wt.name }))}
+                                searchable={false}
                             />
-                            {errors?.venue_name && <p className="text-xs text-destructive mt-1">{errors.venue_name}</p>}
+                            {errors?.wedding_type_id && <p className="text-xs text-destructive mt-1">{errors.wedding_type_id}</p>}
                         </FormField>
-                        <div className="grid grid-cols-2 gap-3">
-                            <FormField label="Template">
-                                <SearchableSelect
-                                    value={createForm.template_key}
-                                    onChange={(v) => updateCreateField("template_key", v)}
-                                    searchPlaceholder="Search template..."
-                                    options={invitationTemplates.map((template) => ({ value: template.key, label: template.name }))}
-                                    searchable={false}
-                                />
-                            </FormField>
-                            <FormField label="Typography">
-                                <SearchableSelect
-                                    value={createForm.typography_key}
-                                    onChange={(v) => updateCreateField("typography_key", v)}
-                                    searchPlaceholder="Search typography..."
-                                    options={typographyOptions.map((typo) => ({ value: typo.key, label: typo.name }))}
-                                    searchable={false}
-                                />
-                            </FormField>
-                        </div>
                     </div>
                 </div>
 
@@ -631,17 +579,15 @@ export const AdminUsersPage = ({
                         {isSubmittingCreate ? "Creating..." : "Create User"}
                     </button>
                 </div>
-            </Modal>
+              </DialogContent>
+            </Dialog>
 
             {/* Edit User Modal */}
-            <Modal
-                open={!!editUser}
-                onClose={closeEditModal}
-                title={`Edit User — ${editUser?.name ?? ""}`}
-                size="xl"
-                panelClassName="shadow-card border-border/80"
-                bodyClassName="bg-muted/20"
-            >
+            <Dialog open={!!editUser} onOpenChange={(v) => !v && closeEditModal()}>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-card">
+                <DialogHeader>
+                  <DialogTitle>Edit User — {editUser?.name ?? ""}</DialogTitle>
+                </DialogHeader>
                 {editForm && (
                     <div className="grid md:grid-cols-2 gap-6">
                         {/* User Account */}
@@ -795,52 +741,16 @@ export const AdminUsersPage = ({
                                     {errors?.groom_name && <p className="text-xs text-destructive mt-1">{errors.groom_name}</p>}
                                 </FormField>
                             </div>
-                            <div className="grid grid-cols-2 gap-3">
-                                <div>
-                                    <DatePickerField
-                                        label="Event Date"
-                                        value={editForm.event_date}
-                                        onChange={(v) => updateEditField("event_date", v)}
-                                    />
-                                    {errors?.event_date && <p className="text-xs text-destructive mt-1">{errors.event_date}</p>}
-                                </div>
-                                <div>
-                                    <DatePickerField
-                                        label="RSVP Deadline"
-                                        value={editForm.rsvp_deadline}
-                                        onChange={(v) => updateEditField("rsvp_deadline", v)}
-                                    />
-                                    {errors?.rsvp_deadline && <p className="text-xs text-destructive mt-1">{errors.rsvp_deadline}</p>}
-                                </div>
-                            </div>
-                            <FormField label="Venue Name">
-                                <input
-                                    value={editForm.venue_name}
-                                    onChange={(e) => updateEditField("venue_name", e.target.value)}
-                                    className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm"
+                            <FormField label="Wedding Type">
+                                <SearchableSelect
+                                    value={editForm.wedding_type_id}
+                                    onChange={(v) => updateEditField("wedding_type_id", v)}
+                                    searchPlaceholder="Search type..."
+                                    options={weddingTypes.map((wt) => ({ value: wt.id, label: wt.name }))}
+                                    searchable={false}
                                 />
-                                {errors?.venue_name && <p className="text-xs text-destructive mt-1">{errors.venue_name}</p>}
+                                {errors?.wedding_type_id && <p className="text-xs text-destructive mt-1">{errors.wedding_type_id}</p>}
                             </FormField>
-                            <div className="grid grid-cols-2 gap-3">
-                                <FormField label="Template">
-                                    <SearchableSelect
-                                        value={editForm.template_key}
-                                        onChange={(v) => updateEditField("template_key", v)}
-                                        searchPlaceholder="Search template..."
-                                        options={invitationTemplates.map((template) => ({ value: template.key, label: template.name }))}
-                                        searchable={false}
-                                    />
-                                </FormField>
-                                <FormField label="Typography">
-                                    <SearchableSelect
-                                        value={editForm.typography_key}
-                                        onChange={(v) => updateEditField("typography_key", v)}
-                                        searchPlaceholder="Search typography..."
-                                        options={typographyOptions.map((typo) => ({ value: typo.key, label: typo.name }))}
-                                        searchable={false}
-                                    />
-                                </FormField>
-                            </div>
                         </div>
 
                         <div className="md:col-span-2 flex justify-end gap-3 pt-4 border-t border-border">
@@ -862,31 +772,30 @@ export const AdminUsersPage = ({
                         </div>
                     </div>
                 )}
-            </Modal>
+              </DialogContent>
+            </Dialog>
 
             {/* Delete Confirmation */}
-            <Modal open={!!deleteUser} onClose={() => setDeleteUser(null)} title="Delete User" size="sm">
-                {deleteUser && (
-                    <div className="text-center space-y-4">
-                        <div className="w-14 h-14 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
-                            <Trash2 className="h-6 w-6 text-destructive" />
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                            Are you sure you want to delete <strong className="text-foreground">{deleteUser.name}</strong>? This action cannot be undone.
-                        </p>
-                        <div className="flex justify-center gap-3">
-                            <button onClick={() => setDeleteUser(null)} className="px-4 py-2 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors">Cancel</button>
-                            <button
-                                onClick={() => handleDelete(deleteUser.id)}
-                                disabled={deletingUserId === deleteUser.id}
-                                className="px-4 py-2 rounded-lg bg-destructive text-destructive-foreground text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-60"
-                            >
-                                {deletingUserId === deleteUser.id ? "Deleting..." : "Delete"}
-                            </button>
-                        </div>
-                    </div>
-                )}
-            </Modal>
+            <AlertDialog open={!!deleteUser} onOpenChange={(v) => !v && setDeleteUser(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete User</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Are you sure you want to delete <strong>{deleteUser?.name}</strong>? This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setDeleteUser(null)}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={() => deleteUser && handleDelete(deleteUser.id)}
+                            disabled={deletingUserId === deleteUser?.id}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90 disabled:opacity-60"
+                        >
+                            {deletingUserId === deleteUser?.id ? "Deleting..." : "Delete"}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 };

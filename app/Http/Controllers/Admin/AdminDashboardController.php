@@ -21,6 +21,7 @@ class AdminDashboardController extends Controller
                 'name'        => $user->name,
                 'email'       => $user->email,
                 'status'      => $user->status,
+                'last_login'  => $user->last_login?->format('Y-m-d h:i A') ?? '',
                 'expire_date' => $user->expire_date?->toDateString() ?? '',
                 'created_at'  => $user->created_at?->toDateString() ?? '',
             ])
