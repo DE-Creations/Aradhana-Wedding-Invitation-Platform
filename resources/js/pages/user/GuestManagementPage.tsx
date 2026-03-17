@@ -38,9 +38,11 @@ interface GuestManagementPageProps {
   guests: Guest[];
   tables: TableOption[];
   event_token: string;
+  bride_name: string;
+  groom_name: string;
 }
 
-export const GuestManagementPage = ({ guests, tables, event_token }: GuestManagementPageProps) => {
+export const GuestManagementPage = ({ guests, tables, event_token, bride_name, groom_name }: GuestManagementPageProps) => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [sortAZ, setSortAZ] = useState(false);
@@ -92,7 +94,10 @@ export const GuestManagementPage = ({ guests, tables, event_token }: GuestManage
     });
   };
 
-  const handleCopyLink = (guest: Guest) => {    navigator.clipboard.writeText(`${window.location.origin}/invitation/${event_token}?guest=${guest.guest_token}`);
+  const handleCopyLink = (guest: Guest) => {
+    const link = `${window.location.origin}/invitation/${event_token}?guest=${guest.guest_token}`;
+    const message = `Dear ${guest.guest_name},\n\nWe are delighted to invite you to celebrate our wedding with us. Your presence on this special day would mean so much to us as we begin this beautiful new chapter together.\n\nPlease join us for the celebration and kindly confirm your attendance through the invitation link below.\n\nInvitation Link: ${link}\n\nWe look forward to sharing this joyful occasion with you.\n\nWith love,\n${bride_name} & ${groom_name}`;
+    navigator.clipboard.writeText(message);
     setCopiedId(guest.id);
     setTimeout(() => setCopiedId(null), 2000);
   };
@@ -289,18 +294,29 @@ export const GuestManagementPage = ({ guests, tables, event_token }: GuestManage
         </div>
       </Modal>
 
-      {/* Add Guest Modal */}
-      <Modal open={showAdd} onClose={() => setShowAdd(false)} title="Add Guest">
-        <div className="space-y-4">
-          <FormField label="Guest Name" required><input value={addForm.guest_name} onChange={(e) => setAddForm((f) => ({ ...f, guest_name: e.target.value }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" placeholder="e.g. Nimal & Family" /></FormField>
-          <FormField label="Phone"><input value={addForm.phone} onChange={(e) => setAddForm((f) => ({ ...f, phone: e.target.value }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" placeholder="+94 7X XXX XXXX" /></FormField>
-          <FormField label="Max Attendees" required><input type="number" min={1} value={addForm.max_attendees} onChange={(e) => setAddForm((f) => ({ ...f, max_attendees: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" /></FormField>
-          <div className="flex justify-end gap-3 pt-4 border-t border-border">
-            <button onClick={() => setShowAdd(false)} className="px-4 py-2 rounded-lg border border-border text-sm font-medium hover:bg-muted">Cancel</button>
-            <button onClick={handleAdd} className="px-4 py-2 rounded-lg bg-gradient-gold text-primary-foreground text-sm font-medium hover:opacity-90">Add Guest</button>
+      {/* Add Guest Dialog */}
+      <AlertDialog open={showAdd} onOpenChange={(v) => !v && setShowAdd(false)}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Add Guest</AlertDialogTitle>
+            <AlertDialogDescription>Fill in the details below to add a new guest to your list.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-4 py-2">
+            <FormField label="Guest Name" required><input value={addForm.guest_name} onChange={(e) => setAddForm((f) => ({ ...f, guest_name: e.target.value }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" placeholder="e.g. Nimal & Family" /></FormField>
+            <FormField label="Phone"><input value={addForm.phone} onChange={(e) => setAddForm((f) => ({ ...f, phone: e.target.value }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" placeholder="+94 7X XXX XXXX" /></FormField>
+            <FormField label="Max Attendees" required><input type="number" min={1} value={addForm.max_attendees} onChange={(e) => setAddForm((f) => ({ ...f, max_attendees: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" /></FormField>
           </div>
-        </div>
-      </Modal>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowAdd(false)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleAdd}
+              className="bg-gradient-gold text-primary-foreground hover:opacity-90"
+            >
+              Add Guest
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Edit Guest Modal */}
       <Modal open={!!editGuest} onClose={() => setEditGuest(null)} title="Edit Guest">

@@ -21,8 +21,10 @@ class GuestController extends Controller
 
         if (! $wedding) {
             return Inertia::render('user/Guests', [
-                'guests' => [],
-                'tables' => [],
+                'guests'      => [],
+                'tables'      => [],
+                'bride_name'  => '',
+                'groom_name'  => '',
             ]);
         }
 
@@ -51,6 +53,8 @@ class GuestController extends Controller
             'guests'       => $guests,
             'tables'       => $tables,
             'event_token'  => $wedding->event_token,
+            'bride_name'   => $wedding->bride_name,
+            'groom_name'   => $wedding->groom_name,
         ]);
     }
 

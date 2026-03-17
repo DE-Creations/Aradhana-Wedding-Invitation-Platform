@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { WatermarkFooter } from "@/components/WatermarkFooter";
 import { Search, Upload, Check, Image, ChevronDown, X, Loader2, AlertCircle, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -172,7 +173,8 @@ export const QRGuestSearchPage = ({ onBack, wedding, guests = [], token = "", ta
   };
 
   return (
-    <div className="min-h-screen bg-gradient-ivory">
+    <>
+      <div className="min-h-screen bg-gradient-ivory">
       {onBack && (
         <button onClick={onBack} className="fixed top-4 left-4 z-50 px-3 py-1.5 rounded-full bg-card/90 backdrop-blur-sm border border-border text-sm shadow-card">← Back</button>
       )}
@@ -427,5 +429,9 @@ export const QRGuestSearchPage = ({ onBack, wedding, guests = [], token = "", ta
         )}
       </div>
     </div>
+    <div className="sticky bottom-0 left-0 w-full">
+      <WatermarkFooter />
+    </div>
+    </>
   );
 };
