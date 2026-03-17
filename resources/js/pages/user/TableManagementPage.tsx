@@ -206,17 +206,28 @@ export const TableManagementPage = ({ tables, guests }: TableManagementPageProps
         </SectionCard>
       )}
 
-      {/* Add Table Modal */}
-      <Modal open={showAdd} onClose={() => setShowAdd(false)} title="Add Table">
-        <div className="space-y-4">
-          <FormField label="Table Name" required><input value={addForm.table_name} onChange={(e) => setAddForm((f) => ({ ...f, table_name: e.target.value }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" placeholder="e.g. Head Table" /></FormField>
-          <FormField label="Seat Count" required><input type="number" min={1} value={addForm.seat_count} onChange={(e) => setAddForm((f) => ({ ...f, seat_count: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" /></FormField>
-          <div className="flex justify-end gap-3 pt-4 border-t border-border">
-            <button onClick={() => setShowAdd(false)} className="px-4 py-2 rounded-lg border border-border text-sm font-medium hover:bg-muted">Cancel</button>
-            <button onClick={handleAddTable} className="px-4 py-2 rounded-lg bg-gradient-gold text-primary-foreground text-sm font-medium hover:opacity-90">Add Table</button>
+      {/* Add Table Dialog */}
+      <AlertDialog open={showAdd} onOpenChange={(v) => !v && setShowAdd(false)}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Add Table</AlertDialogTitle>
+            <AlertDialogDescription>Fill in the details below to add a new table to your seating plan.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-4 py-2">
+            <FormField label="Table Name" required><input value={addForm.table_name} onChange={(e) => setAddForm((f) => ({ ...f, table_name: e.target.value }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" placeholder="e.g. Head Table" /></FormField>
+            <FormField label="Seat Count" required><input type="number" min={1} value={addForm.seat_count} onChange={(e) => setAddForm((f) => ({ ...f, seat_count: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" /></FormField>
           </div>
-        </div>
-      </Modal>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowAdd(false)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleAddTable}
+              className="bg-gradient-gold text-primary-foreground hover:opacity-90"
+            >
+              Add Table
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Edit/Assign/Delete modals */}
       <Modal open={!!editTable} onClose={() => setEditTable(null)} title="Edit Table">
