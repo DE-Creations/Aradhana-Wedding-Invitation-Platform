@@ -22,7 +22,7 @@ return new class extends Migration
             $table->boolean('share_memory')->default(false);
             $table->datetime('last_login')->nullable();
             $table->enum('status', ['active', 'deactive', 'expired'])->default('active');
-            $table->timestamp('expire_date')->nullable();
+            $table->dateTime('expire_date')->nullable();
             $table->timestamps();
         });
     }

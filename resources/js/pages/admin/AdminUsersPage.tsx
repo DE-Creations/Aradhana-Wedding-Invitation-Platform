@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Search, Edit, Trash2, Power, Users as UsersIcon, CalendarIcon, Eye, EyeOff } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Power, Users as UsersIcon, CalendarIcon, Eye, EyeOff, Pencil } from "lucide-react";
 import { StatsCard, StatusBadge, SectionCard, FormField, EmptyState } from "@/components/ui-components";
 import {
   AlertDialog,
@@ -143,6 +143,7 @@ export const AdminUsersPage = ({
     const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
     const [showCreatePassword, setShowCreatePassword] = useState(false);
     const [showEditPassword, setShowEditPassword] = useState(false);
+    const [changeEditPassword, setChangeEditPassword] = useState(false);
     const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
     const [togglingUserId, setTogglingUserId] = useState<string | null>(null);
     const [createForm, setCreateForm] = useState<CreateUserFormState>({
@@ -225,6 +226,7 @@ export const AdminUsersPage = ({
         setEditUser(null);
         setEditForm(null);
         setShowEditPassword(false);
+        setChangeEditPassword(false);
     };
 
     const updateEditField = <K extends keyof EditUserFormState>(field: K, value: EditUserFormState[K]) => {
@@ -321,6 +323,7 @@ export const AdminUsersPage = ({
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="Search users..."
+                        autoComplete="off"
                         className="w-full pl-9 pr-4 py-2 rounded-lg border border-input bg-card text-sm outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary"
                     />
                 </div>
@@ -412,6 +415,7 @@ export const AdminUsersPage = ({
                             <input
                                 value={createForm.name}
                                 onChange={(e) => updateCreateField("name", e.target.value)}
+                                autoComplete="off"
                                 className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm"
                                 placeholder="Full name"
                             />
@@ -422,6 +426,7 @@ export const AdminUsersPage = ({
                                 type="email"
                                 value={createForm.email}
                                 onChange={(e) => updateCreateField("email", e.target.value)}
+                                autoComplete="off"
                                 className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm"
                                 placeholder="email@example.com"
                             />
@@ -433,6 +438,7 @@ export const AdminUsersPage = ({
                                     type={showCreatePassword ? "text" : "password"}
                                     value={createForm.password}
                                     onChange={(e) => updateCreateField("password", e.target.value)}
+                                    autoComplete="new-password"
                                     className="w-full px-3 py-2 pr-10 rounded-lg border border-input bg-background text-sm"
                                     placeholder="••••••••"
                                 />
@@ -451,6 +457,8 @@ export const AdminUsersPage = ({
                             <input
                                 value={createForm.phone}
                                 onChange={(e) => updateCreateField("phone", e.target.value)}
+                                maxLength={10}
+                                autoComplete="off"
                                 className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm"
                                 placeholder="+94 7X XXX XXXX"
                             />
@@ -597,6 +605,7 @@ export const AdminUsersPage = ({
                                 <input
                                     value={editForm.name}
                                     onChange={(e) => updateEditField("name", e.target.value)}
+                                    autoComplete="off"
                                     className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm"
                                     placeholder="Full name"
                                 />
@@ -607,35 +616,63 @@ export const AdminUsersPage = ({
                                     type="email"
                                     value={editForm.email}
                                     onChange={(e) => updateEditField("email", e.target.value)}
+                                    autoComplete="off"
                                     className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm"
                                     placeholder="email@example.com"
                                 />
                                 {errors?.email && <p className="text-xs text-destructive mt-1">{errors.email}</p>}
                             </FormField>
-                            <FormField label="New Password">
-                                <div className="relative">
-                                    <input
-                                        type={showEditPassword ? "text" : "password"}
-                                        value={editForm.password}
-                                        onChange={(e) => updateEditField("password", e.target.value)}
-                                        className="w-full px-3 py-2 pr-10 rounded-lg border border-input bg-background text-sm"
-                                        placeholder="Leave blank to keep current"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowEditPassword((prev) => !prev)}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
-                                        title={showEditPassword ? "Hide password" : "Show password"}
-                                    >
-                                        {showEditPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                    </button>
-                                </div>
+                            <FormField label="Password">
+                                {changeEditPassword ? (
+                                    <div className="space-y-1.5">
+                                        <div className="relative">
+                                            <input
+                                                type={showEditPassword ? "text" : "password"}
+                                                value={editForm.password}
+                                                onChange={(e) => updateEditField("password", e.target.value)}
+                                                autoComplete="new-password"
+                                                className="w-full px-3 py-2 pr-10 rounded-lg border border-input bg-background text-sm"
+                                                placeholder="Enter new password"
+                                                autoFocus
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowEditPassword((prev) => !prev)}
+                                                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
+                                                title={showEditPassword ? "Hide password" : "Show password"}
+                                            >
+                                                {showEditPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                            </button>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => { setChangeEditPassword(false); updateEditField("password", ""); setShowEditPassword(false); }}
+                                            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                                        >
+                                            ✕ Cancel password change
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center justify-between px-3 py-2 rounded-lg border border-input bg-muted/40">
+                                        <span className="text-sm text-muted-foreground tracking-widest select-none">••••••••</span>
+                                        <button
+                                            type="button"
+                                            onClick={() => setChangeEditPassword(true)}
+                                            className="p-1 text-muted-foreground hover:text-foreground transition-colors"
+                                            title="Set new password"
+                                        >
+                                            <Pencil className="h-3.5 w-3.5" />
+                                        </button>
+                                    </div>
+                                )}
                                 {errors?.password && <p className="text-xs text-destructive mt-1">{errors.password}</p>}
                             </FormField>
                             <FormField label="Phone" required>
                                 <input
                                     value={editForm.phone}
                                     onChange={(e) => updateEditField("phone", e.target.value)}
+                                    maxLength={10}
+                                    autoComplete="off"
                                     className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm"
                                     placeholder="+94 7X XXX XXXX"
                                 />

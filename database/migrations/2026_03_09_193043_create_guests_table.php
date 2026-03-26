@@ -24,6 +24,7 @@ return new class extends Migration
             $table->timestamp('rsvp_clicked_at')->nullable();
             $table->timestamp('responded_at')->nullable();
             $table->unsignedBigInteger('table_id')->nullable();
+            $table->tinyInteger('image_count')->default(0);
             $table->timestamps();
 
             $table->foreign('wedding_id')->references('id')->on('weddings');

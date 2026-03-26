@@ -1249,7 +1249,7 @@ export const InvitationDesignPage = ({
     const namesMarkup = (
       <p className={`mt-3 mx-auto max-w-[8.5ch] text-[clamp(1.95rem,8vw,2.6rem)] font-bold leading-[0.95] tracking-[-0.04em] ${selectedTypographyConfig.headingFont}`}>
         <span className="block">{brideName}</span>
-        <span className={`block py-0.5 text-lg italic tracking-normal font-serif ${theme.accentToneClassName}`}>&</span>
+        <span className={`block py-0.5 text-lg italic tracking-normal ${selectedTypographyConfig.headingFont} ${theme.accentToneClassName}`}>&</span>
         <span className="block">{groomName}</span>
       </p>
     );

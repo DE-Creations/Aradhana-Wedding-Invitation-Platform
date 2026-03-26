@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Settings, Grid3X3, Image, Palette, QrCode, LogOut, ExternalLink, Lock } from "lucide-react";
+import { LayoutDashboard, Users, Settings, Grid3X3, Image, Palette, MapPin, Camera, LogOut, ExternalLink, Lock } from "lucide-react";
 
 interface UserSidebarProps {
   currentPage: string;
@@ -23,7 +23,7 @@ export const UserSidebar = ({ currentPage, onNavigate, onLogout, eventToken, tab
     ...item,
     disabled: (!!item.requiresTable && !tableManagement) || (!!item.requiresMemory && !shareMemory),
   }));
-  const qrDisabled = !tableManagement && !shareMemory;
+
   return (
     <>
       <aside className="hidden md:flex w-64 flex-col border-r border-border bg-sidebar h-screen sticky top-0">
@@ -68,25 +68,46 @@ export const UserSidebar = ({ currentPage, onNavigate, onLogout, eventToken, tab
             );
           })}
 
-          {/* QR Guest Search - opens in new tab */}
-          {qrDisabled ? (
+          {/* Find My Table - opens in new tab */}
+          {tableManagement ? (
+            <button
+              onClick={() => window.open(eventToken ? `/find-table?token=${eventToken}` : '/find-table', "_blank")}
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground transition-all"
+            >
+              <MapPin className="h-4 w-4" />
+              Find My Table
+              <ExternalLink className="h-3 w-3 ml-auto opacity-50" />
+            </button>
+          ) : (
             <div
               title="This feature is not available in your plan"
               className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground/30 cursor-not-allowed select-none"
             >
-              <QrCode className="h-4 w-4" />
-              QR Guest Search
+              <MapPin className="h-4 w-4" />
+              Find My Table
               <Lock className="h-3 w-3 ml-auto" />
             </div>
-          ) : (
+          )}
+
+          {/* Share Memories - opens in new tab */}
+          {shareMemory ? (
             <button
-              onClick={() => window.open(eventToken ? `/guest-search?token=${eventToken}` : '/guest-search', "_blank")}
+              onClick={() => window.open(eventToken ? `/share-memories?token=${eventToken}` : '/share-memories', "_blank")}
               className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground transition-all"
             >
-              <QrCode className="h-4 w-4" />
-              QR Guest Search
+              <Camera className="h-4 w-4" />
+              Share Memories
               <ExternalLink className="h-3 w-3 ml-auto opacity-50" />
             </button>
+          ) : (
+            <div
+              title="This feature is not available in your plan"
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground/30 cursor-not-allowed select-none"
+            >
+              <Camera className="h-4 w-4" />
+              Share Memories
+              <Lock className="h-3 w-3 ml-auto" />
+            </div>
           )}
         </nav>
 
@@ -134,22 +155,39 @@ export const UserSidebar = ({ currentPage, onNavigate, onLogout, eventToken, tab
               </button>
             );
           })}
-          {qrDisabled ? (
+          {tableManagement ? (
+            <button
+              onClick={() => window.open(eventToken ? `/find-table?token=${eventToken}` : '/find-table', "_blank")}
+              className="mx-1 min-w-[76px] rounded-lg px-2 py-2 text-center text-sidebar-foreground/75 transition-colors hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+            >
+              <MapPin className="mx-auto h-4 w-4" />
+              <span className="mt-1 block text-[10px] leading-tight">Find Table</span>
+            </button>
+          ) : (
             <div
               title="This feature is not available in your plan"
               className="mx-1 min-w-[76px] rounded-lg px-2 py-2 text-center text-sidebar-foreground/30 cursor-not-allowed select-none"
             >
-              <QrCode className="mx-auto h-4 w-4" />
-              <span className="mt-1 block text-[10px] leading-tight">QR Search</span>
+              <MapPin className="mx-auto h-4 w-4" />
+              <span className="mt-1 block text-[10px] leading-tight">Find Table</span>
             </div>
-          ) : (
+          )}
+          {shareMemory ? (
             <button
-              onClick={() => window.open(eventToken ? `/guest-search?token=${eventToken}` : '/guest-search', "_blank")}
+              onClick={() => window.open(eventToken ? `/share-memories?token=${eventToken}` : '/share-memories', "_blank")}
               className="mx-1 min-w-[76px] rounded-lg px-2 py-2 text-center text-sidebar-foreground/75 transition-colors hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
             >
-              <QrCode className="mx-auto h-4 w-4" />
-              <span className="mt-1 block text-[10px] leading-tight">QR Search</span>
+              <Camera className="mx-auto h-4 w-4" />
+              <span className="mt-1 block text-[10px] leading-tight">Share Mem.</span>
             </button>
+          ) : (
+            <div
+              title="This feature is not available in your plan"
+              className="mx-1 min-w-[76px] rounded-lg px-2 py-2 text-center text-sidebar-foreground/30 cursor-not-allowed select-none"
+            >
+              <Camera className="mx-auto h-4 w-4" />
+              <span className="mt-1 block text-[10px] leading-tight">Share Mem.</span>
+            </div>
           )}
           <button
             onClick={onLogout}

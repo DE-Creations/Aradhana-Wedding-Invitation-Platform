@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { router } from "@inertiajs/react";
 import { Plus, Search, Edit, Trash2, Copy, Users, AlertTriangle, ArrowUpDown, FileSpreadsheet, Download, Upload, X as XIcon } from "lucide-react";
-import { SectionCard, StatusBadge, Modal, FormField, EmptyState } from "@/components/ui-components";
+import { SectionCard, StatusBadge, FormField, EmptyState } from "@/components/ui-components";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -231,68 +231,73 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
         )}
       </SectionCard>
 
-      {/* Import Modal */}
-      <Modal open={showImport} onClose={() => { setShowImport(false); setImportFile(null); }} title="Import Guests from CSV">
-        <div className="space-y-4">
-          {/* Template download */}
-          <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/40 border border-border">
-            <FileSpreadsheet className="h-5 w-5 text-muted-foreground mt-0.5 shrink-0" />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground">CSV Format</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Columns: <span className="font-mono">Guest Name, Phone, Max Attendees</span></p>
-            </div>
-            <button
-              onClick={handleDownloadTemplate}
-              className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-border text-xs font-medium hover:bg-muted transition-colors"
-            >
-              <Download className="h-3.5 w-3.5" /> Template
-            </button>
-          </div>
-
-          {/* File drop zone */}
-          <div>
-            <input
-              ref={importFileRef}
-              type="file"
-              accept=".csv,text/csv"
-              className="hidden"
-              onChange={(e) => setImportFile(e.target.files?.[0] ?? null)}
-            />
-            <button
-              type="button"
-              onClick={() => importFileRef.current?.click()}
-              className="w-full border-2 border-dashed border-input rounded-xl p-8 text-center hover:border-primary/40 transition-colors"
-            >
-              <Upload className="h-7 w-7 text-muted-foreground mx-auto mb-2" />
-              {importFile ? (
-                <p className="text-sm font-medium text-foreground">{importFile.name}</p>
-              ) : (
-                <p className="text-sm font-medium text-muted-foreground">Click to select a CSV file</p>
-              )}
-            </button>
-            {importFile && (
+      {/* Import Dialog */}
+      <AlertDialog open={showImport} onOpenChange={(v) => { if (!v) { setShowImport(false); setImportFile(null); } }}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Import Guests from CSV</AlertDialogTitle>
+            <AlertDialogDescription>Upload a CSV file with columns: Guest Name, Phone, Max Attendees.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-4 py-2">
+            {/* Template download */}
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/40 border border-border">
+              <FileSpreadsheet className="h-5 w-5 text-muted-foreground mt-0.5 shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground">CSV Format</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Columns: <span className="font-mono">Guest Name, Phone, Max Attendees</span></p>
+              </div>
               <button
-                onClick={() => { setImportFile(null); if (importFileRef.current) importFileRef.current.value = ""; }}
-                className="mt-2 flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors"
+                onClick={handleDownloadTemplate}
+                className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-border text-xs font-medium hover:bg-muted transition-colors"
               >
-                <XIcon className="h-3 w-3" /> Remove file
+                <Download className="h-3.5 w-3.5" /> Template
               </button>
-            )}
-          </div>
+            </div>
 
-          <div className="flex justify-end gap-3 pt-2 border-t border-border">
-            <button onClick={() => { setShowImport(false); setImportFile(null); }} className="px-4 py-2 rounded-lg border border-border text-sm font-medium hover:bg-muted">Cancel</button>
-            <button
+            {/* File drop zone */}
+            <div>
+              <input
+                ref={importFileRef}
+                type="file"
+                accept=".csv,text/csv"
+                className="hidden"
+                onChange={(e) => setImportFile(e.target.files?.[0] ?? null)}
+              />
+              <button
+                type="button"
+                onClick={() => importFileRef.current?.click()}
+                className="w-full border-2 border-dashed border-input rounded-xl p-8 text-center hover:border-primary/40 transition-colors"
+              >
+                <Upload className="h-7 w-7 text-muted-foreground mx-auto mb-2" />
+                {importFile ? (
+                  <p className="text-sm font-medium text-foreground">{importFile.name}</p>
+                ) : (
+                  <p className="text-sm font-medium text-muted-foreground">Click to select a CSV file</p>
+                )}
+              </button>
+              {importFile && (
+                <button
+                  onClick={() => { setImportFile(null); if (importFileRef.current) importFileRef.current.value = ""; }}
+                  className="mt-2 flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors"
+                >
+                  <XIcon className="h-3 w-3" /> Remove file
+                </button>
+              )}
+            </div>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => { setShowImport(false); setImportFile(null); }}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
               onClick={handleImport}
               disabled={!importFile || isImporting}
-              className="px-4 py-2 rounded-lg bg-gradient-gold text-primary-foreground text-sm font-medium hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
+              className="bg-gradient-gold text-primary-foreground hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
             >
               <Upload className="h-3.5 w-3.5" />
               {isImporting ? "Importing..." : "Import Guests"}
-            </button>
-          </div>
-        </div>
-      </Modal>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Add Guest Dialog */}
       <AlertDialog open={showAdd} onOpenChange={(v) => !v && setShowAdd(false)}>
@@ -303,7 +308,7 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
           </AlertDialogHeader>
           <div className="space-y-4 py-2">
             <FormField label="Guest Name" required><input value={addForm.guest_name} onChange={(e) => setAddForm((f) => ({ ...f, guest_name: e.target.value }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" placeholder="e.g. Nimal & Family" /></FormField>
-            <FormField label="Phone"><input value={addForm.phone} onChange={(e) => setAddForm((f) => ({ ...f, phone: e.target.value }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" placeholder="+94 7X XXX XXXX" /></FormField>
+            <FormField label="Phone"><input value={addForm.phone} onChange={(e) => setAddForm((f) => ({ ...f, phone: e.target.value }))} maxLength={10} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" placeholder="+94 7X XXX XXXX" /></FormField>
             <FormField label="Max Attendees" required><input type="number" min={1} value={addForm.max_attendees} onChange={(e) => setAddForm((f) => ({ ...f, max_attendees: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" /></FormField>
           </div>
           <AlertDialogFooter>
@@ -318,20 +323,24 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Edit Guest Modal */}
-      <Modal open={!!editGuest} onClose={() => setEditGuest(null)} title="Edit Guest">
-        {editGuest && (
-          <div className="space-y-4">
+      {/* Edit Guest Dialog */}
+      <AlertDialog open={!!editGuest} onOpenChange={(v) => !v && setEditGuest(null)}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Edit Guest</AlertDialogTitle>
+            <AlertDialogDescription>Update the guest details below.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-4 py-2">
             <FormField label="Guest Name"><input value={editForm.guest_name} onChange={(e) => setEditForm((f) => ({ ...f, guest_name: e.target.value }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" /></FormField>
-            <FormField label="Phone"><input value={editForm.phone} onChange={(e) => setEditForm((f) => ({ ...f, phone: e.target.value }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" /></FormField>
+            <FormField label="Phone"><input value={editForm.phone} onChange={(e) => setEditForm((f) => ({ ...f, phone: e.target.value }))} maxLength={10} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" /></FormField>
             <FormField label="Max Attendees"><input type="number" value={editForm.max_attendees} onChange={(e) => setEditForm((f) => ({ ...f, max_attendees: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" /></FormField>
-            <div className="flex justify-end gap-3 pt-4 border-t border-border">
-              <button onClick={() => setEditGuest(null)} className="px-4 py-2 rounded-lg border border-border text-sm font-medium hover:bg-muted">Cancel</button>
-              <button onClick={handleEdit} className="px-4 py-2 rounded-lg bg-gradient-gold text-primary-foreground text-sm font-medium hover:opacity-90">Save</button>
-            </div>
           </div>
-        )}
-      </Modal>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setEditGuest(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleEdit} className="bg-gradient-gold text-primary-foreground hover:opacity-90">Save</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Delete Confirmation */}
       <AlertDialog open={!!deleteGuest} onOpenChange={(v) => !v && setDeleteGuest(null)}>

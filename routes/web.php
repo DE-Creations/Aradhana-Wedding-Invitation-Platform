@@ -4,8 +4,9 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Auth\AdminAuthController;
 use App\Http\Controllers\Auth\UserAuthController;
-use App\Http\Controllers\GuestSearchController;
+use App\Http\Controllers\FindTableController;
 use App\Http\Controllers\PublicInvitationController;
+use App\Http\Controllers\ShareMemoriesController;
 use App\Http\Controllers\PublicMemoryController;
 use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\DesignController;
@@ -32,9 +33,11 @@ Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admi
 Route::get('/invitation/{token}', [PublicInvitationController::class, 'show'])->name('invitation.show');
 Route::post('/invitation/{token}/rsvp', [PublicInvitationController::class, 'submitRsvp'])->name('invitation.rsvp');
 Route::post('/invitation/{token}/rsvp-click', [PublicInvitationController::class, 'trackRsvpClick'])->name('invitation.rsvp-click');
-Route::get('/guest-search', [GuestSearchController::class, 'index'])->name('guest.search');
-Route::get('/guest-search/search', [GuestSearchController::class, 'search'])->name('guest.search.ajax');
-Route::post('/guest-search/upload-memory', [PublicMemoryController::class, 'upload'])->name('guest.upload-memory');
+Route::get('/find-table', [FindTableController::class, 'index'])->name('guest.find-table');
+Route::get('/find-table/search', [FindTableController::class, 'search'])->name('guest.find-table.search');
+Route::get('/share-memories', [ShareMemoriesController::class, 'index'])->name('guest.share-memories');
+Route::get('/share-memories/search', [ShareMemoriesController::class, 'search'])->name('guest.share-memories.search');
+Route::post('/share-memories/upload', [PublicMemoryController::class, 'upload'])->name('guest.upload-memory');
 
 // ─── User Panel (protected) ──────────────────────────────────────────────────
 

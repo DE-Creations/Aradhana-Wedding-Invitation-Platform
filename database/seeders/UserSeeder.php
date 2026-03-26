@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
                 'password'          => bcrypt('test@321'),
                 'phone'             => '0773434567',
                 'status'            => 'active',
-                'expire_date'       => now()->addYear(),
+                'expire_date'       => now()->addYears(100),
                 'created_at'       => now(),
                 'updated_at'       => now(),
             ]

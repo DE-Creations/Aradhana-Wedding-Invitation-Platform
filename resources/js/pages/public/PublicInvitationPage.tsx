@@ -1022,7 +1022,7 @@ export const PublicInvitationPage = ({
     const namesMarkup = (
       <h1 className={`mt-5 mx-auto max-w-[10ch] text-[clamp(2.4rem,10vw,5.15rem)] font-bold leading-[0.92] tracking-[-0.045em] ${selectedTypography.headingFont}`}>
         <span className="block break-words">{w.bride_name}</span>
-        <span className={`block py-1 text-xl italic tracking-normal sm:text-2xl md:text-3xl ${selectedTheme.accentToneClassName} font-serif`}>&</span>
+        <span className={`block py-1 text-xl italic tracking-normal sm:text-2xl md:text-3xl ${selectedTheme.accentToneClassName} ${selectedTypography.headingFont}`}>&</span>
         <span className="block break-words">{w.groom_name}</span>
       </h1>
     );

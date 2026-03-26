@@ -12,7 +12,6 @@ const routeMap: Record<string, string> = {
   tables: '/tables',
   memories: '/memories',
   design: '/design',
-  'qr-search': '/guest-search',
 };
 
 export default function UserShell({ currentPage, children }: { currentPage: string; children: ReactNode }) {

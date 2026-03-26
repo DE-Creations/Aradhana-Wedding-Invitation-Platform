@@ -19,7 +19,8 @@ class DesignController extends Controller
         $wedding = $user?->wedding()->with(['weddingType', 'sinhalaDetails', 'christianDetails', 'tamilDetails', 'muslimDetails'])->first();
 
         if (! $wedding) {
-            abort(404);
+            return redirect()->route('settings.index')
+                ->with('error', 'Please complete your wedding setup before previewing the invitation.');
         }
 
         $mainImageUrl = $wedding->main_image

@@ -392,10 +392,10 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, eventDetails }: We
         <SectionCard title="Contact Numbers" description="Numbers guests can use to reach you">
           <div className="grid md:grid-cols-2 gap-4">
             <FormField label="Contact Number 1">
-              <input value={form.contact_number_1} onChange={(e) => updateField("contact_number_1", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
+              <input value={form.contact_number_1} onChange={(e) => updateField("contact_number_1", e.target.value)} maxLength={10} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
             </FormField>
             <FormField label="Contact Number 2">
-              <input value={form.contact_number_2} onChange={(e) => updateField("contact_number_2", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
+              <input value={form.contact_number_2} onChange={(e) => updateField("contact_number_2", e.target.value)} maxLength={10} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
             </FormField>
           </div>
         </SectionCard>

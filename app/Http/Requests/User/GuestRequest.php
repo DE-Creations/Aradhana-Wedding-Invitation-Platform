@@ -15,7 +15,7 @@ class GuestRequest extends FormRequest
     {
         return [
             'guest_name'    => ['required', 'string', 'max:255'],
-            'phone'         => ['nullable', 'string', 'max:40'],
+            'phone'         => ['nullable', 'string', 'max:10'],
             'max_attendees' => ['required', 'integer', 'min:1', 'max:20'],
         ];
     }
