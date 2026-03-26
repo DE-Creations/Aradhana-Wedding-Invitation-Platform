@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Calendar, Users, MousePointerClick, UserCheck, Clock, UserX, Hash, Plus, FileSpreadsheet, Settings, Eye, QrCode, Image, Lock } from "lucide-react";
+import { Calendar, Users, MousePointerClick, UserCheck, Clock, UserX, Hash, Plus, Settings, Eye, MapPin, Camera, Image, Lock } from "lucide-react";
 import { StatsCard, SectionCard, StatusBadge } from "@/components/ui-components";
 import { WatermarkFooter } from "@/components/WatermarkFooter";
 import { motion } from "framer-motion";
@@ -119,10 +119,10 @@ export const UserDashboardPage = ({ onNavigate, wedding, stats, pendingGuests, r
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {[
           { label: "Add Guest", icon: Plus, page: "guests", disabled: false },
-          { label: "Import Guests", icon: FileSpreadsheet, page: "guests", disabled: false },
           { label: "Edit Settings", icon: Settings, page: "settings", disabled: false },
           { label: "Preview Invite", icon: Eye, page: "preview", disabled: false },
-          { label: "QR Search", icon: QrCode, page: "qr-search", disabled: !tableManagement && !shareMemory },
+          { label: "Find Table", icon: MapPin, page: "find-table", disabled: !tableManagement },
+          { label: "Share Memories", icon: Camera, page: "share-memories", disabled: !shareMemory },
         ].map((action) => (
           <button
             key={action.label}
@@ -131,8 +131,10 @@ export const UserDashboardPage = ({ onNavigate, wedding, stats, pendingGuests, r
               if (action.disabled) return;
               if (action.page === "preview") {
                 window.open(eventToken ? `/invitation/${eventToken}` : "/invitation", "_blank");
-              } else if (action.page === "qr-search") {
-                window.open(eventToken ? `/guest-search?token=${eventToken}` : "/guest-search", "_blank");
+              } else if (action.page === "find-table") {
+                window.open(eventToken ? `/find-table?token=${eventToken}` : "/find-table", "_blank");
+              } else if (action.page === "share-memories") {
+                window.open(eventToken ? `/share-memories?token=${eventToken}` : "/share-memories", "_blank");
               } else {
                 onNavigate(action.page);
               }

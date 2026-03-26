@@ -1,8 +1,10 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { router } from "@inertiajs/react";
 import { Search, Check, X, Download, Image, CheckSquare, ChevronLeft, ChevronRight } from "lucide-react";
 import { StatusBadge, EmptyState } from "@/components/ui-components";
 import { motion } from "framer-motion";
+import * as Dialog from "@radix-ui/react-dialog";
+import useEmblaCarousel from "embla-carousel-react";
 
 interface Memory {
   id: string;
@@ -25,7 +27,10 @@ export const MemoriesPage = ({ memories }: MemoriesPageProps) => {
   const [filter, setFilter] = useState("all");
   const [selectMode, setSelectMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxStartIdx, setLightboxStartIdx] = useState(0);
+  const [currentIdx, setCurrentIdx] = useState(0);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
 
   const formatSize = (bytes: number) => {
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
@@ -61,20 +66,39 @@ export const MemoriesPage = ({ memories }: MemoriesPageProps) => {
   };
 
   const openLightbox = useCallback((idx: number) => {
-    setLightboxIdx(idx);
+    setLightboxStartIdx(idx);
+    setCurrentIdx(idx);
+    setLightboxOpen(true);
   }, []);
 
-  const lightboxPrev = () => {
-    if (lightboxIdx === null) return;
-    setLightboxIdx((lightboxIdx - 1 + filtered.length) % filtered.length);
-  };
+  // Jump Embla to the clicked slide when the carousel mounts inside the dialog
+  useEffect(() => {
+    if (!emblaApi) return;
+    emblaApi.scrollTo(lightboxStartIdx, true);
+    setCurrentIdx(lightboxStartIdx);
+  }, [emblaApi, lightboxStartIdx]);
 
-  const lightboxNext = () => {
-    if (lightboxIdx === null) return;
-    setLightboxIdx((lightboxIdx + 1) % filtered.length);
-  };
+  // Keep currentIdx in sync with Embla
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => setCurrentIdx(emblaApi.selectedScrollSnap());
+    emblaApi.on("select", onSelect);
+    return () => { emblaApi.off("select", onSelect); };
+  }, [emblaApi]);
 
-  const currentLightboxMemory = lightboxIdx !== null ? filtered[lightboxIdx] : null;
+  // Keyboard navigation
+  useEffect(() => {
+    if (!lightboxOpen || !emblaApi) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft")  emblaApi.scrollPrev();
+      if (e.key === "ArrowRight") emblaApi.scrollNext();
+      if (e.key === "Escape")     setLightboxOpen(false);
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [lightboxOpen, emblaApi]);
+
+  const currentMemory = filtered[currentIdx] ?? filtered[lightboxStartIdx];
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -181,38 +205,84 @@ export const MemoriesPage = ({ memories }: MemoriesPageProps) => {
         </div>
       )}
 
-      {/* Lightbox Slider */}
-      {currentLightboxMemory && lightboxIdx !== null && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/80 backdrop-blur-sm">
-          <button onClick={() => setLightboxIdx(null)} className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-card/90 flex items-center justify-center hover:bg-card transition-colors">
-            <X className="h-5 w-5 text-foreground" />
-          </button>
-
-          {/* Prev */}
-          <button onClick={lightboxPrev} className="absolute left-4 z-10 w-10 h-10 rounded-full bg-card/90 flex items-center justify-center hover:bg-card transition-colors">
-            <ChevronLeft className="h-5 w-5 text-foreground" />
-          </button>
-
-          {/* Image */}
-          <div className="max-w-3xl max-h-[80vh] mx-16">
-            <img
-              src={currentLightboxMemory.image_path}
-              alt={currentLightboxMemory.file_name}
-              className="max-w-full max-h-[75vh] object-contain rounded-lg"
-            />
-            <div className="mt-3 text-center">
-              <p className="text-sm font-medium text-card">{currentLightboxMemory.file_name}</p>
-              <p className="text-xs text-card/70">{currentLightboxMemory.guest_name} · {formatSize(currentLightboxMemory.file_size)}</p>
-              <p className="text-xs text-card/50 mt-1">{lightboxIdx + 1} / {filtered.length}</p>
+      {/* Image Slider Dialog */}
+      <Dialog.Root open={lightboxOpen} onOpenChange={setLightboxOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+          <Dialog.Content
+            className="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 w-[calc(100vw-2rem)] max-w-xl flex flex-col bg-card border border-border rounded-2xl shadow-2xl overflow-hidden focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+            style={{ height: "min(540px, 90svh)" }}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
+              <div className="min-w-0">
+                <Dialog.Title className="text-sm font-semibold text-foreground truncate leading-tight">
+                  {currentMemory?.file_name}
+                </Dialog.Title>
+                <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                  {currentMemory?.guest_name} · {currentMemory ? formatSize(currentMemory.file_size) : ""}
+                </p>
+              </div>
+              <Dialog.Close className="ml-3 shrink-0 w-8 h-8 rounded-lg flex items-center justify-center hover:bg-muted transition-colors cursor-pointer">
+                <X className="h-4 w-4 text-muted-foreground" />
+                <span className="sr-only">Close</span>
+              </Dialog.Close>
             </div>
-          </div>
 
-          {/* Next */}
-          <button onClick={lightboxNext} className="absolute right-4 z-10 w-10 h-10 rounded-full bg-card/90 flex items-center justify-center hover:bg-card transition-colors">
-            <ChevronRight className="h-5 w-5 text-foreground" />
-          </button>
-        </div>
-      )}
+            {/* Embla Carousel */}
+            <div className="relative flex-1 overflow-hidden bg-muted/20">
+              <div ref={emblaRef} className="h-full overflow-hidden">
+                <div className="flex h-full">
+                  {filtered.map((memory) => (
+                    <div key={memory.id} className="flex-[0_0_100%] min-w-0 h-full flex items-center justify-center p-4">
+                      <img
+                        src={memory.image_path}
+                        alt={memory.file_name}
+                        className="max-w-full max-h-full object-contain rounded-md shadow-md select-none"
+                        draggable={false}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Prev */}
+              <button
+                onClick={() => emblaApi?.scrollPrev()}
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-card/90 border border-border flex items-center justify-center hover:bg-card transition-colors shadow-sm"
+                aria-label="Previous image"
+              >
+                <ChevronLeft className="h-4 w-4 text-foreground" />
+              </button>
+
+              {/* Next */}
+              <button
+                onClick={() => emblaApi?.scrollNext()}
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-card/90 border border-border flex items-center justify-center hover:bg-card transition-colors shadow-sm"
+                aria-label="Next image"
+              >
+                <ChevronRight className="h-4 w-4 text-foreground" />
+              </button>
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-muted/20 shrink-0">
+              <StatusBadge status={currentMemory?.status ?? "pending"} />
+              <div className="flex items-center gap-1 overflow-hidden max-w-[160px]">
+                {filtered.length <= 20 && filtered.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => emblaApi?.scrollTo(i)}
+                    className={`rounded-full shrink-0 transition-all duration-200 ${i === currentIdx ? "w-3.5 h-1.5 bg-primary" : "w-1.5 h-1.5 bg-border hover:bg-muted-foreground"}`}
+                    aria-label={`Go to image ${i + 1}`}
+                  />
+                ))}
+              </div>
+              <span className="text-xs text-muted-foreground font-medium tabular-nums">{currentIdx + 1} / {filtered.length}</span>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
 
     </div>
   );

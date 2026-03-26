@@ -88,6 +88,9 @@ class PublicMemoryController extends Controller
             // Store in storage/app/public/guests-images/{guest_name}/
             $path = $file->storeAs($diskPath, $fileName, 'public');
 
+            // Compress / resize to reduce storage footprint
+            $this->compressStoredImage($path, $file->getMimeType() ?? 'image/jpeg');
+
             $memory = Memory::create([
                 'wedding_id'  => $wedding->id,
                 'guest_id'    => $guest->id,
@@ -108,12 +111,90 @@ class PublicMemoryController extends Controller
         $originalCount = count($request->file('images'));
         $skipped = max(0, $originalCount - count($files));
 
+        // Update the guest's running upload count (column already exists on guests table)
+        $guest->increment('image_count', count($uploaded));
+
         return response()->json([
-            'uploaded' => count($uploaded),
-            'skipped'  => $skipped,
-            'images'   => $uploaded,
-            'message'  => count($uploaded) . ' photo(s) uploaded successfully.' .
+            'uploaded'  => count($uploaded),
+            'skipped'   => $skipped,
+            'images'    => $uploaded,
+            'new_count' => $guest->fresh()->image_count,
+            'max_count' => $maxImagesPerGuest,
+            'message'   => count($uploaded) . ' photo(s) uploaded successfully.' .
                 ($skipped > 0 ? " {$skipped} skipped (limit reached)." : ''),
         ]);
+    }
+
+    /**
+     * Compress and resize a stored image using PHP's GD extension.
+     * Skips silently if GD is unavailable or the file is already compact.
+     */
+    private function compressStoredImage(string $storagePath, string $mimeType): void
+    {
+        if (! extension_loaded('gd')) {
+            return;
+        }
+
+        $fullPath = storage_path('app/public/' . $storagePath);
+        if (! file_exists($fullPath)) {
+            return;
+        }
+
+        $imageInfo = @getimagesize($fullPath);
+        if (! $imageInfo) {
+            return;
+        }
+
+        [$origW, $origH] = $imageInfo;
+        $maxDim    = 1920;
+        $threshold = 500 * 1024; // 500 KB
+
+        // Already small enough — nothing to do
+        if ($origW <= $maxDim && $origH <= $maxDim && filesize($fullPath) <= $threshold) {
+            return;
+        }
+
+        // Maintain aspect ratio
+        if ($origW >= $origH && $origW > $maxDim) {
+            $newW = $maxDim;
+            $newH = (int) round($origH * $maxDim / $origW);
+        } elseif ($origH > $origW && $origH > $maxDim) {
+            $newH = $maxDim;
+            $newW = (int) round($origW * $maxDim / $origH);
+        } else {
+            $newW = $origW;
+            $newH = $origH;
+        }
+
+        $src = match ($mimeType) {
+            'image/jpeg' => @imagecreatefromjpeg($fullPath),
+            'image/png'  => @imagecreatefrompng($fullPath),
+            'image/webp' => @imagecreatefromwebp($fullPath),
+            default      => null, // skip GIF etc.
+        };
+
+        if (! $src) {
+            return;
+        }
+
+        $dst = imagecreatetruecolor($newW, $newH);
+
+        if ($mimeType === 'image/png') {
+            imagealphablending($dst, false);
+            imagesavealpha($dst, true);
+            $transparent = imagecolorallocatealpha($dst, 0, 0, 0, 127);
+            imagefilledrectangle($dst, 0, 0, $newW, $newH, $transparent);
+        }
+
+        imagecopyresampled($dst, $src, 0, 0, 0, 0, $newW, $newH, $origW, $origH);
+
+        match ($mimeType) {
+            'image/png'  => imagepng($dst, $fullPath, 8),
+            'image/webp' => imagewebp($dst, $fullPath, 82),
+            default      => imagejpeg($dst, $fullPath, 82),
+        };
+
+        imagedestroy($src);
+        imagedestroy($dst);
     }
 }

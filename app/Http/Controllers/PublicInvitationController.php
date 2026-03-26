@@ -27,9 +27,9 @@ class PublicInvitationController extends Controller
                 ->first();
         }
 
-        // Track invitation opened
-        if ($guest) {
-            if (!$guest->invitation_opened_at) {
+        // Track invitation opened — skip link-preview bots/crawlers (e.g. WhatsApp)
+        if ($guest && ! $this->isLinkPreviewBot($request)) {
+            if (! $guest->invitation_opened_at) {
                 $guest->update([
                     'invitation_opened_at' => now(),
                     'rsvp_status'          => 'viewed',
@@ -151,6 +151,47 @@ class PublicInvitationController extends Controller
         ]);
 
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * Returns true when the request is from a link-preview crawler/bot rather
+     * than a real interactive browser visit. Prevents WhatsApp & similar
+     * services from triggering false invitation-view records.
+     */
+    private function isLinkPreviewBot(Request $request): bool
+    {
+        $ua = strtolower($request->userAgent() ?? '');
+
+        $signatures = [
+            'facebookexternalhit', // WhatsApp / Facebook link preview
+            'facebot',             // Facebook bot
+            'whatsapp',            // WhatsApp
+            'twitterbot',          // Twitter card fetcher
+            'slackbot',            // Slack
+            'slack-imgproxy',
+            'telegrambot',         // Telegram
+            'linkedinbot',         // LinkedIn
+            'discordbot',          // Discord
+            'applebot',            // Apple
+            'pinterest',           // Pinterest
+            'googlebot',           // Google
+            'bingbot',             // Bing
+            'ia_archiver',         // Wayback Machine
+            'curl/',
+            'wget/',
+            'python-requests',
+            'go-http-client',
+            'okhttp',
+            'java/',
+        ];
+
+        foreach ($signatures as $sig) {
+            if (str_contains($ua, $sig)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function buildCeremonyEvents(Wedding $wedding): array

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { router } from "@inertiajs/react";
 import { Plus, Edit, Trash2, Users, UserPlus, AlertTriangle, X } from "lucide-react";
-import { SectionCard, StatusBadge, Modal, FormField, EmptyState } from "@/components/ui-components";
+import { SectionCard, StatusBadge, FormField, EmptyState } from "@/components/ui-components";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -53,8 +53,8 @@ export const TableManagementPage = ({ tables, guests }: TableManagementPageProps
   const [deleteTable, setDeleteTable] = useState<WeddingTable | null>(null);
   const [assignSearch, setAssignSearch] = useState("");
 
-  const [addForm, setAddForm] = useState({ table_name: "", seat_count: 8 });
-  const [editForm, setEditForm] = useState({ table_name: "", seat_count: 8 });
+  const [addForm, setAddForm] = useState({ table_name: "", seat_count: 10 });
+  const [editForm, setEditForm] = useState({ table_name: "", seat_count: 10 });
 
   const unassignedGuests = guests.filter((g) => !g.table_id && g.rsvp_status !== "declined");
   const totalSeats = tables.reduce((s, t) => s + t.seat_count, 0);
@@ -62,7 +62,7 @@ export const TableManagementPage = ({ tables, guests }: TableManagementPageProps
 
   const handleAddTable = () => {
     router.post("/tables", addForm, {
-      onSuccess: () => { setShowAdd(false); setAddForm({ table_name: "", seat_count: 8 }); },
+      onSuccess: () => { setShowAdd(false); setAddForm({ table_name: "", seat_count: 10 }); },
     });
   };
 
@@ -230,34 +230,47 @@ export const TableManagementPage = ({ tables, guests }: TableManagementPageProps
       </AlertDialog>
 
       {/* Edit/Assign/Delete modals */}
-      <Modal open={!!editTable} onClose={() => setEditTable(null)} title="Edit Table">
-        {editTable && (
-          <div className="space-y-4">
+      <AlertDialog open={!!editTable} onOpenChange={(v) => !v && setEditTable(null)}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Edit Table</AlertDialogTitle>
+            <AlertDialogDescription>Update the table name or seat count below.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-4 py-2">
             <FormField label="Table Name"><input value={editForm.table_name} onChange={(e) => setEditForm((f) => ({ ...f, table_name: e.target.value }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" /></FormField>
             <FormField label="Seat Count"><input type="number" value={editForm.seat_count} onChange={(e) => setEditForm((f) => ({ ...f, seat_count: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" /></FormField>
-            <div className="flex justify-end gap-3 pt-4 border-t border-border">
-              <button onClick={() => setEditTable(null)} className="px-4 py-2 rounded-lg border border-border text-sm font-medium hover:bg-muted">Cancel</button>
-              <button onClick={handleEditTable} className="px-4 py-2 rounded-lg bg-gradient-gold text-primary-foreground text-sm font-medium hover:opacity-90">Save</button>
-            </div>
           </div>
-        )}
-      </Modal>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setEditTable(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleEditTable} className="bg-gradient-gold text-primary-foreground hover:opacity-90">Save</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
-      <Modal open={!!assignTable} onClose={() => { setAssignTable(null); setAssignSearch(""); }} title={`Assign Guests to ${assignTable?.table_name || ""}`} size="lg">
-        <div className="space-y-3">
-          <input value={assignSearch} onChange={(e) => setAssignSearch(e.target.value)} placeholder="Search guests..." className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
-          {filteredAssignGuests.map((g) => (
-            <div key={g.id} className="flex items-center justify-between py-2 px-3 rounded-lg border border-border hover:bg-muted/30 transition-colors">
-              <div>
-                <p className="text-sm font-medium text-foreground">{g.guest_name}</p>
-                <p className="text-xs text-muted-foreground">{g.attending_count} attendees · {g.rsvp_status}</p>
+      <AlertDialog open={!!assignTable} onOpenChange={(v) => { if (!v) { setAssignTable(null); setAssignSearch(""); } }}>
+        <AlertDialogContent className="max-w-lg">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Assign Guests to {assignTable?.table_name || ""}</AlertDialogTitle>
+            <AlertDialogDescription>Select unassigned guests to seat at this table.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-3 max-h-80 overflow-y-auto py-2">
+            <input value={assignSearch} onChange={(e) => setAssignSearch(e.target.value)} placeholder="Search guests..." className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
+            {filteredAssignGuests.map((g) => (
+              <div key={g.id} className="flex items-center justify-between py-2 px-3 rounded-lg border border-border hover:bg-muted/30 transition-colors">
+                <div>
+                  <p className="text-sm font-medium text-foreground">{g.guest_name}</p>
+                  <p className="text-xs text-muted-foreground">{g.attending_count} attendees · {g.rsvp_status}</p>
+                </div>
+                <button onClick={() => handleAssign(g.id)} className="px-3 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors">Assign</button>
               </div>
-              <button onClick={() => handleAssign(g.id)} className="px-3 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors">Assign</button>
-            </div>
-          ))}
-          {filteredAssignGuests.length === 0 && <p className="text-sm text-muted-foreground text-center py-6">All guests are assigned!</p>}
-        </div>
-      </Modal>
+            ))}
+            {filteredAssignGuests.length === 0 && <p className="text-sm text-muted-foreground text-center py-6">All guests are assigned!</p>}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => { setAssignTable(null); setAssignSearch(""); }}>Close</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AlertDialog open={!!deleteTable} onOpenChange={(v) => !v && setDeleteTable(null)}>
         <AlertDialogContent>
