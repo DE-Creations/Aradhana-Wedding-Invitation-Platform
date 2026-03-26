@@ -451,7 +451,9 @@ export const AdminUsersPage = ({
                                     {showCreatePassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                 </button>
                             </div>
-                            {errors?.password && <p className="text-xs text-destructive mt-1">{errors.password}</p>}
+                            {(errors?.password || (createForm.password.length > 0 && createForm.password.length < 8)) && (
+                                <p className="text-xs text-destructive mt-1">{errors?.password ?? "Password must be at least 8 characters."}</p>
+                            )}
                         </FormField>
                         <FormField label="Phone" required>
                             <input
@@ -665,7 +667,9 @@ export const AdminUsersPage = ({
                                         </button>
                                     </div>
                                 )}
-                                {errors?.password && <p className="text-xs text-destructive mt-1">{errors.password}</p>}
+                                {(errors?.password || (changeEditPassword && editForm.password.length > 0 && editForm.password.length < 8)) && (
+                                    <p className="text-xs text-destructive mt-1">{errors?.password ?? "Password must be at least 8 characters."}</p>
+                                )}
                             </FormField>
                             <FormField label="Phone" required>
                                 <input
