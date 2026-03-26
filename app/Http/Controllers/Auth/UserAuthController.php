@@ -19,6 +19,16 @@ class UserAuthController extends Controller
             ])->onlyInput('email');
         }
 
+        if (Auth::user()->status === 'expired') {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()->withErrors([
+                'email' => 'Your account has expired. Please contact our support team.',
+            ])->onlyInput('email');
+        }
+
         $request->session()->regenerate();
 
         Auth::user()->update(['last_login' => now()]);

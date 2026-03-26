@@ -17,12 +17,13 @@ class SendExpiryReminderCommand extends Command
 
     public function handle(): int
     {
-        $targetDate = now()->addDays(3)->toDateString();
+        // Send when expire_date is exactly 72 hours away (±5 minute window).
+        $windowStart = now()->addHours(72)->subMinutes(5);
+        $windowEnd   = now()->addHours(72)->addMinutes(5);
 
-        // Users expiring in exactly 3 days who are not already expired.
         $users = User::query()
             ->whereNotNull('expire_date')
-            ->whereDate('expire_date', $targetDate)
+            ->whereBetween('expire_date', [$windowStart, $windowEnd])
             ->where('status', '!=', 'expired')
             ->get();
 
@@ -41,7 +42,7 @@ class SendExpiryReminderCommand extends Command
             }
 
             if ($this->option('dry-run')) {
-                $this->line("DRY-RUN  User #{$user->id}: {$user->name} → {$user->email} (expires: {$user->expire_date->toDateString()})");
+                $this->line("DRY-RUN  User #{$user->id}: {$user->name} → {$user->email} (expires: {$user->expire_date})");
                 $count++;
                 continue;
             }

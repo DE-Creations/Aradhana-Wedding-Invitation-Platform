@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\ChristianWedding;
+use App\Models\EmailLog;
 use App\Models\MuslimWedding;
 use App\Models\SinhalaWedding;
 use App\Models\TamilWedding;
@@ -102,7 +103,19 @@ class WeddingSettingsController extends Controller
 
         $wedding->update($baseValidated);
 
+        // Capture event date before saving to detect if it changes.
+        $wedding->loadMissing(['sinhalaDetails', 'christianDetails', 'tamilDetails', 'muslimDetails']);
+        $oldEventDate = $wedding->primaryEventDate()?->toDateString();
+
         $this->saveEventDetails($request, $wedding);
+
+        // If the event date changed, reset the big day wishes log so a new email fires on the new date.
+        $wedding->load(['sinhalaDetails', 'christianDetails', 'tamilDetails', 'muslimDetails']);
+        $newEventDate = $wedding->primaryEventDate()?->toDateString();
+
+        if ($oldEventDate !== $newEventDate) {
+            EmailLog::clearFor($user->id, EmailLog::TYPE_BIG_DAY_WISHES);
+        }
 
         return back()->with('success', 'Wedding settings saved successfully.');
     }

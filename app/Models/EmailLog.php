@@ -50,4 +50,15 @@ class EmailLog extends Model
             'sent_at' => now(),
         ]);
     }
+
+    /**
+     * Delete the log entry for a given user + type so the email can be re-sent.
+     * Used when a scheduled date (expiry or event) changes.
+     */
+    public static function clearFor(int $userId, string $type): void
+    {
+        static::where('user_id', $userId)
+            ->where('type', $type)
+            ->delete();
+    }
 }

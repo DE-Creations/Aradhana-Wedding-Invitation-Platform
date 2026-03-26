@@ -185,7 +185,10 @@ class UserManagementController extends Controller
             ]);
         }
 
-        DB::transaction(function () use ($validated, $user, $weddingRequested): void {
+        // Capture the current expiry date before any changes are made.
+        $originalExpireDate = $user->expire_date?->toDateString();
+
+        DB::transaction(function () use ($validated, $user, $weddingRequested, $originalExpireDate): void {
             $shareMemory = (bool) ($validated['share_memory'] ?? false);
             $userPayload = [
                 'name'             => $validated['name'],
@@ -203,6 +206,12 @@ class UserManagementController extends Controller
             }
 
             $user->update($userPayload);
+
+            // If expiry date changed, clear the reminder log so the new date triggers a fresh email.
+            $newExpireDate = $validated['expire_date'] ?: null;
+            if ($originalExpireDate !== $newExpireDate) {
+                EmailLog::clearFor($user->id, EmailLog::TYPE_EXPIRY_REMINDER);
+            }
 
             if ($weddingRequested) {
                 $wedding = $user->wedding;
