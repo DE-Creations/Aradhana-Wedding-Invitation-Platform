@@ -50,10 +50,28 @@
     </table>
     @endif
 
-    <p style="font-size:15px; line-height:1.9; color:#4a3c30; margin-bottom:20px; font-family:Georgia,serif;">
+    <p style="font-size:15px; line-height:1.9; color:#4a3c30; margin-bottom:28px; font-family:Georgia,serif;">
         You can now log in to your Aradhana dashboard to personalise your wedding invitation,
         manage your guest list, and share your love story with the world.
     </p>
+
+    {{-- Login CTA button --}}
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 32px;">
+        <tr>
+            <td align="center">
+                <a href="{{ url('/login') }}"
+                   target="_blank"
+                   style="display:inline-block; padding: 14px 40px;
+                          background: linear-gradient(135deg,#8b6a4a,#c9a96e);
+                          color:#ffffff; font-family:Arial,sans-serif;
+                          font-size:14px; font-weight:600; letter-spacing:1px;
+                          text-decoration:none; border-radius:2px;
+                          text-transform:uppercase;">
+                    Login to Your Dashboard
+                </a>
+            </td>
+        </tr>
+    </table>
 
     <p style="font-size:15px; line-height:1.9; color:#4a3c30; margin-bottom:32px; font-family:Georgia,serif;">
         If you have any questions, our team is always here to help.

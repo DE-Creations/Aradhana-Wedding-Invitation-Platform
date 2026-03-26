@@ -34,10 +34,12 @@
                 <tr>
                     <td align="center"
                         style="background-color:#1a1208; padding: 32px 40px;">
-                        <img src="{{ $message->embed(public_path('images/logo-text.png')) }}"
-                             alt="Aradhana"
-                             width="160"
-                             style="width:160px; height:auto; display:block; margin:0 auto;" />
+                        <a href="https://www.decreations.lk" target="_blank" style="display:inline-block;">
+                            <img src="{{ $message->embed(public_path('images/logo-text.png')) }}"
+                                 alt="Aradhana"
+                                 width="160"
+                                 style="width:160px; height:auto; display:block; margin:0 auto;" />
+                        </a>
                     </td>
                 </tr>
 
@@ -70,6 +72,10 @@
                         </p>
                         <p style="margin-top:16px; font-size:11px; color:#b8a898; letter-spacing:0.5px; text-transform:uppercase; font-family:Arial,sans-serif;">
                             Aradhana &mdash; Premium Wedding Invitations Platform
+                        </p>
+                        <p style="margin-top:8px; font-size:12px; color:#9a8878; font-family:Arial,sans-serif;">
+                            Powered by <a href="https://www.decreations.lk" target="_blank"
+                               style="color:#8b6a4a; text-decoration:none; letter-spacing:0.3px;">DE Creations&reg;</a>
                         </p>
                         <p style="margin-top:8px; font-size:11px; color:#c8b8a8; font-family:Arial,sans-serif;">
                             This email was sent to {{ $recipientEmail ?? '' }}.<br />

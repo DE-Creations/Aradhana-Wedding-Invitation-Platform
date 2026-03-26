@@ -13,9 +13,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule): void {
-        $schedule->command('users:expire')->daily();
-        $schedule->command('mail:big-day-wishes')->dailyAt('08:00');
-        $schedule->command('mail:expiry-reminder')->dailyAt('09:00');
+        $schedule->command('users:expire')->everyFiveMinutes();
+        $schedule->command('mail:big-day-wishes')->everyFiveMinutes();
+        $schedule->command('mail:expiry-reminder')->everyFiveMinutes();
     })
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->validateCsrfTokens(except: [
