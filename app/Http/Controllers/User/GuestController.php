@@ -29,7 +29,7 @@ class GuestController extends Controller
         }
 
         $guests = $wedding->guests()
-            ->with('table:id,table_name')
+            ->with('table:id,table_name', 'rsvp:guest_id,note')
             ->orderBy('guest_name')
             ->get()
             ->map(fn ($g) => [
@@ -45,6 +45,7 @@ class GuestController extends Controller
                 'table_id'            => $g->table_id,
                 'table_name'          => $g->table?->table_name,
                 'guest_token'         => $g->guest_token,
+                'note'                => $g->rsvp?->note,
             ]);
 
         $tables = $wedding->tables()->select('id', 'table_name')->get();

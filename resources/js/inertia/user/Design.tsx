@@ -40,6 +40,7 @@ export default function Design({ coupleMainImage, coupleGalleryImages, ceremonyE
     groom_name: auth.wedding.groom_name,
     event_date: auth.wedding.event_date,
     venue_name: auth.wedding.venue_name,
+    event_token: auth.wedding.event_token,
   } : undefined;
 
   return (
