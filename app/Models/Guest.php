@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
 class Guest extends Model
@@ -50,5 +51,10 @@ class Guest extends Model
     public function table(): BelongsTo
     {
         return $this->belongsTo(WeddingTable::class, 'table_id');
+    }
+
+    public function rsvp(): HasOne
+    {
+        return $this->hasOne(Rsvp::class);
     }
 }

@@ -1,4 +1,4 @@
-﻿import { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { Save, Upload, GripVertical, X, Image as ImageIcon, CalendarIcon, Clock, Trash2 } from "lucide-react";
 import { SectionCard, FormField, ConfirmModal } from "@/components/ui-components";
 import { invitationTemplates, typographyOptions } from "@/data/invitationConstants";

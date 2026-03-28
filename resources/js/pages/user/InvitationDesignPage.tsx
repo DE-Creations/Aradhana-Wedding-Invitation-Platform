@@ -8,6 +8,7 @@ interface WeddingData {
   groom_name?: string;
   event_date?: string;
   venue_name?: string;
+  event_token?: string;
 }
 
 type CeremonyEvent = {
@@ -42,6 +43,7 @@ interface TemplateTheme {
   textToneClassName: string;
   subTextToneClassName: string;
   accentToneClassName: string;
+  btnClassName: string;
   ornament: React.ReactNode;
   topAdornment?: React.ReactNode;
 }
@@ -55,6 +57,7 @@ const templateThemes: Record<string, TemplateTheme> = {
     textToneClassName: "text-[#5E2433]",
     subTextToneClassName: "text-[#7A5561]/85",
     accentToneClassName: "text-[#C76A82]",
+    btnClassName: "bg-[#C76A82] text-white",
     overlay: {
       backgroundImage: `radial-gradient(circle at 18% 18%, rgba(255,255,255,0.75) 0, transparent 26%), radial-gradient(circle at 82% 24%, rgba(226,150,169,0.22) 0, transparent 28%), radial-gradient(circle at 28% 78%, rgba(245,201,171,0.3) 0, transparent 24%), url("data:image/svg+xml,%3Csvg width='180' height='180' viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23D98CA3' stroke-opacity='0.11' stroke-width='2'%3E%3Cpath d='M38 82c10-26 48-33 62-10 14 23-6 51-28 54-26 4-50-26-34-52z'/%3E%3Cpath d='M116 40c8 10 16 22 6 34-10 12-28 8-36-4-7-11-2-28 30-30z'/%3E%3Cpath d='M130 122c-16 10-34 12-48 2-12-8-14-24-2-34 14-13 34-3 44 12 7 16 2 26 6 20z'/%3E%3C/g%3E%3C/svg%3E")`,
       backgroundSize: "auto, auto, auto, 180px 180px",
@@ -83,6 +86,7 @@ const templateThemes: Record<string, TemplateTheme> = {
     textToneClassName: "text-[#495545]",
     subTextToneClassName: "text-[#6D7765]/82",
     accentToneClassName: "text-[#C8A85A]",
+    btnClassName: "bg-[#C8A85A] text-[#2A3020]",
     overlay: {
       backgroundImage: `radial-gradient(circle at 50% 0%, rgba(255,255,255,0.82) 0, transparent 24%), radial-gradient(circle at 20% 78%, rgba(199,168,94,0.14) 0, transparent 22%), url("data:image/svg+xml,%3Csvg width='220' height='220' viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23D2B56C' stroke-opacity='0.12' stroke-width='2'%3E%3Cpath d='M20 140c24-46 58-70 90-70s66 24 90 70'/%3E%3Cpath d='M36 154c20-34 50-54 74-54s54 20 74 54'/%3E%3Cpath d='M60 166c14-20 32-30 50-30s36 10 50 30'/%3E%3Cpath d='M46 112c8-8 18-12 28-12 10 0 20 4 28 12'/%3E%3C/g%3E%3Cg fill='%23D2B56C' fill-opacity='0.11'%3E%3Cpath d='M110 92c8 12 16 18 30 24-14 6-22 12-30 24-8-12-16-18-30-24 14-6 22-12 30-24z'/%3E%3C/g%3E%3C/svg%3E")`,
       backgroundSize: "auto, auto, 220px 220px",
@@ -110,6 +114,7 @@ const templateThemes: Record<string, TemplateTheme> = {
     textToneClassName: "text-[#214B57]",
     subTextToneClassName: "text-[#597984]/82",
     accentToneClassName: "text-[#6BA7B8]",
+    btnClassName: "bg-[#6BA7B8] text-white",
     overlay: {
       backgroundImage: `radial-gradient(circle at 12% 18%, rgba(255,255,255,0.78) 0, transparent 24%), radial-gradient(circle at 82% 82%, rgba(107,167,184,0.18) 0, transparent 22%), url("data:image/svg+xml,%3Csvg width='160' height='160' viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%236BA7B8' stroke-opacity='0.14' stroke-width='2'%3E%3Cpath d='M14 116c24-32 52-48 84-48 20 0 34 4 48 14'/%3E%3Cpath d='M18 130c26-20 54-30 84-30 18 0 32 3 44 10'/%3E%3C/g%3E%3C/svg%3E")`,
       backgroundSize: "auto, auto, 160px 160px",
@@ -137,6 +142,7 @@ const templateThemes: Record<string, TemplateTheme> = {
     textToneClassName: "text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]",
     subTextToneClassName: "text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]",
     accentToneClassName: "text-amber-200 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]",
+    btnClassName: "bg-white/20 backdrop-blur-sm border border-white/50 text-white",
     overlay: {
       backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.7) 100%)`,
       backgroundSize: "cover",
@@ -159,6 +165,7 @@ const templateThemes: Record<string, TemplateTheme> = {
     textToneClassName: "text-[#F9F2E2]",
     subTextToneClassName: "text-[#D8D1C6]/82",
     accentToneClassName: "text-[#F4D37B]",
+    btnClassName: "bg-[#F4D37B] text-[#1B1434]",
     overlay: {
       backgroundImage: `radial-gradient(circle at center, rgba(244,211,123,0.1) 0, transparent 32%), radial-gradient(circle at center, rgba(103,73,158,0.16) 0, transparent 52%), url("data:image/svg+xml,%3Csvg width='220' height='220' viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23F4D37B' stroke-opacity='0.12'%3E%3Ccircle cx='110' cy='110' r='28'/%3E%3Ccircle cx='110' cy='110' r='48'/%3E%3Ccircle cx='110' cy='110' r='68'/%3E%3Cpath d='M110 28l10 22 24 6-18 16 4 24-20-12-20 12 4-24-18-16 24-6z'/%3E%3Cpath d='M110 124l10 22 24 6-18 16 4 24-20-12-20 12 4-24-18-16 24-6z'/%3E%3C/g%3E%3C/svg%3E")`,
       backgroundSize: "auto, auto, 220px 220px",
@@ -186,6 +193,7 @@ const templateThemes: Record<string, TemplateTheme> = {
     textToneClassName: "text-[#3D1018]",
     subTextToneClassName: "text-[#6B3040]/82",
     accentToneClassName: "text-[#C9A96E]",
+    btnClassName: "bg-[#C9A96E] text-[#3D1018]",
     overlay: {
       backgroundImage: `radial-gradient(ellipse at 50% 50%, rgba(255,252,240,0.52) 0, transparent 68%)`,
     },
@@ -315,6 +323,7 @@ const templateThemes: Record<string, TemplateTheme> = {
     textToneClassName: "text-[#2C3E25]",
     subTextToneClassName: "text-[#4E6244]/82",
     accentToneClassName: "text-[#7A9B6A]",
+    btnClassName: "bg-[#7A9B6A] text-white",
     overlay: {
       backgroundImage: `radial-gradient(circle at 50% 20%, rgba(255,255,250,0.55) 0, transparent 50%), radial-gradient(circle at 50% 80%, rgba(200,220,185,0.18) 0, transparent 40%)`,
     },
@@ -402,6 +411,7 @@ const templateThemes: Record<string, TemplateTheme> = {
     textToneClassName: "text-[#7B3A2E]",
     subTextToneClassName: "text-[#9A6457]/84",
     accentToneClassName: "text-[#E58B5B]",
+    btnClassName: "bg-[#E58B5B] text-white",
     overlay: {
       backgroundImage: `radial-gradient(circle at 16% 20%, rgba(255,255,255,0.72) 0, transparent 24%), radial-gradient(circle at 84% 18%, rgba(229,139,91,0.18) 0, transparent 22%), radial-gradient(circle at 68% 84%, rgba(246,198,141,0.28) 0, transparent 24%), url("data:image/svg+xml,%3Csvg width='180' height='180' viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23E58B5B' stroke-opacity='0.14' stroke-width='2'%3E%3Cpath d='M24 132c18-38 52-64 92-70 18-2 34 0 48 6'/%3E%3Cpath d='M44 146c18-22 40-34 66-38 22-2 40 2 58 12'/%3E%3C/g%3E%3C/svg%3E")`,
       backgroundSize: "auto, auto, auto, 180px 180px",
@@ -431,6 +441,7 @@ const templateThemes: Record<string, TemplateTheme> = {
     textToneClassName: "text-[#4A1828]",
     subTextToneClassName: "text-[#7E4255]/84",
     accentToneClassName: "text-[#C9607A]",
+    btnClassName: "bg-[#C9607A] text-white",
     overlay: {
       backgroundImage: `radial-gradient(ellipse at 50% 50%, rgba(255,252,254,0.6) 0, transparent 70%)`,
     },
@@ -536,6 +547,7 @@ const templateThemes: Record<string, TemplateTheme> = {
     textToneClassName: "text-[#F5EEF8]",
     subTextToneClassName: "text-[#D8C8E0]/82",
     accentToneClassName: "text-[#E8C070]",
+    btnClassName: "bg-[#E8C070] text-[#2C1A44]",
     overlay: {
       backgroundImage: `radial-gradient(ellipse at 50% 30%, rgba(200,140,220,0.14) 0, transparent 55%), radial-gradient(ellipse at 50% 85%, rgba(232,192,112,0.10) 0, transparent 40%), url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23C9A0D4' stroke-opacity='0.09' stroke-width='1.5'%3E%3Ccircle cx='100' cy='100' r='38'/%3E%3Ccircle cx='100' cy='100' r='58'/%3E%3Ccircle cx='100' cy='100' r='78'/%3E%3Cpath d='M100 22l6 14 16 4-12 10 2 16-12-8-12 8 2-16-12-10 16-4z'/%3E%3C/g%3E%3C/svg%3E")`,
       backgroundSize: "auto, auto, 200px 200px",
@@ -585,6 +597,7 @@ const templateThemes: Record<string, TemplateTheme> = {
     textToneClassName: "text-[#26201A]",
     subTextToneClassName: "text-[#6A5E52]/82",
     accentToneClassName: "text-[#8C7860]",
+    btnClassName: "bg-[#8C7860] text-white",
     overlay: {
       backgroundImage: `radial-gradient(circle at 50% 50%, rgba(255,255,255,0.45) 0, transparent 70%)`,
     },
@@ -635,6 +648,7 @@ const templateThemes: Record<string, TemplateTheme> = {
     textToneClassName: "text-[#1E3A16]",
     subTextToneClassName: "text-[#4A6840]/84",
     accentToneClassName: "text-[#7EAA5C]",
+    btnClassName: "bg-[#7EAA5C] text-white",
     overlay: {
       backgroundImage: `radial-gradient(circle at 50% 18%, rgba(255,255,255,0.80) 0, transparent 30%), radial-gradient(circle at 50% 82%, rgba(160,210,130,0.16) 0, transparent 26%), url("data:image/svg+xml,%3Csvg width='160' height='160' viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%237EAA5C' stroke-opacity='0.12' stroke-width='1.5'%3E%3Cpath d='M30 130c22-44 54-70 94-70'/%3E%3Cpath d='M48 138c18-28 44-46 76-52'/%3E%3C/g%3E%3C/svg%3E")`,
       backgroundSize: "auto, auto, 160px 160px",
@@ -716,6 +730,7 @@ const templateThemes: Record<string, TemplateTheme> = {
     textToneClassName: "text-[#2E0808]",
     subTextToneClassName: "text-[#6E2428]/84",
     accentToneClassName: "text-[#B8922A]",
+    btnClassName: "bg-[#B8922A] text-white",
     overlay: {
       backgroundImage: `radial-gradient(ellipse at 50% 48%, rgba(255,250,248,0.58) 0, transparent 65%), url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23B8922A' stroke-opacity='0.10' stroke-width='1.4'%3E%3Crect x='12' y='12' width='176' height='176' rx='8'/%3E%3Crect x='22' y='22' width='156' height='156' rx='5'/%3E%3Cpath d='M100 22l5 12 13 2-10 9 2 13-10-6-10 6 2-13-10-9 13-2z'/%3E%3C/g%3E%3C/svg%3E")`,
       backgroundSize: "auto, 200px 200px",
@@ -833,6 +848,7 @@ const templateThemes: Record<string, TemplateTheme> = {
     textToneClassName: "text-[#3A2008]",
     subTextToneClassName: "text-[#7A5020]/84",
     accentToneClassName: "text-[#C88A2A]",
+    btnClassName: "bg-[#C88A2A] text-[#2A1A06]",
     overlay: {
       backgroundImage: `radial-gradient(ellipse at 50% 44%, rgba(255,252,240,0.55) 0, transparent 68%), url("data:image/svg+xml,%3Csvg width='180' height='180' viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23C88A2A' stroke-opacity='0.11' stroke-width='1.5'%3E%3Cpath d='M20 150c28-52 66-80 110-80'/%3E%3Cpath d='M40 158c22-34 54-52 100-58'/%3E%3C/g%3E%3C/svg%3E")`,
       backgroundSize: "auto, 180px 180px",
@@ -924,6 +940,7 @@ const templateThemes: Record<string, TemplateTheme> = {
     textToneClassName: "text-[#28103C]",
     subTextToneClassName: "text-[#604878]/84",
     accentToneClassName: "text-[#9A60BE]",
+    btnClassName: "bg-[#9A60BE] text-white",
     overlay: {
       backgroundImage: `radial-gradient(circle at 50% 10%, rgba(255,255,255,0.78) 0, transparent 28%), radial-gradient(circle at 50% 90%, rgba(168,120,220,0.12) 0, transparent 30%), url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%239A60BE' stroke-opacity='0.10' stroke-width='1.5'%3E%3Ccircle cx='100' cy='100' r='35'/%3E%3Ccircle cx='100' cy='100' r='55'/%3E%3Ccircle cx='100' cy='100' r='75'/%3E%3C/g%3E%3C/svg%3E")`,
       backgroundSize: "auto, auto, 200px 200px",
@@ -1001,6 +1018,7 @@ const templateThemes: Record<string, TemplateTheme> = {
     textToneClassName: "text-[#162436]",
     subTextToneClassName: "text-[#486080]/84",
     accentToneClassName: "text-[#6890B8]",
+    btnClassName: "bg-[#6890B8] text-white",
     overlay: {
       backgroundImage: `radial-gradient(ellipse at 30% 26%, rgba(255,255,255,0.85) 0, transparent 34%), radial-gradient(ellipse at 70% 74%, rgba(180,220,240,0.18) 0, transparent 30%), url("data:image/svg+xml,%3Csvg width='240' height='240' viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%236890B8' stroke-opacity='0.10' stroke-width='1.5'%3E%3Ccircle cx='120' cy='120' r='40'/%3E%3Ccircle cx='120' cy='120' r='65'/%3E%3Ccircle cx='120' cy='120' r='90'/%3E%3Cpath d='M120 30l8 18 20 4-14 14 4 20-18-10-18 10 4-20-14-14 20-4z'/%3E%3C/g%3E%3C/svg%3E")`,
       backgroundSize: "auto, auto, 240px 240px",
@@ -1073,6 +1091,7 @@ const templateThemes: Record<string, TemplateTheme> = {
     textToneClassName: "text-[#EEF2FF]",
     subTextToneClassName: "text-[#BCC8E4]/84",
     accentToneClassName: "text-[#E8C868]",
+    btnClassName: "bg-[#E8C868] text-[#1B1434]",
     overlay: {
       backgroundImage: `radial-gradient(ellipse at 50% 30%, rgba(190,204,232,0.10) 0, transparent 45%), radial-gradient(ellipse at 50% 80%, rgba(232,200,104,0.08) 0, transparent 35%), url("data:image/svg+xml,%3Csvg width='220' height='220' viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23E8C868' stroke-opacity='0.09'%3E%3Crect x='20' y='20' width='180' height='180' rx='4'/%3E%3Crect x='32' y='32' width='156' height='156' rx='3'/%3E%3Cpath d='M110 20v180M20 110h180' stroke-width='0.8'/%3E%3Ccircle cx='110' cy='110' r='28'/%3E%3Ccircle cx='110' cy='110' r='50'/%3E%3C/g%3E%3C/svg%3E")`,
       backgroundSize: "auto, auto, 220px 220px",
@@ -1131,6 +1150,7 @@ const templateThemes: Record<string, TemplateTheme> = {
     textToneClassName: "text-[#3C1410]",
     subTextToneClassName: "text-[#7A4030]/84",
     accentToneClassName: "text-[#E07060]",
+    btnClassName: "bg-[#E07060] text-white",
     overlay: {
       backgroundImage: `radial-gradient(circle at 20% 22%, rgba(255,255,255,0.72) 0, transparent 26%), radial-gradient(circle at 80% 18%, rgba(240,160,144,0.18) 0, transparent 22%), radial-gradient(circle at 60% 82%, rgba(255,200,180,0.26) 0, transparent 24%)`,
       backgroundSize: "auto",
@@ -1224,6 +1244,7 @@ export const InvitationDesignPage = ({
     ? new Date(weddingData.event_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
     : '';
   const venueName = weddingData?.venue_name ?? '';
+  const eventToken = weddingData?.event_token;
   const [previewMode, setPreviewMode] = useState<"mobile" | "desktop">("mobile");
   const selectedTypographyConfig = typographyOptions.find((typo) => typo.key === selectedTypography) || typographyOptions[0];
 
@@ -1843,7 +1864,7 @@ export const InvitationDesignPage = ({
           <div className={`bg-card border-2 border-border rounded-2xl shadow-elevated overflow-hidden transition-all ${previewMode === "mobile" ? "w-[375px]" : "w-full max-w-3xl"}`}>
             <div className="bg-muted/50 px-4 py-2 flex items-center gap-2 border-b border-border">
               <div className="flex gap-1"><div className="w-2.5 h-2.5 rounded-full bg-destructive/30" /><div className="w-2.5 h-2.5 rounded-full bg-warning/30" /><div className="w-2.5 h-2.5 rounded-full bg-success/30" /></div>
-              <div className="flex-1 text-center text-[10px] text-muted-foreground">aradhana.lk/invite/amaya-kavinda-2026</div>
+              <div className="flex-1 text-center text-[10px] text-muted-foreground">{eventToken ? `${window.location.origin}/invitation/${eventToken}` : 'aradhana.lk/invite/preview'}</div>
             </div>
             <div className="bg-muted/20 p-5 md:p-8">
                 <div className={`relative mx-auto aspect-[9/16] overflow-hidden rounded-[1.4rem] ${previewCardWidthClass} ${selectedTheme.previewClassName}`}>
@@ -1854,7 +1875,7 @@ export const InvitationDesignPage = ({
                   <div className="w-full">
                     {renderPreviewHero(selectedTheme)}
                     <div className="mt-4 text-center space-y-2">
-                      <button className="px-6 py-2 rounded-lg bg-gradient-gold text-primary-foreground text-sm font-medium">RSVP Now</button>
+                      <button className={`px-6 py-2 rounded-lg text-sm font-medium ${selectedTheme.btnClassName}`}>Will You Attend?</button>
                       {ceremonyEvents.filter(e => e.google_maps_link).map((event, i) => (
                         <a
                           key={i}

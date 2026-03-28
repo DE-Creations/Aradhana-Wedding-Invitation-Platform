@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { router } from "@inertiajs/react";
-import { Plus, Search, Edit, Trash2, Copy, Users, AlertTriangle, ArrowUpDown, FileSpreadsheet, Download, Upload, X as XIcon } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Copy, Users, AlertTriangle, ArrowUpDown, FileSpreadsheet, Download, Upload, X as XIcon, StickyNote } from "lucide-react";
 import { SectionCard, StatusBadge, FormField, EmptyState } from "@/components/ui-components";
 import {
   AlertDialog,
@@ -27,6 +27,7 @@ interface Guest {
   table_id: string | null;
   table_name: string | null;
   guest_token: string;
+  note: string | null;
 }
 
 interface TableOption {
@@ -54,6 +55,7 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
   const [editGuest, setEditGuest] = useState<Guest | null>(null);
   const [deleteGuest, setDeleteGuest] = useState<Guest | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [viewNoteGuest, setViewNoteGuest] = useState<Guest | null>(null);
 
   // Add form state
   const [addForm, setAddForm] = useState({ guest_name: "", phone: "", max_attendees: 2 });
@@ -173,8 +175,58 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
         {filtered.length === 0 ? (
           <EmptyState icon={<Users className="h-8 w-8" />} title="No guests found" description="Try adjusting your search or filter." />
         ) : (
-          <div className="overflow-x-auto -mx-5 md:-mx-6">
-            <table className="w-full text-sm min-w-[900px]">
+          <>
+            {/* Mobile card view */}
+            <div className="block md:hidden space-y-3">
+              {filtered.map((guest, i) => {
+                const isOverLimit = guest.attending_count > guest.max_attendees;
+                return (
+                  <motion.div
+                    key={guest.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.02 }}
+                    className={`rounded-xl border bg-background p-4 ${isOverLimit ? "border-destructive/40" : "border-border"}`}
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="font-medium text-sm text-foreground truncate">{guest.guest_name}</span>
+                        {isOverLimit && (
+                          <span className="shrink-0 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-destructive/10 text-destructive border border-destructive/20">
+                            <AlertTriangle className="h-2.5 w-2.5" /> Over
+                          </span>
+                        )}
+                      </div>
+                      <StatusBadge status={guest.rsvp_status} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-muted-foreground mb-3">
+                      <div><span className="text-foreground/50">Phone: </span>{guest.phone || "—"}</div>
+                      <div><span className="text-foreground/50">Max: </span>{guest.max_attendees} · <span className="text-foreground/50">Attending: </span>{guest.attending_count}</div>
+                      <div><span className="text-foreground/50">Table: </span>{guest.table_name || "—"}</div>
+                      {guest.responded_at && <div><span className="text-foreground/50">Responded: </span>{guest.responded_at.split(" ")[0]}</div>}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => handleCopyLink(guest)} className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20">
+                        <Copy className="h-3 w-3" /> {copiedId === guest.id ? "Copied!" : "Copy Link"}
+                      </button>
+                      <div className="flex items-center gap-1 ml-auto">
+                        <button onClick={() => openEdit(guest)} className="p-1.5 rounded-md hover:bg-muted"><Edit className="h-3.5 w-3.5 text-muted-foreground" /></button>
+                        {guest.note && (
+                          <button onClick={() => setViewNoteGuest(guest)} className="p-1.5 rounded-md hover:bg-primary/10" title="View note">
+                            <StickyNote className="h-3.5 w-3.5 text-primary" />
+                          </button>
+                        )}
+                        <button onClick={() => setDeleteGuest(guest)} className="p-1.5 rounded-md hover:bg-destructive/10"><Trash2 className="h-3.5 w-3.5 text-destructive" /></button>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* Desktop table view */}
+            <div className="hidden md:block overflow-x-auto -mx-5 md:-mx-6">
+              <table className="w-full text-sm min-w-[900px]">
               <thead>
                 <tr className="border-b border-border">
                   {["Guest Name", "Phone", "Max", "RSVP", "Attending", "Opened", "Clicked", "Responded", "Table", "Link", "Actions"].map((h) => (
@@ -219,6 +271,11 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
                       <td className="py-3 px-3">
                         <div className="flex items-center gap-1">
                           <button onClick={() => openEdit(guest)} className="p-1.5 rounded-md hover:bg-muted"><Edit className="h-3.5 w-3.5 text-muted-foreground" /></button>
+                          {guest.note && (
+                            <button onClick={() => setViewNoteGuest(guest)} className="p-1.5 rounded-md hover:bg-primary/10" title="View note">
+                              <StickyNote className="h-3.5 w-3.5 text-primary" />
+                            </button>
+                          )}
                           <button onClick={() => setDeleteGuest(guest)} className="p-1.5 rounded-md hover:bg-destructive/10"><Trash2 className="h-3.5 w-3.5 text-destructive" /></button>
                         </div>
                       </td>
@@ -228,6 +285,7 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
               </tbody>
             </table>
           </div>
+          </>
         )}
       </SectionCard>
 
@@ -338,6 +396,26 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setEditGuest(null)}>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleEdit} className="bg-gradient-gold text-primary-foreground hover:opacity-90">Save</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* View Note Dialog */}
+      <AlertDialog open={!!viewNoteGuest} onOpenChange={(v) => !v && setViewNoteGuest(null)}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <StickyNote className="h-4 w-4 text-primary" />
+              Note from {viewNoteGuest?.guest_name}
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="mt-3 rounded-lg bg-muted/50 border border-border p-4 text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                {viewNoteGuest?.note}
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setViewNoteGuest(null)}>Close</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
