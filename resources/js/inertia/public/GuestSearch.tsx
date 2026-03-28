@@ -1,20 +1,18 @@
 import { usePage } from '@inertiajs/react';
-import { QRGuestSearchPage } from '@/pages/public/QRGuestSearchPage';
+import { FindTablePage } from '@/pages/public/FindTablePage';
 
 export default function GuestSearch() {
-  const { wedding, token, tableManagement, shareMemory } = usePage<{
+  const { wedding, token, tableManagement } = usePage<{
     wedding: any;
     token: string;
     tableManagement: boolean;
-    shareMemory: boolean;
   }>().props;
 
   return (
-    <QRGuestSearchPage
+    <FindTablePage
       wedding={wedding}
       token={token ?? ''}
       tableManagement={tableManagement}
-      shareMemory={shareMemory}
     />
   );
 }
