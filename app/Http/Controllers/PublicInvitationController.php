@@ -52,16 +52,21 @@ class PublicInvitationController extends Controller
 
         return Inertia::render('public/Invitation', [
             'wedding' => [
-                'bride_name'          => $wedding->bride_name,
-                'groom_name'          => $wedding->groom_name,
-                'bride_parents_names' => $wedding->bride_parents_names,
-                'groom_parents_names' => $wedding->groom_parents_names,
-                'wedding_type_id'     => (string) ($wedding->wedding_type_id ?? ''),
-                'rsvp_deadline'       => $wedding->rsvp_deadline?->toDateString(),
-                'contact_number_1'    => $wedding->contact_number_1,
-                'contact_number_2'    => $wedding->contact_number_2,
-                'template_key'        => $wedding->template_key ?? 'faded-picture-overlay',
-                'typography_key'      => $wedding->typography_key ?? 'classic',
+                'bride_name'               => $wedding->bride_name,
+                'groom_name'               => $wedding->groom_name,
+                'bride_parents_names'      => $wedding->bride_parents_names,
+                'groom_parents_names'      => $wedding->groom_parents_names,
+                'wedding_type_id'          => (string) ($wedding->wedding_type_id ?? ''),
+                'rsvp_deadline'            => $wedding->rsvp_deadline?->toDateString(),
+                'contact_number_1'         => $wedding->contact_number_1,
+                'contact_number_2'         => $wedding->contact_number_2,
+                'template_key'             => $wedding->template_key ?? 'faded-picture-overlay',
+                'typography_key'           => $wedding->typography_key ?? 'classic',
+                'background_music_url'     => $wedding->background_music_path
+                    ? asset('storage/' . $wedding->background_music_path)
+                    : null,
+                'background_music_label'   => $wedding->background_music_label,
+                'background_music_enabled' => (bool) $wedding->background_music_enabled,
             ],
             'ceremonyEvents'     => $this->buildCeremonyEvents($wedding),
             'googleMapsLink'     => null,

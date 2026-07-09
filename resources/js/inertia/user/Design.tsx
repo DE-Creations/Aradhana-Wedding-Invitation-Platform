@@ -7,6 +7,9 @@ interface DesignProps {
   coupleMainImage: string | null;
   coupleGalleryImages: string[];
   ceremonyEvents: CeremonyEvent[];
+  backgroundMusicUrl?: string | null;
+  backgroundMusicLabel?: string | null;
+  backgroundMusicEnabled?: boolean;
 }
 
 interface CeremonyEvent {
@@ -28,7 +31,7 @@ interface AuthWedding {
   venue_name?: string;
 }
 
-export default function Design({ coupleMainImage, coupleGalleryImages, ceremonyEvents }: DesignProps) {
+export default function Design({ coupleMainImage, coupleGalleryImages, ceremonyEvents, backgroundMusicUrl, backgroundMusicLabel, backgroundMusicEnabled }: DesignProps) {
   const { auth } = usePage<{ auth: { wedding: AuthWedding | null } }>().props;
   const [preferences, setPreferences] = useState(() => ({
     templateKey: sessionStorage.getItem('invitation.templateKey') ?? auth?.wedding?.template_key ?? 'faded-picture-overlay',
@@ -63,6 +66,9 @@ export default function Design({ coupleMainImage, coupleGalleryImages, ceremonyE
         coupleMainImage={coupleMainImage ?? ''}
         coupleGalleryImages={coupleGalleryImages}
         ceremonyEvents={ceremonyEvents}
+        backgroundMusicUrl={backgroundMusicUrl}
+        backgroundMusicLabel={backgroundMusicLabel}
+        backgroundMusicEnabled={backgroundMusicEnabled}
         onTemplateChange={(templateKey) => {
           sessionStorage.setItem('invitation.templateKey', templateKey);
           setPreferences((current) => ({ ...current, templateKey }));

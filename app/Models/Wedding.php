@@ -25,15 +25,20 @@ class Wedding extends Model
         'contact_number_1',
         'contact_number_2',
         'template_key',
+        'template_category',
         'typography_key',
         'main_image',
+        'background_music_path',
+        'background_music_label',
+        'background_music_enabled',
         'status',
     ];
 
     protected function casts(): array
     {
         return [
-            'rsvp_deadline' => 'date',
+            'rsvp_deadline'            => 'date',
+            'background_music_enabled' => 'boolean',
         ];
     }
 

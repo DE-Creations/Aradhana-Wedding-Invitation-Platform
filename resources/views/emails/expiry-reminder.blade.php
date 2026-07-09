@@ -19,7 +19,7 @@
 
     {{-- Main body --}}
     <p style="font-size:16px; line-height:1.8; color:#3a3028; margin-bottom:20px; font-family:Georgia,serif;">
-        Dear <strong>{{ $user->name }}</strong>,
+        Dear <strong>{{ $user->name }}</strong>@if(isset($wedding) && $wedding) <span style="color:#8b6a4a;">({{ $wedding->bride_name }} &amp; {{ $wedding->groom_name }})</span>@endif,
     </p>
 
     <p style="font-size:15px; line-height:1.9; color:#4a3c30; margin-bottom:20px; font-family:Georgia,serif;">

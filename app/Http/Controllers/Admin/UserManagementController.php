@@ -149,7 +149,7 @@ class UserManagementController extends Controller
         $newUserId = User::where('email', $validated['email'])->value('id');
         if ($newUserId) {
             $createdUser = User::with('wedding')->find($newUserId);
-            Mail::to($createdUser->email)
+            Mail::to($createdUser->email, $createdUser->name)
                 ->send(new WelcomeClientMail($createdUser, $createdUser->wedding));
             EmailLog::record($newUserId, EmailLog::TYPE_WELCOME);
         }

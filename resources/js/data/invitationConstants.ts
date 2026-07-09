@@ -1,5 +1,8 @@
 // Static configuration — these are design options, not DB data.
 
+export type TemplateCategoryKey = "solid" | "animated";
+export type AnimationKey = "celestial-cosmos" | "cherry-blossom-fall" | "golden-dust" | "emerald-vine" | "moonlit-romance";
+
 export interface InvitationTemplate {
   id: string;
   key: string;
@@ -8,6 +11,8 @@ export interface InvitationTemplate {
   description: string;
   colors: string[];
   bgStyle: string;
+  categoryKey: TemplateCategoryKey;
+  animation?: AnimationKey;
 }
 
 export interface TypographyOption {
@@ -21,6 +26,11 @@ export interface TypographyOption {
   sampleClass: string;
 }
 
+export const templateCategories = [
+  { key: "solid" as const,    name: "Solid Designs",    description: "Timeless static layouts" },
+  { key: "animated" as const, name: "Animated Designs", description: "Living invitations with motion" },
+];
+
 export const invitationTemplates: InvitationTemplate[] = [
   {
     id: "tmpl-1",
@@ -30,6 +40,7 @@ export const invitationTemplates: InvitationTemplate[] = [
     description: "Soft blush florals with romantic rose clip art, curved arch lines, and a dreamy garden-card feel.",
     colors: ["#FFF7F6", "#C76A82", "#F5D6DA", "#5E2433"],
     bgStyle: "bg-gradient-to-br from-[#FFF7F6] via-[#F7E2E6] to-[#F5D6DA]",
+    categoryKey: "solid",
   },
   {
     id: "tmpl-2",
@@ -39,6 +50,7 @@ export const invitationTemplates: InvitationTemplate[] = [
     description: "A cinematic photo-led invitation with dark glass layers so names and details stay readable even over bright images.",
     colors: ["#000000", "#FFFFFF", "#D4A853", "#1C1C1C"],
     bgStyle: "bg-stone-900",
+    categoryKey: "solid",
   },
   {
     id: "tmpl-3",
@@ -48,6 +60,7 @@ export const invitationTemplates: InvitationTemplate[] = [
     description: "Pearl, sage, and gold with Sri Lankan moonstone-style curved bands, lotus symbolism, and flowing vine work.",
     colors: ["#FBF8EF", "#D2B56C", "#DDE6D6", "#4A5A4A"],
     bgStyle: "bg-gradient-to-tr from-[#FBF8EF] via-[#EEF3EA] to-[#DDE6D6]",
+    categoryKey: "solid",
   },
   {
     id: "tmpl-4",
@@ -57,6 +70,7 @@ export const invitationTemplates: InvitationTemplate[] = [
     description: "Sea-glass aqua, white lilies, and flowing wave lines for a fresh tropical Sri Lankan celebration mood.",
     colors: ["#F3FEFF", "#6BA7B8", "#D4F1F4", "#214B57"],
     bgStyle: "bg-gradient-to-b from-[#F3FEFF] via-[#E1F5F7] to-[#D4F1F4]",
+    categoryKey: "solid",
   },
   {
     id: "tmpl-5",
@@ -66,6 +80,7 @@ export const invitationTemplates: InvitationTemplate[] = [
     description: "A dark ornamental invitation with layered mandala geometry, mehndi-style line art, and a rich jewel-toned night palette.",
     colors: ["#1B1434", "#F4D37B", "#0D1022", "#F9F2E2"],
     bgStyle: "bg-gradient-to-tl from-[#1B1434] via-[#121933] to-[#0D1022]",
+    categoryKey: "solid",
   },
   {
     id: "tmpl-6",
@@ -75,6 +90,7 @@ export const invitationTemplates: InvitationTemplate[] = [
     description: "Coral, saffron, and apricot tones with curved floral vines, rose-lily clip art, and a festive tropical glow.",
     colors: ["#FFF0E2", "#E58B5B", "#F6C68D", "#7B3A2E"],
     bgStyle: "bg-[linear-gradient(135deg,#FFF0E2,#F6C68D)]",
+    categoryKey: "solid",
   },
   {
     id: "tmpl-7",
@@ -84,6 +100,7 @@ export const invitationTemplates: InvitationTemplate[] = [
     description: "Opulent crimson roses and lush emerald leaves cascade from every corner across a warm ivory canvas — a bold declaration of romantic grandeur.",
     colors: ["#FFF8EE", "#8B1A3A", "#C9A96E", "#2E6B45"],
     bgStyle: "bg-[linear-gradient(180deg,#FFF8EE,#F7E5CC)]",
+    categoryKey: "solid",
   },
   {
     id: "tmpl-8",
@@ -93,6 +110,7 @@ export const invitationTemplates: InvitationTemplate[] = [
     description: "Delicate sage eucalyptus sprigs and fern fronds frame a warm linen canvas — airy, organic, and quietly beautiful for those who love understated natural elegance.",
     colors: ["#FEFCF5", "#6A8C5E", "#B5C4A5", "#2C3E25"],
     bgStyle: "bg-[linear-gradient(180deg,#FEFCF5,#EBF0E4)]",
+    categoryKey: "solid",
   },
   {
     id: "tmpl-9",
@@ -102,6 +120,7 @@ export const invitationTemplates: InvitationTemplate[] = [
     description: "Lush blush peony clusters cascade from every corner of a pure ivory canvas — opulent, feminine, and radiantly grandiose for the most romantic of celebrations.",
     colors: ["#FFF5F8", "#C9607A", "#F9C8D4", "#2E5A36"],
     bgStyle: "bg-[linear-gradient(160deg,#FFF5F8,#F9E8ED)]",
+    categoryKey: "solid",
   },
   {
     id: "tmpl-10",
@@ -111,6 +130,7 @@ export const invitationTemplates: InvitationTemplate[] = [
     description: "A richly draped plum-violet invitation with gold star flourishes, geometric mandala rings, and a cinematic couple photo framed in ornate velvet luxury.",
     colors: ["#2C1A2E", "#E8C070", "#C9A0D4", "#F5EEF8"],
     bgStyle: "bg-[linear-gradient(170deg,#2C1A2E,#5C2E5A)]",
+    categoryKey: "solid",
   },
   {
     id: "tmpl-11",
@@ -120,6 +140,7 @@ export const invitationTemplates: InvitationTemplate[] = [
     description: "Hand-drawn sketch-style botanical line art on warm linen — deeply understated and artful, for couples who believe simplicity is the ultimate sophistication.",
     colors: ["#FEFEFE", "#8C7860", "#C8B89A", "#26201A"],
     bgStyle: "bg-[linear-gradient(180deg,#FEFEFE,#F2EDE6)]",
+    categoryKey: "solid",
   },
   {
     id: "tmpl-12",
@@ -129,6 +150,7 @@ export const invitationTemplates: InvitationTemplate[] = [
     description: "A living floral archway of roses and climbing vines frames your names beneath a pastel garden sky — fresh, joyful, and bursting with natural romance.",
     colors: ["#F4FBF0", "#7EAA5C", "#D8EDD0", "#1E3A16"],
     bgStyle: "bg-[linear-gradient(180deg,#F4FBF0,#D8EDD0)]",
+    categoryKey: "solid",
   },
   {
     id: "tmpl-13",
@@ -138,6 +160,7 @@ export const invitationTemplates: InvitationTemplate[] = [
     description: "Opulent deep crimson roses and ivory blooms with gold-tipped leaves border a warm ivory canvas — bold, aristocratic, and sumptuously elegant.",
     colors: ["#FFFBF5", "#C43040", "#B8922A", "#1E4228"],
     bgStyle: "bg-[linear-gradient(160deg,#FFFBF5,#FAE8E4)]",
+    categoryKey: "solid",
   },
   {
     id: "tmpl-14",
@@ -147,6 +170,7 @@ export const invitationTemplates: InvitationTemplate[] = [
     description: "Rich amber warmth meets hand-pressed autumn foliage — golden maple leaves and russet acorns frame a creamy ivory invitation with harvest-season romance.",
     colors: ["#FFF8EC", "#D4862A", "#C85020", "#2A3A1A"],
     bgStyle: "bg-[linear-gradient(165deg,#FFF8EC,#F3E0A8)]",
+    categoryKey: "solid",
   },
   {
     id: "tmpl-15",
@@ -156,6 +180,7 @@ export const invitationTemplates: InvitationTemplate[] = [
     description: "Soft lavender mist and cascading wisteria clusters drift over a pale violet canvas — dreamy, delicate, and perfectly evocative of a French countryside wedding.",
     colors: ["#FAF5FF", "#A080C8", "#7A5A8A", "#2E1A3A"],
     bgStyle: "bg-[linear-gradient(175deg,#FAF5FF,#E6D8F5)]",
+    categoryKey: "solid",
   },
   {
     id: "tmpl-16",
@@ -165,6 +190,7 @@ export const invitationTemplates: InvitationTemplate[] = [
     description: "Flowing ribbon curves and delicate pearl bead strands cascade over a misty silver-white canvas — serene, polished, and ethereally timeless.",
     colors: ["#FAFAFA", "#D8DCE4", "#8892A0", "#2A3040"],
     bgStyle: "bg-[linear-gradient(155deg,#FDFEFF,#E8F2FB)]",
+    categoryKey: "solid",
   },
   {
     id: "tmpl-17",
@@ -174,6 +200,7 @@ export const invitationTemplates: InvitationTemplate[] = [
     description: "Majestic deep indigo panels adorned with burnished gold scroll corners and a regal crest centerpiece — commanding, opulent, and powerfully grand.",
     colors: ["#0E1628", "#1A2650", "#E8ECF4", "#C8A84A"],
     bgStyle: "bg-[linear-gradient(160deg,#0E1A38,#1C2850)]",
+    categoryKey: "solid",
   },
   {
     id: "tmpl-18",
@@ -183,6 +210,64 @@ export const invitationTemplates: InvitationTemplate[] = [
     description: "Vibrant hibiscus blooms and scattered coral petals drift across a warm blush-peach canvas — joyful, tropical, and radiantly summery.",
     colors: ["#FFF4F0", "#E8705A", "#C45A3A", "#F5C4B0"],
     bgStyle: "bg-[linear-gradient(170deg,#FFF4F0,#FFD4C4)]",
+    categoryKey: "solid",
+  },
+
+  // ── Animated Designs ──────────────────────────────────────────────────────
+  {
+    id: "tmpl-19",
+    key: "celestial-cosmos",
+    name: "Celestial Cosmos",
+    label: "Starfield & Gold",
+    description: "An immersive 3D starfield in deep navy with GSAP-powered text reveals and gold accents — a celestial journey for couples whose love story was written in the stars.",
+    colors: ["#070B1A", "#D4A843", "#1A2240", "#F5ECD5"],
+    bgStyle: "bg-[radial-gradient(ellipse_at_top,#1A2240,#070B1A)]",
+    categoryKey: "animated",
+    animation: "celestial-cosmos",
+  },
+  {
+    id: "tmpl-20",
+    key: "cherry-blossom-fall",
+    name: "Cherry Blossom Fall",
+    label: "Petal Cascade",
+    description: "Hundreds of delicate pink petals drift and spiral down the screen — with scroll-triggered fade-in sections gliding in from left and right for each ceremony detail.",
+    colors: ["#FFF0F5", "#E8A0B4", "#8B2252", "#F5D0DC"],
+    bgStyle: "bg-[linear-gradient(180deg,#FFF0F5,#FFD6E8)]",
+    categoryKey: "animated",
+    animation: "cherry-blossom-fall",
+  },
+  {
+    id: "tmpl-21",
+    key: "golden-dust",
+    name: "Golden Dust",
+    label: "Luxe Particles",
+    description: "Golden dust particles shimmer and float across a warm ivory canvas — with dramatic zoom-in reveals and staggered content animations that build toward your special day.",
+    colors: ["#FEFAEF", "#C9943C", "#7D5A28", "#FFF5DD"],
+    bgStyle: "bg-[linear-gradient(160deg,#FEFAEF,#FFF0C8)]",
+    categoryKey: "animated",
+    animation: "golden-dust",
+  },
+  {
+    id: "tmpl-22",
+    key: "emerald-vine",
+    name: "Emerald Vine",
+    label: "Living Botanicals",
+    description: "SVG vines draw themselves across a deep forest-green canvas as you scroll — each section blooms into view from opposite sides for a nature-inspired, luxuriously animated celebration.",
+    colors: ["#0D2B1E", "#4CAF78", "#E8F5EC", "#8DBF9C"],
+    bgStyle: "bg-[linear-gradient(160deg,#0D2B1E,#1A4030)]",
+    categoryKey: "animated",
+    animation: "emerald-vine",
+  },
+  {
+    id: "tmpl-23",
+    key: "moonlit-romance",
+    name: "Moonlit Romance",
+    label: "3D Moon & Stars",
+    description: "A glowing 3D moon rises over a deep indigo sky as floating orbs drift in parallax — Lenis smooth scroll reveals each section with cinematic elegance and silver shimmer.",
+    colors: ["#0E0A1E", "#C8A2E0", "#2A1B4A", "#F0E6FF"],
+    bgStyle: "bg-[radial-gradient(ellipse_at_50%_20%,#2A1B4A,#0E0A1E)]",
+    categoryKey: "animated",
+    animation: "moonlit-romance",
   },
 ];
 
