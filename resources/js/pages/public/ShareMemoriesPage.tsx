@@ -24,6 +24,40 @@ interface ShareMemoriesPageProps {
 }
 
 const MAX_MB = 15;
+const COMPRESS_MAX_PX = 1280;
+const COMPRESS_QUALITY = 0.82;
+const UPLOAD_TIMEOUT_MS = 60_000;
+const UPLOAD_MAX_RETRIES = 2;
+
+/** Compress an image File using Canvas API. Skips compression for GIF. */
+async function compressImage(file: File): Promise<File> {
+  if (file.type === "image/gif") return file;
+  return new Promise((resolve) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      const { naturalWidth: w, naturalHeight: h } = img;
+      const scale = Math.min(1, COMPRESS_MAX_PX / Math.max(w, h));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(w * scale);
+      canvas.height = Math.round(h * scale);
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { resolve(file); return; }
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(
+        (blob) => {
+          if (!blob || blob.size >= file.size) { resolve(file); return; }
+          resolve(new File([blob], file.name.replace(/\.[^.]+$/, ".jpg"), { type: "image/jpeg" }));
+        },
+        "image/jpeg",
+        COMPRESS_QUALITY
+      );
+    };
+    img.onerror = () => { URL.revokeObjectURL(objectUrl); resolve(file); };
+    img.src = objectUrl;
+  });
+}
 
 export const ShareMemoriesPage = ({
   wedding,
@@ -84,26 +118,38 @@ export const ShareMemoriesPage = ({
   };
 
   const addFiles = (incoming: FileList | File[]) => {
-    setUploadError("");
     const list = Array.from(incoming);
     const oversized = list.filter((f) => f.size > MAX_MB * 1024 * 1024);
-    if (oversized.length) {
-      setUploadError(`${oversized.length} file(s) exceed ${MAX_MB} MB and were skipped.`);
-    }
     const valid = list.filter((f) => f.size <= MAX_MB * 1024 * 1024);
-    setPendingFiles((prev) => {
-      const combined = [...prev, ...valid].slice(0, MAX_IMAGES);
-      setPreviewUrls(combined.map((f) => URL.createObjectURL(f)));
-      return combined;
-    });
+
+    // Remaining slots = total quota minus already-uploaded minus already-queued
+    const remaining = MAX_IMAGES - guestImageCount - pendingFiles.length;
+    const toAdd = valid.slice(0, Math.max(0, remaining));
+
+    const msgs: string[] = [];
+    if (oversized.length) {
+      msgs.push(`${oversized.length} file${oversized.length !== 1 ? "s" : ""} exceed ${MAX_MB} MB and were skipped.`);
+    }
+    if (valid.length > remaining && remaining > 0) {
+      msgs.push(
+        `You selected ${valid.length} photo${valid.length !== 1 ? "s" : ""} but only ${remaining} slot${remaining !== 1 ? "s" : ""} remain — ${valid.length - toAdd.length} extra photo${valid.length - toAdd.length !== 1 ? "s" : ""} removed.`
+      );
+    }
+    if (valid.length > 0 && remaining <= 0) {
+      msgs.push("You have reached your upload limit for this event.");
+    }
+    setUploadError(msgs.join(" "));
+
+    if (toAdd.length === 0) return;
+    const combined = [...pendingFiles, ...toAdd];
+    setPendingFiles(combined);
+    setPreviewUrls(combined.map((f) => URL.createObjectURL(f)));
   };
 
   const removeFile = (idx: number) => {
-    setPendingFiles((prev) => {
-      const next = prev.filter((_, i) => i !== idx);
-      setPreviewUrls(next.map((f) => URL.createObjectURL(f)));
-      return next;
-    });
+    const next = pendingFiles.filter((_, i) => i !== idx);
+    setPendingFiles(next);
+    setPreviewUrls(next.map((f) => URL.createObjectURL(f)));
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -114,35 +160,67 @@ export const ShareMemoriesPage = ({
 
   const handleUpload = async () => {
     if (!selectedGuest || pendingFiles.length === 0) return;
+
+    // Guard: enforce remaining capacity before starting (prevents mobile zero-upload)
+    const remaining = MAX_IMAGES - guestImageCount;
+    if (remaining <= 0) {
+      setUploadError("You have already reached your upload limit for this event.");
+      return;
+    }
+    const filesToUpload = pendingFiles.slice(0, remaining);
+
     setIsUploading(true);
     setUploadError("");
     setUploadProgress(0);
     setUploadCurrent(0);
-    setUploadTotal(pendingFiles.length);
+    setUploadTotal(filesToUpload.length);
 
     const csrfMeta = document.querySelector<HTMLMetaElement>("meta[name='csrf-token']");
     const headers = csrfMeta ? { "X-CSRF-TOKEN": csrfMeta.content } : {};
     let lastNewCount: number | undefined;
     const errors: string[] = [];
 
-    for (let i = 0; i < pendingFiles.length; i++) {
+    for (let i = 0; i < filesToUpload.length; i++) {
       setUploadCurrent(i + 1);
       setUploadProgress(0);
-      const form = new FormData();
-      form.append("token", token);
-      form.append("guest_id", selectedGuest);
-      form.append("images[]", pendingFiles[i]);
-      try {
-        const res = await axios.post("/share-memories/upload", form, {
-          headers,
-          onUploadProgress: (e) => {
-            if (e.total) setUploadProgress(Math.round((e.loaded / e.total) * 100));
-          },
-        });
-        if (res.data.new_count !== undefined) lastNewCount = res.data.new_count;
-      } catch (err: any) {
-        const msg = err.response?.data?.error || err.message || "Upload failed.";
-        errors.push(`Photo ${i + 1}: ${msg}`);
+
+      // Compress before upload to reduce size and upload time
+      const compressed = await compressImage(filesToUpload[i]);
+
+      let attempt = 0;
+      let succeeded = false;
+      while (attempt <= UPLOAD_MAX_RETRIES && !succeeded) {
+        if (attempt > 0) {
+          await new Promise((r) => setTimeout(r, 1000 * attempt)); // back-off
+        }
+        const form = new FormData();
+        form.append("token", token);
+        form.append("guest_id", selectedGuest);
+        form.append("images[]", compressed);
+        try {
+          const res = await axios.post("/share-memories/upload", form, {
+            headers,
+            timeout: UPLOAD_TIMEOUT_MS,
+            onUploadProgress: (e) => {
+              if (e.total) setUploadProgress(Math.round((e.loaded / e.total) * 100));
+            },
+          });
+          if (res.data.new_count !== undefined) lastNewCount = res.data.new_count;
+          succeeded = true;
+        } catch (err: any) {
+          // Don't retry on 4xx (quota/validation errors — retrying won't help)
+          const status = err.response?.status;
+          if (status && status >= 400 && status < 500) {
+            const msg = err.response?.data?.error || err.message || "Upload failed.";
+            errors.push(`Photo ${i + 1}: ${msg}`);
+            break;
+          }
+          attempt++;
+          if (attempt > UPLOAD_MAX_RETRIES) {
+            const msg = err.response?.data?.error || err.message || "Upload failed after retries.";
+            errors.push(`Photo ${i + 1}: ${msg}`);
+          }
+        }
       }
     }
 
@@ -153,7 +231,7 @@ export const ShareMemoriesPage = ({
     setUploadTotal(0);
 
     if (errors.length > 0) setUploadError(errors.join(" · "));
-    if (errors.length < pendingFiles.length) {
+    if (errors.length < filesToUpload.length) {
       setUploadSuccess(true);
       setPendingFiles([]);
       setPreviewUrls([]);
@@ -383,7 +461,7 @@ export const ShareMemoriesPage = ({
           )}
         </div>
       </div>
-      <div className="sticky bottom-0 left-0 w-full">
+      <div className="w-full border-t border-border/40 mt-8">
         <WatermarkFooter />
       </div>
     </>

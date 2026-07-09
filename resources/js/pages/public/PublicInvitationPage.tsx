@@ -3,6 +3,8 @@ import { Heart, MapPin, Clock, Calendar, ChevronLeft, ChevronRight, Phone, X, Ch
 import { typographyOptions } from "@/data/invitationConstants";
 import axios from "axios";
 import { motion } from "framer-motion";
+import { AnimatedDesignRenderer, ANIMATED_DESIGN_KEYS } from "@/components/invitation/animated/AnimatedDesignRenderer";
+import { MusicControl } from "@/components/invitation/MusicControl";
 
 interface WeddingData {
   bride_name: string;
@@ -15,6 +17,9 @@ interface WeddingData {
   template_key: string;
   typography_key: string;
   rsvp_deadline?: string | null;
+  background_music_url?: string | null;
+  background_music_label?: string | null;
+  background_music_enabled?: boolean;
 }
 
 interface CeremonyEvent {
@@ -967,6 +972,8 @@ const invitationThemes: Record<string, InvitationTheme> = {
       </>
     ),
   },
+
+  // ── Animated templates ───────────────────────────────────────────────────
 };
 
 export const PublicInvitationPage = ({
@@ -1575,10 +1582,40 @@ export const PublicInvitationPage = ({
     setTimeout(() => setShowRSVP(false), 2000);
   };
 
+  // Animated designs render through a dedicated renderer (full-page, no static frame)
+  if (ANIMATED_DESIGN_KEYS.has(templateKey)) {
+    return (
+      <>
+        {onBack && (
+          <button onClick={onBack} className="fixed top-4 left-4 z-50 rounded-full border border-white/20 bg-black/30 px-3 py-1.5 text-sm text-white shadow-lg backdrop-blur-sm">← Back</button>
+        )}
+        {w.background_music_url && w.background_music_enabled && (
+          <MusicControl src={w.background_music_url} label={w.background_music_label} />
+        )}
+        <AnimatedDesignRenderer
+          templateKey={templateKey}
+          typographyKey={typographyKey}
+          wedding={w}
+          guest={guest}
+          eventToken={eventToken}
+          coupleMainImage={coupleMainImage}
+          coupleGalleryImages={coupleGalleryImages}
+          ceremonyEvents={ceremonyEvents}
+          onBack={onBack}
+        />
+      </>
+    );
+  }
+
   return (
     <div className={`relative min-h-screen overflow-hidden ${selectedTheme.pageClassName}`}>
       {onBack && (
         <button onClick={onBack} className={`fixed top-4 left-4 z-50 rounded-full border px-3 py-1.5 text-sm shadow-card backdrop-blur-sm ${navigationButtonClassName}`}>← Back</button>
+      )}
+
+      {/* Background music control — fixed bottom-right, shown for every template */}
+      {w.background_music_url && w.background_music_enabled && (
+        <MusicControl src={w.background_music_url} label={w.background_music_label} />
       )}
 
       <div className="relative z-10 px-4 py-10 md:px-8 md:py-12">

@@ -50,10 +50,16 @@ class WeddingSettingsController extends Controller
                 'rsvp_deadline'       => $wedding->rsvp_deadline?->toDateString() ?? '',
                 'contact_number_1'    => $wedding->contact_number_1 ?? '',
                 'contact_number_2'    => $wedding->contact_number_2 ?? '',
-                'template_key'        => $wedding->template_key ?? '',
-                'typography_key'      => $wedding->typography_key ?? '',
-                'status'              => $wedding->status ?? 'draft',
-                'main_image_url'      => $this->resolveImageUrl($wedding->main_image),
+                'template_key'             => $wedding->template_key ?? '',
+                'template_category'        => $wedding->template_category ?? 'solid',
+                'typography_key'           => $wedding->typography_key ?? '',
+                'status'                   => $wedding->status ?? 'draft',
+                'main_image_url'           => $this->resolveImageUrl($wedding->main_image),
+                'background_music_url'     => $wedding->background_music_path
+                    ? asset('storage/' . $wedding->background_music_path)
+                    : null,
+                'background_music_label'   => $wedding->background_music_label,
+                'background_music_enabled' => (bool) $wedding->background_music_enabled,
             ];
 
             $eventDetails = $this->loadEventDetails($wedding);
@@ -91,14 +97,16 @@ class WeddingSettingsController extends Controller
         }
 
         $baseValidated = $request->validate([
-            'bride_parents_names' => ['nullable', 'string', 'max:255'],
-            'groom_parents_names' => ['nullable', 'string', 'max:255'],
-            'rsvp_deadline'       => ['nullable', 'date'],
-            'contact_number_1'    => ['nullable', 'string', 'max:10'],
-            'contact_number_2'    => ['nullable', 'string', 'max:10'],
-            'template_key'        => ['nullable', 'string', 'max:120'],
-            'typography_key'      => ['nullable', 'string', 'max:120'],
-            'status'              => ['required', 'in:draft,active,completed'],
+            'bride_parents_names'      => ['nullable', 'string', 'max:255'],
+            'groom_parents_names'      => ['nullable', 'string', 'max:255'],
+            'rsvp_deadline'            => ['nullable', 'date'],
+            'contact_number_1'         => ['nullable', 'string', 'max:10'],
+            'contact_number_2'         => ['nullable', 'string', 'max:10'],
+            'template_key'             => ['nullable', 'string', 'max:120'],
+            'template_category'        => ['nullable', 'in:solid,animated'],
+            'typography_key'           => ['nullable', 'string', 'max:120'],
+            'background_music_enabled' => ['nullable', 'boolean'],
+            'status'                   => ['required', 'in:draft,active,completed'],
         ]);
 
         $wedding->update($baseValidated);
@@ -169,6 +177,69 @@ class WeddingSettingsController extends Controller
         }
 
         return back()->with('success', 'Main image removed.');
+    }
+
+    public function uploadBackgroundMusic(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'background_music' => [
+                'required',
+                'file',
+                'max:5120',
+                'mimetypes:audio/mpeg,audio/mp4,audio/x-m4a,audio/aac',
+            ],
+        ]);
+
+        $user = Auth::user();
+
+        if (! $user) {
+            return back()->withErrors(['wedding' => 'Not authenticated.']);
+        }
+
+        $wedding = $user->wedding;
+
+        if (! $wedding) {
+            return back()->withErrors(['wedding' => 'No wedding found.']);
+        }
+
+        if ($wedding->background_music_path) {
+            Storage::disk('public')->delete($wedding->background_music_path);
+        }
+
+        $file = $request->file('background_music');
+        $path = $file->store('weddings/' . $wedding->id . '/music', 'public');
+
+        $wedding->update([
+            'background_music_path'  => $path,
+            'background_music_label' => $file->getClientOriginalName(),
+        ]);
+
+        return back()->with('success', 'Background music uploaded.');
+    }
+
+    public function deleteBackgroundMusic(): RedirectResponse
+    {
+        $user = Auth::user();
+
+        if (! $user) {
+            return back()->withErrors(['wedding' => 'Not authenticated.']);
+        }
+
+        $wedding = $user->wedding;
+
+        if (! $wedding) {
+            return back()->withErrors(['wedding' => 'No wedding found.']);
+        }
+
+        if ($wedding->background_music_path) {
+            Storage::disk('public')->delete($wedding->background_music_path);
+            $wedding->update([
+                'background_music_path'  => null,
+                'background_music_label' => null,
+            ]);
+        }
+
+        return back()->with('success', 'Background music removed.');
     }
 
     public function addGalleryImage(Request $request): RedirectResponse

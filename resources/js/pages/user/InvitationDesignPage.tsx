@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { Eye, Check, Smartphone, Monitor, MapPin } from "lucide-react";
+import { useState, useRef } from "react";
+import { Eye, Check, Smartphone, Monitor, MapPin, Music, Upload, Trash2, Play, Pause, ChevronDown, ChevronUp, Sparkles, Layers } from "lucide-react";
 import { invitationTemplates, typographyOptions } from "@/data/invitationConstants";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { router } from "@inertiajs/react";
 
 interface WeddingData {
   bride_name?: string;
@@ -30,6 +31,9 @@ interface InvitationDesignPageProps {
   coupleMainImage?: string;
   coupleGalleryImages?: string[];
   ceremonyEvents?: CeremonyEvent[];
+  backgroundMusicUrl?: string | null;
+  backgroundMusicLabel?: string | null;
+  backgroundMusicEnabled?: boolean;
 }
 
 interface TemplateTheme {
@@ -1225,6 +1229,155 @@ const templateThemes: Record<string, TemplateTheme> = {
     ),
     topAdornment: <div className="text-[10px] uppercase tracking-[0.44em] text-[#C05840]/86">Coral Drift</div>,
   },
+
+  // ── Animated templates ───────────────────────────────────────────────────
+  "celestial-cosmos": {
+    previewClassName: "bg-[radial-gradient(ellipse_at_top,#1A2240,#070B1A)]",
+    cardClassName: "border-[#D4A843]/25 shadow-[0_20px_60px_-28px_rgba(7,11,26,0.9)]",
+    labelClassName: "text-[#D4A843]/80",
+    layoutVariant: "celestial",
+    textToneClassName: "text-[#F5ECD5]",
+    subTextToneClassName: "text-[#D4A843]/80",
+    accentToneClassName: "text-[#D4A843]",
+    btnClassName: "bg-[#D4A843] text-[#070B1A]",
+    frameStyle: { border: "1px solid rgba(212,168,67,0.2)", borderRadius: "1.7rem", margin: "0.5rem" },
+    contentPanelClassName: "bg-[#1A2240]/50 backdrop-blur border border-[#D4A843]/15 shadow-sm rounded-[1rem]",
+    ornament: (
+      <div className="absolute inset-0 overflow-hidden">
+        {Array.from({ length: 30 }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full bg-[#D4A843]"
+            style={{ width: Math.random() * 2 + 1, height: Math.random() * 2 + 1, left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}
+            animate={{ opacity: [0.1, 0.7, 0.1] }}
+            transition={{ duration: 1.5 + Math.random() * 2, repeat: Infinity, delay: Math.random() * 2 }}
+          />
+        ))}
+      </div>
+    ),
+    topAdornment: <div className="text-[10px] uppercase tracking-[0.45em] text-[#D4A843]/90">Celestial Cosmos</div>,
+  },
+
+  "cherry-blossom-fall": {
+    previewClassName: "bg-[linear-gradient(180deg,#FFF0F5,#FFD6E8)]",
+    cardClassName: "border-[#E8A0B4]/35 shadow-[0_18px_52px_-28px_rgba(139,34,82,0.25)]",
+    labelClassName: "text-[#8B2252]/80",
+    layoutVariant: "cameo",
+    textToneClassName: "text-[#8B2252]",
+    subTextToneClassName: "text-[#8B2252]/70",
+    accentToneClassName: "text-[#E8A0B4]",
+    btnClassName: "bg-[#8B2252] text-white",
+    frameStyle: { border: "1px solid rgba(232,160,180,0.35)", borderRadius: "1.8rem", margin: "0.45rem" },
+    contentPanelClassName: "bg-white/45 backdrop-blur border border-[#E8A0B4]/25 shadow-sm rounded-[1rem]",
+    ornament: (
+      <div className="absolute inset-0 overflow-hidden">
+        {Array.from({ length: 18 }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full"
+            style={{ width: 6 + Math.random() * 8, height: 6 + Math.random() * 8, left: `${Math.random() * 100}%`, top: `-8%`, backgroundColor: ["#E8A0B4", "#F5C0D0", "#FFB3CC"][Math.floor(Math.random() * 3)] }}
+            animate={{ y: ["0%", "110%"], x: [0, (Math.random() - 0.5) * 40], rotate: [0, 360], opacity: [0.7, 0.3] }}
+            transition={{ duration: 3 + Math.random() * 3, repeat: Infinity, delay: Math.random() * 3, ease: "linear" }}
+          />
+        ))}
+      </div>
+    ),
+    topAdornment: <div className="text-[10px] uppercase tracking-[0.42em] text-[#8B2252]/80">Cherry Blossom Fall</div>,
+  },
+
+  "golden-dust": {
+    previewClassName: "bg-[linear-gradient(160deg,#FEFAEF,#FFF0C8)]",
+    cardClassName: "border-[#C9943C]/30 shadow-[0_18px_52px_-28px_rgba(201,148,60,0.3)]",
+    labelClassName: "text-[#7D5A28]/82",
+    layoutVariant: "arch",
+    textToneClassName: "text-[#7D5A28]",
+    subTextToneClassName: "text-[#7D5A28]/72",
+    accentToneClassName: "text-[#C9943C]",
+    btnClassName: "bg-[#C9943C] text-[#FEFAEF]",
+    frameStyle: { border: "1px solid rgba(201,148,60,0.25)", borderRadius: "1.7rem", margin: "0.45rem" },
+    contentPanelClassName: "bg-white/50 backdrop-blur border border-[#C9943C]/20 shadow-sm rounded-[1rem]",
+    ornament: (
+      <div className="absolute inset-0 overflow-hidden">
+        {Array.from({ length: 25 }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute"
+            style={{ width: 3 + Math.random() * 4, height: 3 + Math.random() * 4, left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`, backgroundColor: ["#C9943C", "#E8C060", "#F0D878"][Math.floor(Math.random() * 3)], borderRadius: "50%" }}
+            animate={{ opacity: [0.1, 0.8, 0.1], scale: [0.8, 1.3, 0.8] }}
+            transition={{ duration: 1.8 + Math.random() * 2, repeat: Infinity, delay: Math.random() * 2.5 }}
+          />
+        ))}
+      </div>
+    ),
+    topAdornment: <div className="text-[10px] uppercase tracking-[0.42em] text-[#7D5A28]/84">Golden Dust</div>,
+  },
+
+  "emerald-vine": {
+    previewClassName: "bg-[linear-gradient(160deg,#0D2B1E,#1A4030)]",
+    cardClassName: "border-[#4CAF78]/22 shadow-[0_20px_60px_-28px_rgba(13,43,30,0.85)]",
+    labelClassName: "text-[#4CAF78]/82",
+    layoutVariant: "botanical",
+    textToneClassName: "text-[#E8F5EC]",
+    subTextToneClassName: "text-[#8DBF9C]/80",
+    accentToneClassName: "text-[#4CAF78]",
+    btnClassName: "bg-[#4CAF78] text-[#0D2B1E]",
+    frameStyle: { border: "1px solid rgba(76,175,120,0.2)", borderRadius: "1.7rem", margin: "0.5rem" },
+    contentPanelClassName: "bg-[#0D2B1E]/50 backdrop-blur border border-[#4CAF78]/18 shadow-sm rounded-[1rem]",
+    ornament: (
+      <div className="absolute inset-0 overflow-hidden opacity-20">
+        <svg viewBox="0 0 100 200" className="absolute left-0 top-0 h-full w-1/3" fill="none">
+          <motion.path
+            d="M10 10 C30 40 5 70 20 100 C35 130 10 160 25 190"
+            stroke="#4CAF78" strokeWidth="2" strokeLinecap="round"
+            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+            transition={{ duration: 2.5, ease: "easeInOut", repeat: Infinity, repeatType: "reverse", repeatDelay: 1 }}
+          />
+        </svg>
+        <svg viewBox="0 0 100 200" className="absolute right-0 top-0 h-full w-1/3 scale-x-[-1]" fill="none">
+          <motion.path
+            d="M10 10 C30 40 5 70 20 100 C35 130 10 160 25 190"
+            stroke="#4CAF78" strokeWidth="2" strokeLinecap="round"
+            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+            transition={{ duration: 2.5, ease: "easeInOut", delay: 0.5, repeat: Infinity, repeatType: "reverse", repeatDelay: 1 }}
+          />
+        </svg>
+      </div>
+    ),
+    topAdornment: <div className="text-[10px] uppercase tracking-[0.42em] text-[#4CAF78]/82">Emerald Vine</div>,
+  },
+
+  "moonlit-romance": {
+    previewClassName: "bg-[radial-gradient(ellipse_at_50%_30%,#2A1B4A,#0E0A1E)]",
+    cardClassName: "border-[#C8A2E0]/22 shadow-[0_20px_64px_-28px_rgba(14,10,30,0.9)]",
+    labelClassName: "text-[#C8A2E0]/80",
+    layoutVariant: "celestial",
+    textToneClassName: "text-[#F0E6FF]",
+    subTextToneClassName: "text-[#C8A2E0]/75",
+    accentToneClassName: "text-[#C8A2E0]",
+    btnClassName: "bg-[#C8A2E0] text-[#0E0A1E]",
+    frameStyle: { border: "1px solid rgba(200,162,224,0.2)", borderRadius: "1.7rem", margin: "0.5rem" },
+    contentPanelClassName: "bg-[#2A1B4A]/50 backdrop-blur border border-[#C8A2E0]/15 shadow-sm rounded-[1rem]",
+    ornament: (
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          className="absolute rounded-full bg-[#C8A2E0]/20"
+          style={{ width: 70, height: 70, right: "10%", top: "12%" }}
+          animate={{ scale: [1, 1.15, 1], opacity: [0.2, 0.35, 0.2] }}
+          transition={{ duration: 3, repeat: Infinity }}
+        />
+        {Array.from({ length: 20 }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full bg-white"
+            style={{ width: Math.random() * 2 + 1, height: Math.random() * 2 + 1, left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}
+            animate={{ opacity: [0.2, 0.9, 0.2] }}
+            transition={{ duration: 1.5 + Math.random() * 2, repeat: Infinity, delay: Math.random() * 2 }}
+          />
+        ))}
+      </div>
+    ),
+    topAdornment: <div className="text-[10px] uppercase tracking-[0.45em] text-[#C8A2E0]/90">Moonlit Romance</div>,
+  },
 };
 
 export const InvitationDesignPage = ({
@@ -1237,6 +1390,9 @@ export const InvitationDesignPage = ({
   coupleMainImage = "",
   coupleGalleryImages = [],
   ceremonyEvents = [],
+  backgroundMusicUrl,
+  backgroundMusicLabel,
+  backgroundMusicEnabled = true,
 }: InvitationDesignPageProps) => {
   const brideName = weddingData?.bride_name ?? 'Bride';
   const groomName = weddingData?.groom_name ?? 'Groom';
@@ -1246,6 +1402,58 @@ export const InvitationDesignPage = ({
   const venueName = weddingData?.venue_name ?? '';
   const eventToken = weddingData?.event_token;
   const [previewMode, setPreviewMode] = useState<"mobile" | "desktop">("mobile");
+
+  // Section collapse state — both expanded by default
+  const [solidCollapsed, setSolidCollapsed] = useState(false);
+  const [animatedCollapsed, setAnimatedCollapsed] = useState(false);
+
+  // Background music local state
+  const [musicEnabled, setMusicEnabled] = useState(backgroundMusicEnabled);
+  const [musicUploading, setMusicUploading] = useState(false);
+  const [musicDeleting, setMusicDeleting] = useState(false);
+  const musicFileRef = useRef<HTMLInputElement | null>(null);
+  const previewAudioRef = useRef<HTMLAudioElement | null>(null);
+  const [previewPlaying, setPreviewPlaying] = useState(false);
+
+  const handleMusicUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setMusicUploading(true);
+    const formData = new FormData();
+    formData.append("background_music", file);
+    router.post("/settings/music", formData, {
+      forceFormData: true,
+      onFinish: () => setMusicUploading(false),
+    });
+  };
+
+  const handleMusicDelete = () => {
+    if (!confirm("Remove background music?")) return;
+    setMusicDeleting(true);
+    router.post("/settings/music/destroy", {}, {
+      onFinish: () => setMusicDeleting(false),
+    });
+  };
+
+  const handleMusicEnabledToggle = () => {
+    const next = !musicEnabled;
+    setMusicEnabled(next);
+    router.post("/settings", { background_music_enabled: next, status: weddingData ? "draft" : "draft" } as Record<string, unknown>, {
+      preserveScroll: true,
+    });
+  };
+
+  const togglePreviewAudio = () => {
+    const audio = previewAudioRef.current;
+    if (!audio) return;
+    if (previewPlaying) {
+      audio.pause();
+      setPreviewPlaying(false);
+    } else {
+      audio.play().then(() => setPreviewPlaying(true)).catch(() => {});
+    }
+  };
+
   const selectedTypographyConfig = typographyOptions.find((typo) => typo.key === selectedTypography) || typographyOptions[0];
 
   const resolveTheme = (key: string): TemplateTheme => {
@@ -1763,53 +1971,176 @@ export const InvitationDesignPage = ({
       </div>
 
       {/* Template Selection */}
-      <section>
-        <h2 className="font-display text-xl font-semibold text-foreground mb-4">Choose Your Design</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {invitationTemplates.map((template, i) => {
-            const isSelected = selectedTemplate === template.key;
-            const theme = resolveTheme(template.key);
-            return (
+      <section className="space-y-6">
+        <h2 className="font-display text-xl font-semibold text-foreground">Choose Your Design</h2>
+
+        {/* ── Solid Designs Section ── */}
+        <div className="rounded-2xl border border-border overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setSolidCollapsed((v) => !v)}
+            className="w-full flex items-center justify-between px-5 py-4 bg-card hover:bg-muted/40 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Layers className="h-4 w-4 text-primary" />
+              </div>
+              <div className="text-left">
+                <p className="font-display text-base font-semibold text-foreground">Solid Designs</p>
+                <p className="text-xs text-muted-foreground">Timeless static layouts</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">{invitationTemplates.filter((t) => t.categoryKey === "solid").length} designs</span>
+              {solidCollapsed ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronUp className="h-4 w-4 text-muted-foreground" />}
+            </div>
+          </button>
+          <AnimatePresence initial={false}>
+            {!solidCollapsed && (
               <motion.div
-                key={template.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className={`rounded-2xl border-2 overflow-hidden cursor-pointer transition-all ${isSelected ? "border-primary shadow-elevated ring-2 ring-primary/20" : `${theme.cardClassName} hover:border-primary/30`}`}
-                onClick={() => onTemplateChange(template.key)}
+                key="solid-grid"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="overflow-hidden"
               >
-                {/* Preview Area */}
-                <div className="relative aspect-[3/4] overflow-hidden bg-muted/20 p-2">
-                  <div className={`relative h-full w-full overflow-hidden rounded-[1.1rem] ${theme.previewClassName}`}>
-                    <div className="absolute inset-0" style={theme.overlay} />
-                    <div className="absolute inset-0">{theme.ornament}</div>
-                    <div className="absolute inset-[12px] rounded-[0.95rem]" style={theme.frameStyle} />
-                    <div className={`relative z-10 flex h-full flex-col items-center justify-center p-5 text-center ${theme.textToneClassName}`}>
-                      {renderPreviewHero(theme, true)}
-                      <p className={`mt-2 text-[10px] tracking-[0.25em] ${theme.labelClassName}`}>{template.label}</p>
-                    </div>
-                  </div>
-                  {isSelected && (
-                    <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-primary flex items-center justify-center">
-                      <Check className="h-4 w-4 text-primary-foreground" />
-                    </div>
-                  )}
-                </div>
-                <div className="p-4">
-                  <div className="flex items-center justify-between mb-1">
-                    <h3 className="font-display text-base font-semibold text-foreground">{template.name}</h3>
-                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-body">{template.label}</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground line-clamp-2">{template.description}</p>
-                  <div className="flex gap-1.5 mt-3">
-                    {template.colors.map((c, ci) => (
-                      <div key={ci} className="w-5 h-5 rounded-full border border-border" style={{ backgroundColor: c }} />
-                    ))}
-                  </div>
+                <div className="p-4 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {invitationTemplates.filter((t) => t.categoryKey === "solid").map((template, i) => {
+                    const isSelected = selectedTemplate === template.key;
+                    const theme = resolveTheme(template.key);
+                    return (
+                      <motion.div
+                        key={template.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.03 }}
+                        className={`rounded-2xl border-2 overflow-hidden cursor-pointer transition-all ${isSelected ? "border-primary shadow-elevated ring-2 ring-primary/20" : `${theme.cardClassName} hover:border-primary/30`}`}
+                        onClick={() => onTemplateChange(template.key)}
+                      >
+                        <div className="relative aspect-[3/4] overflow-hidden bg-muted/20 p-2 group">
+                          <div className={`relative h-full w-full overflow-hidden rounded-[1.1rem] ${theme.previewClassName}`}>
+                            <div className="absolute inset-0" style={theme.overlay} />
+                            <div className="absolute inset-0">{theme.ornament}</div>
+                            <div className="absolute inset-[12px] rounded-[0.95rem]" style={theme.frameStyle} />
+                            <div className={`relative z-10 flex h-full flex-col items-center justify-center p-5 text-center ${theme.textToneClassName}`}>
+                              {renderPreviewHero(theme, true)}
+                              <p className={`mt-2 text-[10px] tracking-[0.25em] ${theme.labelClassName}`}>{template.label}</p>
+                            </div>
+                          </div>
+                          {isSelected && (
+                            <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-primary flex items-center justify-center">
+                              <Check className="h-4 w-4 text-primary-foreground" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-4">
+                          <div className="flex items-center justify-between mb-1">
+                            <h3 className="font-display text-base font-semibold text-foreground">{template.name}</h3>
+                            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-body">{template.label}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground line-clamp-2">{template.description}</p>
+                          <div className="flex gap-1.5 mt-3">
+                            {template.colors.map((c, ci) => (
+                              <div key={ci} className="w-5 h-5 rounded-full border border-border" style={{ backgroundColor: c }} />
+                            ))}
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </motion.div>
-            );
-          })}
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* ── Animated Designs Section ── */}
+        <div className="rounded-2xl border border-border overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setAnimatedCollapsed((v) => !v)}
+            className="w-full flex items-center justify-between px-5 py-4 bg-card hover:bg-muted/40 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Sparkles className="h-4 w-4 text-primary" />
+              </div>
+              <div className="text-left">
+                <p className="font-display text-base font-semibold text-foreground">
+                  Animated Designs
+                  <span className="ml-2 inline-flex items-center rounded-full bg-primary/15 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-primary">
+                    New
+                  </span>
+                </p>
+                <p className="text-xs text-muted-foreground">Living invitations with motion &amp; scroll effects</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">{invitationTemplates.filter((t) => t.categoryKey === "animated").length} designs</span>
+              {animatedCollapsed ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronUp className="h-4 w-4 text-muted-foreground" />}
+            </div>
+          </button>
+          <AnimatePresence initial={false}>
+            {!animatedCollapsed && (
+              <motion.div
+                key="animated-grid"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="overflow-hidden"
+              >
+                <div className="p-4 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {invitationTemplates.filter((t) => t.categoryKey === "animated").map((template, i) => {
+                    const isSelected = selectedTemplate === template.key;
+                    const theme = resolveTheme(template.key);
+                    return (
+                      <motion.div
+                        key={template.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        className={`rounded-2xl border-2 overflow-hidden cursor-pointer transition-all ${isSelected ? "border-primary shadow-elevated ring-2 ring-primary/20" : `${theme.cardClassName} hover:border-primary/30`}`}
+                        onClick={() => onTemplateChange(template.key)}
+                      >
+                        <div className="relative aspect-[3/4] overflow-hidden bg-muted/20 p-2 group">
+                          <div className={`relative h-full w-full overflow-hidden rounded-[1.1rem] ${theme.previewClassName}`}>
+                            <div className="absolute inset-0" style={theme.overlay} />
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                              {theme.ornament}
+                            </div>
+                            <div className="absolute inset-[12px] rounded-[0.95rem]" style={theme.frameStyle} />
+                            <div className={`relative z-10 flex h-full flex-col items-center justify-center p-5 text-center ${theme.textToneClassName}`}>
+                              {renderPreviewHero(theme, true)}
+                              <p className={`mt-2 text-[10px] tracking-[0.25em] ${theme.labelClassName}`}>{template.label}</p>
+                            </div>
+                          </div>
+                          {isSelected && (
+                            <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-primary flex items-center justify-center">
+                              <Check className="h-4 w-4 text-primary-foreground" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-4">
+                          <div className="flex items-center justify-between mb-1">
+                            <h3 className="font-display text-base font-semibold text-foreground">{template.name}</h3>
+                            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-body">{template.label}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground line-clamp-2">{template.description}</p>
+                          <div className="flex gap-1.5 mt-3">
+                            {template.colors.map((c, ci) => (
+                              <div key={ci} className="w-5 h-5 rounded-full border border-border" style={{ backgroundColor: c }} />
+                            ))}
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </section>
 
@@ -1841,6 +2172,101 @@ export const InvitationDesignPage = ({
               </motion.div>
             );
           })}
+        </div>
+      </section>
+
+      {/* Background Music */}
+      <section>
+        <h2 className="font-display text-xl font-semibold text-foreground mb-1 flex items-center gap-2">
+          <Music className="h-5 w-5 text-muted-foreground" /> Background Music
+        </h2>
+        <p className="text-sm text-muted-foreground mb-4">Add a song that plays when guests open your invitation.</p>
+
+        <div className="rounded-2xl border border-border bg-card p-5 space-y-4 shadow-card">
+          {backgroundMusicUrl ? (
+            <>
+              {/* Current track info + controls */}
+              <div className="flex items-center gap-3 rounded-xl bg-muted/50 px-4 py-3">
+                <button
+                  onClick={togglePreviewAudio}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm hover:opacity-90 transition-opacity"
+                  aria-label={previewPlaying ? "Pause preview" : "Play preview"}
+                >
+                  {previewPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                </button>
+                {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+                <audio
+                  ref={previewAudioRef}
+                  src={backgroundMusicUrl}
+                  onEnded={() => setPreviewPlaying(false)}
+                  preload="none"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-foreground truncate">{backgroundMusicLabel ?? "Background music"}</p>
+                  <p className="text-xs text-muted-foreground">Click play to preview</p>
+                </div>
+                <button
+                  onClick={handleMusicDelete}
+                  disabled={musicDeleting}
+                  className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50"
+                  aria-label="Remove music"
+                >
+                  <Trash2 className="h-3.5 w-3.5" /> {musicDeleting ? "Removing…" : "Remove"}
+                </button>
+              </div>
+
+              {/* Enable toggle */}
+              <label className="flex items-center justify-between cursor-pointer">
+                <span className="text-sm text-foreground">Enable on invitation</span>
+                <button
+                  role="switch"
+                  aria-checked={musicEnabled}
+                  onClick={handleMusicEnabledToggle}
+                  className={`relative h-6 w-11 rounded-full transition-colors ${musicEnabled ? "bg-primary" : "bg-muted-foreground/30"}`}
+                >
+                  <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${musicEnabled ? "translate-x-5" : "translate-x-0"}`} />
+                </button>
+              </label>
+
+              {/* Replace with new file */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">Replace track:</span>
+                <label className="flex items-center gap-1.5 rounded-lg border border-dashed border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:border-primary/50 hover:text-primary cursor-pointer transition-colors">
+                  <Upload className="h-3.5 w-3.5" />
+                  {musicUploading ? "Uploading…" : "Choose file"}
+                  <input
+                    ref={musicFileRef}
+                    type="file"
+                    accept="audio/mpeg,audio/mp4,audio/x-m4a"
+                    className="hidden"
+                    onChange={handleMusicUpload}
+                    disabled={musicUploading}
+                  />
+                </label>
+              </div>
+            </>
+          ) : (
+            /* Upload first track */
+            <label className={`flex flex-col items-center gap-3 rounded-xl border-2 border-dashed p-8 cursor-pointer transition-colors ${musicUploading ? "border-primary/40 bg-primary/5" : "border-border hover:border-primary/40 hover:bg-muted/30"}`}>
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                <Music className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-medium text-foreground">
+                  {musicUploading ? "Uploading…" : "Upload your song"}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">MP3 or M4A · up to 5 MB · 2–3 min loop recommended</p>
+              </div>
+              <input
+                ref={musicFileRef}
+                type="file"
+                accept="audio/mpeg,audio/mp4,audio/x-m4a"
+                className="hidden"
+                onChange={handleMusicUpload}
+                disabled={musicUploading}
+              />
+            </label>
+          )}
         </div>
       </section>
 

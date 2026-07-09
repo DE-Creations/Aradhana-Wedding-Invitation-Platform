@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { useForm } from "@inertiajs/react";
-import { Mail, Lock, ArrowRight } from "lucide-react";
+import { Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
 
 export const UserLoginPage = () => {
@@ -7,6 +8,7 @@ export const UserLoginPage = () => {
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,12 +95,21 @@ export const UserLoginPage = () => {
                 <div className="relative">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(40,15%,45%)]" />
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     value={data.password}
                     onChange={(e) => setData("password", e.target.value)}
                     placeholder="••••••••"
-                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[hsl(38,20%,25%)] bg-[hsl(25,10%,11%)] text-[hsl(40,20%,90%)] text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all placeholder:text-[hsl(40,10%,35%)]"
+                    className="w-full pl-10 pr-10 py-2.5 rounded-lg border border-[hsl(38,20%,25%)] bg-[hsl(25,10%,11%)] text-[hsl(40,20%,90%)] text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all placeholder:text-[hsl(40,10%,35%)]"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(40,15%,45%)] hover:text-[hsl(40,20%,70%)] transition-colors"
+                    tabIndex={-1}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
               </div>
 
@@ -113,11 +124,6 @@ export const UserLoginPage = () => {
               </button>
             </form>
 
-            <div className="mt-6 text-center">
-              <a href="/admin/login" className="text-sm text-[hsl(40,15%,50%)] hover:text-primary transition-colors font-sans">
-                Admin Login →
-              </a>
-            </div>
           </div>
         </motion.div>
       </div>

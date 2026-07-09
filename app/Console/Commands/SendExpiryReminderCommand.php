@@ -47,7 +47,7 @@ class SendExpiryReminderCommand extends Command
                 continue;
             }
 
-            Mail::to($user->email)->send(new AccountExpiryReminderMail($user, $user->expire_date));
+            Mail::to($user->email, $user->name)->send(new AccountExpiryReminderMail($user, $user->expire_date));
             EmailLog::record($user->id, EmailLog::TYPE_EXPIRY_REMINDER);
 
             $this->info("Sent Expiry Reminder to {$user->email} (User #{$user->id}).");

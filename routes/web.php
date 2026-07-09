@@ -51,6 +51,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/settings/main-image/destroy', [WeddingSettingsController::class, 'deleteMainImage'])->name('settings.main-image.destroy');
     Route::post('/settings/gallery', [WeddingSettingsController::class, 'addGalleryImage'])->name('settings.gallery.add');
     Route::post('/settings/gallery/{image}/destroy', [WeddingSettingsController::class, 'removeGalleryImage'])->name('settings.gallery.destroy');
+    Route::post('/settings/music', [WeddingSettingsController::class, 'uploadBackgroundMusic'])->name('settings.music.upload');
+    Route::post('/settings/music/destroy', [WeddingSettingsController::class, 'deleteBackgroundMusic'])->name('settings.music.destroy');
 
     // Guests
     Route::get('/guests', [GuestController::class, 'index'])->name('guests.index');

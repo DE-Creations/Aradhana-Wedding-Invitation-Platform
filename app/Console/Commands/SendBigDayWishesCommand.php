@@ -59,7 +59,7 @@ class SendBigDayWishesCommand extends Command
                 continue;
             }
 
-            Mail::to($user->email)->send(new BigDayWishesMail($user, $wedding, $eventDate));
+            Mail::to($user->email, $user->name)->send(new BigDayWishesMail($user, $wedding, $eventDate));
             EmailLog::record($user->id, EmailLog::TYPE_BIG_DAY_WISHES);
 
             $this->info("Sent Big Day Wishes to {$user->email} for wedding #{$wedding->id}.");
