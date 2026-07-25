@@ -45,7 +45,7 @@ class DesignController extends Controller
                 'contact_number_1'         => $wedding->contact_number_1,
                 'contact_number_2'         => $wedding->contact_number_2,
                 'template_key'             => $wedding->template_key ?? 'faded-picture-overlay',
-                'typography_key'           => $wedding->typography_key ?? 'classic-grace',
+                'typography_key'           => $wedding->typography_key ?? 'gilded-garamond',
                 'background_music_url'     => $wedding->background_music_path
                     ? asset('storage/' . $wedding->background_music_path)
                     : null,
