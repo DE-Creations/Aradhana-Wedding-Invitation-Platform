@@ -2,20 +2,20 @@ import { lazy, Suspense } from "react";
 import type { AnimatedDesignProps } from "./types";
 import { motion } from "framer-motion";
 
-const CelestialCosmosDesign = lazy(() =>
-  import("./CelestialCosmosDesign").then((m) => ({ default: m.CelestialCosmosDesign }))
+const InkAndGoldDesign = lazy(() =>
+  import("./InkAndGoldDesign").then((m) => ({ default: m.InkAndGoldDesign }))
 );
-const CherryBlossomFallDesign = lazy(() =>
-  import("./CherryBlossomFallDesign").then((m) => ({ default: m.CherryBlossomFallDesign }))
+const CelestialNocturneDesign = lazy(() =>
+  import("./CelestialNocturneDesign").then((m) => ({ default: m.CelestialNocturneDesign }))
 );
-const GoldenDustDesign = lazy(() =>
-  import("./GoldenDustDesign").then((m) => ({ default: m.GoldenDustDesign }))
+const PetalWaltzDesign = lazy(() =>
+  import("./PetalWaltzDesign").then((m) => ({ default: m.PetalWaltzDesign }))
 );
-const EmeraldVineDesign = lazy(() =>
-  import("./EmeraldVineDesign").then((m) => ({ default: m.EmeraldVineDesign }))
+const LiquidBloomDesign = lazy(() =>
+  import("./LiquidBloomDesign").then((m) => ({ default: m.LiquidBloomDesign }))
 );
-const MoonlitRomanceDesign = lazy(() =>
-  import("./MoonlitRomanceDesign").then((m) => ({ default: m.MoonlitRomanceDesign }))
+const GoldenFiligreeDesign = lazy(() =>
+  import("./GoldenFiligreeDesign").then((m) => ({ default: m.GoldenFiligreeDesign }))
 );
 
 interface AnimatedDesignRendererProps extends AnimatedDesignProps {
@@ -23,11 +23,11 @@ interface AnimatedDesignRendererProps extends AnimatedDesignProps {
 }
 
 const ANIMATED_DESIGN_MAP: Record<string, React.LazyExoticComponent<React.ComponentType<AnimatedDesignProps>>> = {
-  "celestial-cosmos": CelestialCosmosDesign,
-  "cherry-blossom-fall": CherryBlossomFallDesign,
-  "golden-dust": GoldenDustDesign,
-  "emerald-vine": EmeraldVineDesign,
-  "moonlit-romance": MoonlitRomanceDesign,
+  "ink-and-gold": InkAndGoldDesign,
+  "celestial-nocturne": CelestialNocturneDesign,
+  "petal-waltz": PetalWaltzDesign,
+  "liquid-bloom": LiquidBloomDesign,
+  "golden-filigree": GoldenFiligreeDesign,
 };
 
 function LoadingFallback() {
