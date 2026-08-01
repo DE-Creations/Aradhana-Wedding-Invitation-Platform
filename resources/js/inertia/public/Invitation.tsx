@@ -2,18 +2,17 @@ import { usePage } from '@inertiajs/react';
 import { PublicInvitationPage } from '@/pages/public/PublicInvitationPage';
 
 export default function Invitation() {
-  const { wedding, guest, coupleMainImage, coupleGalleryImages, eventToken, ceremonyEvents, googleMapsLink } = usePage<{
+  const { wedding, guest, coupleMainImage, coupleGalleryImages, eventToken, ceremonyEvents } = usePage<{
     wedding: any;
     guest: any;
     coupleMainImage: string | null;
     coupleGalleryImages: string[];
     eventToken: string;
     ceremonyEvents: any[];
-    googleMapsLink: string | null;
   }>().props;
 
   const params = new URLSearchParams(window.location.search);
-  const templateKey = params.get('template') ?? wedding?.template_key ?? 'faded-picture-overlay';
+  const templateKey = params.get('template') ?? wedding?.template_key ?? 'noir-aurelle';
   const typographyKey = params.get('typography') ?? wedding?.typography_key ?? 'gilded-garamond';
 
   return (
@@ -26,7 +25,6 @@ export default function Invitation() {
       coupleMainImage={coupleMainImage}
       coupleGalleryImages={coupleGalleryImages ?? []}
       ceremonyEvents={ceremonyEvents ?? []}
-      googleMapsLink={googleMapsLink ?? null}
     />
   );
 }

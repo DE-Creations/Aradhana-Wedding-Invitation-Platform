@@ -34,7 +34,7 @@ interface AuthWedding {
 export default function Design({ coupleMainImage, coupleGalleryImages, ceremonyEvents, backgroundMusicUrl, backgroundMusicLabel, backgroundMusicEnabled }: DesignProps) {
   const { auth } = usePage<{ auth: { wedding: AuthWedding | null } }>().props;
   const [preferences, setPreferences] = useState(() => ({
-    templateKey: sessionStorage.getItem('invitation.templateKey') ?? auth?.wedding?.template_key ?? 'faded-picture-overlay',
+    templateKey: sessionStorage.getItem('invitation.templateKey') ?? auth?.wedding?.template_key ?? 'noir-aurelle',
     typographyKey: sessionStorage.getItem('invitation.typographyKey') ?? auth?.wedding?.typography_key ?? 'gilded-garamond',
   }));
 

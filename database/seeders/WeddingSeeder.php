@@ -24,7 +24,7 @@ class WeddingSeeder extends Seeder
                 'wedding_type_id'      => 1,
                 'contact_number_1'     => '0771234567',
                 'contact_number_2'     => '0712345678',
-                'template_key'         => 'faded-picture-overlay',
+                'template_key'         => 'noir-aurelle',
                 'typography_key'       => 'gilded-garamond',
             ]);
     }

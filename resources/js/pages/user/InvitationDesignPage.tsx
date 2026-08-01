@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
-import { Eye, Check, Smartphone, Monitor, Music, Upload, Trash2, Play, Pause, ChevronDown, ChevronUp, Sparkles, Layers, Heart } from "lucide-react";
-import { invitationTemplates, typographyOptions, type InvitationTemplate } from "@/data/invitationConstants";
+import { Eye, Check, Smartphone, Monitor, Music, Upload, Trash2, Play, Pause, ChevronDown, ChevronUp, Layers } from "lucide-react";
+import { invitationTemplates, typographyOptions, CINEMATIC_TEMPLATE_KEY, type InvitationTemplate } from "@/data/invitationConstants";
 import { getSolidTheme, SOLID_THEMES } from "@/data/invitationThemes";
 import { SolidHeroPreview } from "@/components/invitation/SolidInvitation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -38,58 +38,21 @@ interface InvitationDesignPageProps {
   backgroundMusicEnabled?: boolean;
 }
 
-/** Lightweight animated thumbnail for the animated designs (no heavy chunks). */
-function AnimatedThumb({
-  template,
-  brideName,
-  groomName,
-  headingFont,
-}: {
-  template: InvitationTemplate;
-  brideName: string;
-  groomName: string;
-  headingFont: string;
-}) {
-  const [c0, c1, c2, c3] = template.colors;
-  const darkKeys = ["celestial-nocturne", "golden-filigree"];
-  const textColor = darkKeys.includes(template.key) ? "#F3ECDD" : c3;
-  const dots = Array.from({ length: 10 }, (_, i) => ({
-    left: (i * 37) % 100,
-    top: (i * 53) % 100,
-    size: 3 + ((i * 3) % 5),
-    delay: (i * 0.4) % 3,
-    dur: 3 + ((i * 5) % 4),
-  }));
-
+/** Compact preview for the cinematic design (matches its envelope-reveal palette). */
+function CinematicHeroPreview({ brideName, groomName }: { brideName: string; groomName: string }) {
   return (
-    <div className={`relative h-full w-full overflow-hidden ${template.bgStyle}`}>
-      {dots.map((d, i) => (
-        <motion.span
-          key={i}
-          className="absolute rounded-full"
-          style={{ left: `${d.left}%`, top: `${d.top}%`, width: d.size, height: d.size, backgroundColor: i % 2 ? c1 : c2 }}
-          animate={{ opacity: [0.2, 0.9, 0.2], y: [0, -10, 0] }}
-          transition={{ duration: d.dur, delay: d.delay, repeat: Infinity, ease: "easeInOut" }}
-        />
-      ))}
-      <div className="relative z-10 flex h-full flex-col items-center justify-center px-3 text-center">
-        <span className="text-[7px] uppercase tracking-[0.3em]" style={{ color: c1 }}>
-          Together Forever
-        </span>
-        <p className={`mt-1 text-lg leading-tight ${headingFont}`} style={{ color: textColor }}>
-          {brideName}
-          <span style={{ color: c1 }}> &amp; </span>
-          {groomName}
-        </p>
-        <motion.span
-          className="mt-2 inline-flex"
-          animate={{ scale: [1, 1.2, 1] }}
-          transition={{ duration: 1.6, repeat: Infinity }}
-        >
-          <Heart className="h-3 w-3" style={{ color: c1, fill: c1 }} />
-        </motion.span>
-      </div>
-      <div className="pointer-events-none absolute inset-0" style={{ boxShadow: `inset 0 0 40px 4px ${c0}66` }} />
+    <div
+      className="relative flex h-full w-full flex-col items-center justify-center gap-1 px-3 text-center"
+      style={{ background: "radial-gradient(circle at center, #2a1016 0%, #0d0d0d 75%)" }}
+    >
+      <span className="text-[7px] uppercase tracking-[0.35em]" style={{ color: "#C9A96E" }}>
+        Together Forever
+      </span>
+      <p className="mt-1 text-lg leading-tight" style={{ color: "#FAF7F2", fontFamily: "'Great Vibes', cursive" }}>
+        {brideName}
+        <span style={{ color: "#C9A96E" }}> &amp; </span>
+        {groomName}
+      </p>
     </div>
   );
 }
@@ -119,7 +82,6 @@ export const InvitationDesignPage = ({
   const [previewMode, setPreviewMode] = useState<"mobile" | "desktop">("mobile");
 
   const [solidCollapsed, setSolidCollapsed] = useState(false);
-  const [animatedCollapsed, setAnimatedCollapsed] = useState(false);
 
   const [musicEnabled, setMusicEnabled] = useState(backgroundMusicEnabled);
   const [musicUploading, setMusicUploading] = useState(false);
@@ -167,27 +129,24 @@ export const InvitationDesignPage = ({
 
   const selectedTypographyConfig = typographyOptions.find((t) => t.key === selectedTypography) || typographyOptions[0];
   const solidTemplates = invitationTemplates.filter((t) => t.categoryKey === "solid");
-  const animatedTemplates = invitationTemplates.filter((t) => t.categoryKey === "animated");
 
-  const isSelectedSolid = !!SOLID_THEMES[selectedTemplate];
+  const isCinematic = (key: string) => key === CINEMATIC_TEMPLATE_KEY;
+  const isSelectedSolid = !isCinematic(selectedTemplate) && !!SOLID_THEMES[selectedTemplate];
   const selectedSolidTheme = getSolidTheme(selectedTemplate);
-  const selectedTemplateMeta = invitationTemplates.find((t) => t.key === selectedTemplate);
   const previewCardWidthClass = previewMode === "mobile" ? "w-[320px]" : "w-full max-w-[560px]";
 
   const renderCardThumb = (template: InvitationTemplate) => {
-    if (template.categoryKey === "solid") {
-      return (
-        <SolidHeroPreview
-          theme={getSolidTheme(template.key)}
-          typography={selectedTypographyConfig}
-          coupleMainImage={coupleMainImage}
-          brideName={brideName}
-          groomName={groomName}
-        />
-      );
+    if (isCinematic(template.key)) {
+      return <CinematicHeroPreview brideName={brideName} groomName={groomName} />;
     }
     return (
-      <AnimatedThumb template={template} brideName={brideName} groomName={groomName} headingFont={selectedTypographyConfig.headingFont} />
+      <SolidHeroPreview
+        theme={getSolidTheme(template.key)}
+        typography={selectedTypographyConfig}
+        coupleMainImage={coupleMainImage}
+        brideName={brideName}
+        groomName={groomName}
+      />
     );
   };
 
@@ -277,53 +236,17 @@ export const InvitationDesignPage = ({
             )}
           </AnimatePresence>
         </div>
-
-        {/* Animated Designs */}
-        <div className="overflow-hidden rounded-2xl border border-border">
-          <button
-            type="button"
-            onClick={() => setAnimatedCollapsed((v) => !v)}
-            className="flex w-full items-center justify-between bg-card px-5 py-4 transition-colors hover:bg-muted/40"
-          >
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-                <Sparkles className="h-4 w-4 text-primary" />
-              </div>
-              <div className="text-left">
-                <p className="font-display text-base font-semibold text-foreground">
-                  Animated Designs
-                  <span className="ml-2 inline-flex items-center rounded-full bg-primary/15 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-primary">
-                    New
-                  </span>
-                </p>
-                <p className="text-xs text-muted-foreground">Living invitations with motion &amp; scroll effects</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">{animatedTemplates.length} designs</span>
-              {animatedCollapsed ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronUp className="h-4 w-4 text-muted-foreground" />}
-            </div>
-          </button>
-          <AnimatePresence initial={false}>
-            {!animatedCollapsed && (
-              <motion.div
-                key="animated-grid"
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="overflow-hidden"
-              >
-                <div className="grid gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
-                  {animatedTemplates.map((t, i) => renderTemplateCard(t, i))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
       </section>
 
-      {/* Typography Selection */}
+      {/* Typography Selection — Gilded Rose uses its own fixed typography */}
+      {isCinematic(selectedTemplate) ? (
+        <section>
+          <h2 className="mb-4 font-display text-xl font-semibold text-foreground">Typography</h2>
+          <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-5 text-sm text-muted-foreground">
+            Gilded Rose uses its own fixed typography (Great Vibes &amp; Playfair Display) — typography selection doesn't apply to this design.
+          </div>
+        </section>
+      ) : (
       <section>
         <h2 className="mb-4 font-display text-xl font-semibold text-foreground">Choose Typography</h2>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -353,6 +276,7 @@ export const InvitationDesignPage = ({
           })}
         </div>
       </section>
+      )}
 
       {/* Background Music */}
       <section>
@@ -454,7 +378,9 @@ export const InvitationDesignPage = ({
             </div>
             <div className="bg-muted/20 p-5 md:p-8">
               <div className={`relative mx-auto aspect-[9/16] overflow-hidden rounded-[1.4rem] ${previewCardWidthClass}`}>
-                {isSelectedSolid ? (
+                {isCinematic(selectedTemplate) ? (
+                  <CinematicHeroPreview brideName={brideName} groomName={groomName} />
+                ) : isSelectedSolid ? (
                   <SolidHeroPreview
                     theme={selectedSolidTheme}
                     typography={selectedTypographyConfig}
@@ -462,11 +388,7 @@ export const InvitationDesignPage = ({
                     brideName={brideName}
                     groomName={groomName}
                   />
-                ) : (
-                  selectedTemplateMeta && (
-                    <AnimatedThumb template={selectedTemplateMeta} brideName={brideName} groomName={groomName} headingFont={selectedTypographyConfig.headingFont} />
-                  )
-                )}
+                ) : null}
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 p-4 text-center">
                   <p className="text-[10px] text-white/80">{[eventDate, venueName].filter(Boolean).join(" · ")}</p>
                 </div>
