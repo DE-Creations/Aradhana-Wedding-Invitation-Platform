@@ -1,0 +1,252 @@
+/*
+  Wedding invitation v2 — cinematic luxury styling.
+  All rules are scoped under .inv2-root so they never leak onto the
+  admin/user dashboard (which reuses names like .font-body/.font-script
+  for a different design system).
+*/
+
+.inv2-root {
+  --inv2-charcoal: #0d0d0d;
+  --inv2-wine: #1a0a0f;
+  --inv2-gold: #c9a96e;
+  --inv2-gold-light: #e8d5a3;
+  --inv2-ivory: #faf7f2;
+  --inv2-blush: #f5e6e0;
+  --inv2-rose: #8b3a4a;
+
+  background-color: var(--inv2-charcoal);
+  color: var(--inv2-gold-light);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.inv2-root img {
+  max-width: 100%;
+  display: block;
+}
+
+.inv2-root button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* ---------- Typography helpers ---------- */
+.inv2-root .font-script {
+  font-family: 'Great Vibes', cursive;
+}
+.inv2-root .font-serif-display {
+  font-family: 'Playfair Display', serif;
+}
+.inv2-root .font-body {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.inv2-root .label-caps {
+  font-family: 'Cormorant Garamond', serif;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--inv2-gold);
+}
+
+/* ---------- Section scaffolding ---------- */
+.inv2-root .section-full {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 1.5rem;
+  position: relative;
+}
+
+.inv2-root .section-pad {
+  padding: 5rem 1.5rem;
+  position: relative;
+}
+
+.inv2-root .bg-charcoal {
+  background-color: var(--inv2-charcoal);
+}
+.inv2-root .bg-wine {
+  background-color: var(--inv2-wine);
+}
+
+/* Radial vignette used on hero / countdown */
+.inv2-root .bg-radial-wine {
+  background: radial-gradient(circle at center, #2a1016 0%, var(--inv2-charcoal) 70%);
+}
+
+/* ---------- Grain / noise overlay ---------- */
+.inv2-root.grain-overlay::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- Decorative gold lines ---------- */
+.inv2-root .gold-line {
+  height: 1px;
+  width: 100px;
+  background: linear-gradient(90deg, transparent, var(--inv2-gold) 50%, transparent);
+  margin: 1.25rem auto;
+}
+
+.inv2-root .gold-line-vertical {
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--inv2-gold) 50%, transparent);
+}
+
+/* Show only on tablet/desktop */
+.inv2-root .hide-mobile {
+  display: none;
+}
+@media (min-width: 768px) {
+  .inv2-root .hide-mobile {
+    display: block;
+  }
+}
+
+/* ---------- Cards ---------- */
+.inv2-root .glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(201, 169, 110, 0.35);
+  border-radius: 16px;
+  backdrop-filter: blur(2px);
+}
+
+/* ---------- Buttons ---------- */
+.inv2-root .btn-gold-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px solid var(--inv2-gold);
+  background: transparent;
+  color: var(--inv2-gold);
+  font-family: 'Cormorant Garamond', serif;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.95rem;
+  padding: 0.85rem 1.75rem;
+  border-radius: 999px;
+  transition: background-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
+  min-height: 44px;
+  text-decoration: none;
+}
+.inv2-root .btn-gold-outline:hover {
+  background: var(--inv2-gold);
+  color: var(--inv2-charcoal);
+  box-shadow: 0 0 24px rgba(201, 169, 110, 0.4);
+}
+
+/* ---------- Gallery ---------- */
+.inv2-root .gallery-arrow {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--inv2-gold);
+  background: rgba(13, 13, 13, 0.5);
+  color: var(--inv2-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.inv2-root .gallery-arrow:hover {
+  background: var(--inv2-gold);
+  color: var(--inv2-charcoal);
+}
+.inv2-root .gallery-side {
+  width: 120px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  opacity: 0.4;
+  border: 1px solid rgba(201, 169, 110, 0.4);
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+.inv2-root .gallery-side:hover {
+  opacity: 0.7;
+}
+
+/* ---------- Ken Burns slow zoom ---------- */
+@keyframes inv2Kenburns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.05);
+  }
+}
+.inv2-root .kenburns {
+  animation: inv2Kenburns 10s ease-out forwards;
+}
+
+/* ---------- Seal glow pulse ---------- */
+@keyframes inv2SealGlow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 6px rgba(201, 169, 110, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 18px rgba(201, 169, 110, 0.8));
+  }
+}
+.inv2-root .seal-glow {
+  animation: inv2SealGlow 2.4s ease-in-out infinite;
+}
+
+/* ---------- Heartbeat pulse ---------- */
+@keyframes inv2Heartbeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.12);
+  }
+}
+.inv2-root .heartbeat {
+  animation: inv2Heartbeat 1.8s ease-in-out infinite;
+}
+
+/* ---------- Equalizer bars (music toggle) ---------- */
+@keyframes inv2Eq {
+  0%,
+  100% {
+    height: 30%;
+  }
+  50% {
+    height: 100%;
+  }
+}
+.inv2-root .eq-bar {
+  width: 3px;
+  background: var(--inv2-gold);
+  border-radius: 2px;
+  animation: inv2Eq 0.9s ease-in-out infinite;
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .inv2-root *,
+  .inv2-root *::before,
+  .inv2-root *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .inv2-root .kenburns,
+  .inv2-root .seal-glow,
+  .inv2-root .heartbeat,
+  .inv2-root .eq-bar {
+    animation: none !important;
+  }
+}

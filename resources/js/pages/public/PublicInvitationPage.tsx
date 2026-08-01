@@ -1,13 +1,13 @@
-﻿import { useState } from "react";
-import { typographyOptions } from "@/data/invitationConstants";
+import { useState } from "react";
+import { typographyOptions, CINEMATIC_TEMPLATE_KEY } from "@/data/invitationConstants";
 import { getSolidTheme } from "@/data/invitationThemes";
-import { AnimatedDesignRenderer, ANIMATED_DESIGN_KEYS } from "@/components/invitation/animated/AnimatedDesignRenderer";
 import { MusicControl } from "@/components/invitation/MusicControl";
 import { EnvelopeReveal } from "@/components/invitation/EnvelopeReveal";
 import { FloatingPetals } from "@/components/invitation/FloatingPetals";
 import { SolidInvitation } from "@/components/invitation/SolidInvitation";
 import { useSmoothScroll } from "@/components/invitation/hooks/useSmoothScroll";
 import type { WeddingData, CeremonyEvent, GuestData } from "@/components/invitation/animated/types";
+import WeddingInvitation from "@/components/invitation-v2/WeddingInvitation";
 
 interface PublicInvitationPageProps {
   onBack?: () => void;
@@ -19,7 +19,6 @@ interface PublicInvitationPageProps {
   coupleMainImage?: string | null;
   coupleGalleryImages?: string[];
   ceremonyEvents?: CeremonyEvent[];
-  googleMapsLink?: string | null;
 }
 
 export const PublicInvitationPage = ({
@@ -34,7 +33,6 @@ export const PublicInvitationPage = ({
   ceremonyEvents = [],
 }: PublicInvitationPageProps) => {
   const w = wedding;
-  const isAnimated = ANIMATED_DESIGN_KEYS.has(templateKey);
   const selectedTypography = typographyOptions.find((t) => t.key === typographyKey) || typographyOptions[0];
   const solidTheme = getSolidTheme(templateKey);
 
@@ -61,12 +59,26 @@ export const PublicInvitationPage = ({
 
   useSmoothScroll(revealed);
 
+  // ── Cinematic design: fully self-contained (its own envelope, petals, music) ──
+  if (templateKey === CINEMATIC_TEMPLATE_KEY) {
+    return (
+      <WeddingInvitation
+        wedding={w}
+        guest={guest}
+        eventToken={eventToken}
+        coupleMainImage={coupleMainImage}
+        coupleGalleryImages={coupleGalleryImages}
+        ceremonyEvents={ceremonyEvents}
+      />
+    );
+  }
+
   const envelopeOverlay = !revealed ? (
     <EnvelopeReveal
       brideName={w.bride_name}
       groomName={w.groom_name}
       onReveal={handleReveal}
-      accent={isAnimated ? undefined : solidTheme.accentHex}
+      accent={solidTheme.accentHex}
     />
   ) : null;
 
@@ -83,28 +95,6 @@ export const PublicInvitationPage = ({
     w.background_music_url && w.background_music_enabled ? (
       <MusicControl src={w.background_music_url} label={w.background_music_label} />
     ) : null;
-
-  // ── Animated designs: full-page renderer ────────────────────────────────────
-  if (isAnimated) {
-    return (
-      <>
-        {envelopeOverlay}
-        {backButton}
-        {musicControl}
-        <AnimatedDesignRenderer
-          templateKey={templateKey}
-          typographyKey={typographyKey}
-          wedding={w}
-          guest={guest}
-          eventToken={eventToken}
-          coupleMainImage={coupleMainImage}
-          coupleGalleryImages={coupleGalleryImages}
-          ceremonyEvents={ceremonyEvents}
-          onBack={onBack}
-        />
-      </>
-    );
-  }
 
   // ── Solid designs: borderless, full-bleed, scroll-animated ──────────────────
   return (

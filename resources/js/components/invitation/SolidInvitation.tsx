@@ -201,13 +201,13 @@ export function SolidInvitation({
           <Reveal animation="fadeUp" className="py-8">
             <p className={`text-center ${sectionLabel}`}>Ceremony Details</p>
             <h2 className={`mt-2 text-center ${sectionHeading}`}>The Celebration</h2>
-            <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div className={ceremonyEvents.length === 1 ? "mt-8 flex justify-center" : "mt-8 grid grid-cols-1 gap-5 md:grid-cols-2"}>
               {ceremonyEvents.map((ev, i) => (
                 <Reveal
                   key={i}
                   animation={i % 2 === 0 ? "slideRight" : "slideLeft"}
                   delay={i * 0.08}
-                  className={`rounded-2xl p-6 ${theme.surfaceClassName}`}
+                  className={`rounded-2xl p-6 ${theme.surfaceClassName} ${ceremonyEvents.length === 1 ? "w-full max-w-xl" : ""}`}
                 >
                   <p className={`text-[11px] font-semibold uppercase tracking-[0.28em] ${typography.bodyFont} ${theme.accentToneClassName}`}>
                     {ev.label}
