@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { Calendar, Clock, MapPin, Phone } from "lucide-react";
 import type { SolidTheme } from "@/data/invitationThemes";
 import type { TypographyOption } from "@/data/invitationConstants";
@@ -72,6 +72,12 @@ export function SolidInvitation({
 
   const firstEvent = ceremonyEvents[0];
   const countdownTarget = firstEvent ? `${firstEvent.date}T${firstEvent.start_time || "00:00"}` : null;
+
+  // Marks the end of the Ceremony Details section — the gallery carousel starts
+  // auto-advancing as soon as the scroll passes this point, rather than waiting
+  // for the gallery itself to scroll into view.
+  const ceremonyEndRef = useRef<HTMLDivElement>(null);
+  const ceremonyPassed = useInView(ceremonyEndRef, { once: true, amount: 0 });
 
   const sectionLabel = `text-xs uppercase tracking-[0.32em] ${typography.bodyFont} ${theme.subTextToneClassName}`;
   const sectionHeading = `text-3xl md:text-4xl ${typography.headingFont} ${theme.textToneClassName}`;
@@ -238,6 +244,7 @@ export function SolidInvitation({
                 </Reveal>
               ))}
             </div>
+            <div ref={ceremonyEndRef} aria-hidden="true" />
           </Reveal>
         )}
 
@@ -255,6 +262,8 @@ export function SolidInvitation({
                   arrowClassName={theme.isDark ? "bg-black/40 text-white border border-white/15" : "bg-white/80 text-zinc-900 border border-black/10"}
                   dotActiveClassName={`w-5 ${theme.isDark ? "bg-white" : "bg-zinc-800"}`}
                   dotClassName={theme.isDark ? "w-2 bg-white/40" : "w-2 bg-zinc-400"}
+                  autoplayTrigger={ceremonyEvents.length > 0 ? ceremonyPassed : undefined}
+                  autoMs={3200}
                 />
               </div>
             </Reveal>
@@ -302,7 +311,7 @@ export function SolidInvitation({
         )}
 
         {/* ── Footer ── */}
-        <Reveal animation="fadeIn" className="mt-16 text-center">
+        <Reveal animation="fadeIn" className="mt-16 pb-16 text-center md:pb-24">
           <p className={`text-4xl ${typography.headingFont} ${theme.accentToneClassName}`}>Thank You</p>
           <p className={`mt-3 text-sm ${typography.bodyFont} ${theme.subTextToneClassName}`}>With love and gratitude</p>
           <p className={`mt-2 text-lg ${typography.bodyFont} ${theme.textToneClassName}`}>

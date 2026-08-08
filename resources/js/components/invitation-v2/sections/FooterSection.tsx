@@ -7,7 +7,7 @@ export default function FooterSection({ invitation }: { invitation: InvitationVi
   const couple = `${invitation.groom_name?.split(' ')[0]} & ${invitation.bride_name?.split(' ')[0]}`;
 
   return (
-    <footer className="section-pad bg-charcoal" style={{ textAlign: 'center', paddingBottom: '3rem' }}>
+    <footer className="section-pad bg-charcoal" style={{ textAlign: 'center', paddingBottom: 'clamp(3.5rem, 10vw, 6rem)' }}>
       <AnimatedSection animation="fadeUp">
         <h2 className="font-script" style={{ color: '#C9A96E', fontSize: 'clamp(2.5rem, 8vw, 3rem)', margin: 0 }}>
           Thank You
