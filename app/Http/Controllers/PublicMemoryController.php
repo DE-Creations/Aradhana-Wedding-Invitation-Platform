@@ -74,10 +74,15 @@ class PublicMemoryController extends Controller
         $files = array_slice($files, 0, $remaining);
 
         // Build safe sub-folder from guest name: "Amitha & Family" → "Amitha & Family"
-        $folderName = Str::limit($guest->guest_name, 60, '');
+        $guestFolderName = Str::limit($guest->guest_name, 60, '');
         // Remove characters unsafe for folder names on any OS
-        $folderName = preg_replace('/[\\\\\/\:\*\?\"\<\>\|]/', '_', $folderName);
-        $diskPath   = 'guests-images/' . $folderName;
+        $guestFolderName = preg_replace('/[\\\\\/\:\*\?\"\<\>\|]/', '_', $guestFolderName);
+
+        // Same wedding-folder naming used for the main image / gallery images
+        $weddingFolderName = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $wedding->user->name ?? 'user_' . $wedding->user_id);
+
+        // Store in storage/app/public/weddings/{wedding_folder}/guest-images/{guest_folder}/
+        $diskPath = 'weddings/' . $weddingFolderName . '/guest-images/' . $guestFolderName;
 
         $uploaded = [];
 
@@ -85,7 +90,6 @@ class PublicMemoryController extends Controller
             $extension = $file->getClientOriginalExtension() ?: 'jpg';
             $fileName  = Str::uuid() . '.' . $extension;
 
-            // Store in storage/app/public/guests-images/{guest_name}/
             $path = $file->storeAs($diskPath, $fileName, 'public');
 
             // Compress / resize to reduce storage footprint

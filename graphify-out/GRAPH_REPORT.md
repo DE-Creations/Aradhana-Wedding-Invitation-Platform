@@ -1,13 +1,13 @@
-# Graph Report - .  (2026-08-01)
+# Graph Report - .  (2026-08-08)
 
 ## Corpus Check
-- 385 files · ~172,698 words
+- 20 files · ~174,181 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 6812 nodes · 20100 edges · 312 communities (258 shown, 54 thin omitted)
-- Extraction: 87% EXTRACTED · 13% INFERRED · 0% AMBIGUOUS · INFERRED: 2696 edges (avg confidence: 0.73)
-- Token cost: 193,723 input · 0 output
+- 6825 nodes · 20042 edges · 311 communities (257 shown, 54 thin omitted)
+- Extraction: 87% EXTRACTED · 13% INFERRED · 0% AMBIGUOUS · INFERRED: 2686 edges (avg confidence: 0.73)
+- Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
 - Filament Code Editor — Core (Vendor)
@@ -37,7 +37,7 @@
 - Admin Dashboard & Auth Controllers
 - Filament Chart Widget — Draw Lifecycle (Vendor)
 - User Model & Admin Widgets
-- Filament Chart Widget — Misc Fragment (Vendor)
+- User Dashboard Controllers (Guests, Memories, Settings)
 - Filament Rich Editor — DOM Serialization (Vendor)
 - User Auth & Login Requests
 - Filament Support Utilities (Vendor)
@@ -50,7 +50,7 @@
 - Filament Notifications Widget (Vendor)
 - shadcn/ui Components — Badge/Breadcrumb
 - Filament File Upload Component (Vendor)
-- Filament Chart Widget — Data Limits (Vendor)
+- Public Invitation & Guest-Facing Controllers
 - Filament Stat Chart — Layout Compute (Vendor)
 - Filament Stat Chart — Bar Pixels (Vendor)
 - Filament File Upload & Markdown Editor Fragment (Vendor)
@@ -78,7 +78,7 @@
 - Code Editor (Vendor Bundle)
 - Package
 - Echo (Vendor Bundle)
-- Admin
+- Gilded Rose Invitation Shell (invitation-v2)
 - Rich Editor (Vendor Bundle)
 - Userdashboardpage
 - Support (Vendor Bundle)
@@ -105,16 +105,16 @@
 - App (Vendor Bundle)
 - Code Editor (Vendor Bundle)
 - Invitationresource
-- Package
+- Image Crop Modal & Wedding Settings Page
 - Contactsection
 - Utils
-- Contactmessageform
+- Table Management Controller & PDF Seating Chart
 - Chart (Vendor Bundle)
 - Sharememoriespage
 - Tsconfig.node
 - Invitationconstants
 - Contactmessageresource
-- Select (Vendor Bundle)
+- RSVP Modal & Invitation View Model
 - Select (Vendor Bundle)
 - Chart (Vendor Bundle)
 - Chart (Vendor Bundle)
@@ -128,7 +128,7 @@
 - Support (Vendor Bundle)
 - Select (Vendor Bundle)
 - Chart (Vendor Bundle)
-- Composer
+- Photo Story Invitation & Gallery Carousel
 - Composer
 - Form
 - Editcontactmessage
@@ -178,15 +178,15 @@
 - Countdowntimer
 - Controller
 - Composer
-- Exampletest
-- Composer
-- Adminlogin
+- Inertia NotFound Error Page
+- Public NotFound Page (pages/)
 - Userlogin
-- Notfound
+- 2026 07 09 090002 Create Gallery Photos Table
+- 2026 07 09 090003 Create Guests Table
+- 2026 05 01 000000 Add Animation And Music To Weddings Table
+- Text Input (Vendor Bundle)
+- Toggle (Vendor Bundle)
 - App
-- Composer
-- Composer
-- Logo
 - Package
 - Logo Text
 - Package
@@ -216,6 +216,7 @@
 - Package
 - Package
 - Package
+- react-easy-crop Dependency
 - Package
 - Package
 - Package
@@ -228,11 +229,7 @@
 - Package
 - Package
 - Package
-- Package
-- Package
-- Package
-- Package
-- Placeholder
+- Postcss.config
 
 ## God Nodes (most connected - your core abstractions)
 1. `o()` - 234 edges
@@ -242,7 +239,7 @@
 5. `i()` - 163 edges
 6. `constructor()` - 146 edges
 7. `update()` - 142 edges
-8. `h()` - 139 edges
+8. `h()` - 138 edges
 9. `u()` - 132 edges
 10. `resolve()` - 97 edges
 
@@ -266,681 +263,669 @@
 - **Filament Panel Role-Based Access Control** — backend_readme_admin_panel, backend_readme_dashboard_panel, backend_readme_user_canaccesspanel [EXTRACTED 1.00]
 - **Aradhana Backend Tech Stack** — backend_readme_laravel12, backend_readme_filament_v5, backend_readme_laravel_sanctum, backend_readme_mysql8, backend_readme_database_queue [EXTRACTED 1.00]
 
-## Communities (312 total, 54 thin omitted)
+## Communities (311 total, 54 thin omitted)
 
 ### Community 0 - "Filament Code Editor — Core (Vendor)"
 Cohesion: 0.01
-Nodes (93): Ac(), addCompletion(), addCompletions(), addNamespace(), addNamespaceObject(), Ag(), b0(), Blockquote() (+85 more)
+Nodes (195): $0(), Ab(), ac(), addAll(), addDOM(), addElement(), addElementByRule(), addHackNode() (+187 more)
 
 ### Community 1 - "Filament Rich Editor — Core (Vendor)"
 Cohesion: 0.01
-Nodes (163): $0(), Ab(), ac(), accepts(), add(), addHackNode(), addNodeMark(), addOptions() (+155 more)
+Nodes (149): abutsStart(), alpha(), bd(), Be(), beforeDraw(), bm(), buildFormatParser(), $c() (+141 more)
 
 ### Community 2 - "Filament Chart Widget — Core (Vendor)"
 Cohesion: 0.01
-Nodes (130): abutsStart(), alpha(), Be(), beforeDraw(), bm(), $c(), Cm(), co() (+122 more)
+Nodes (101): Ac(), addCompletion(), addCompletions(), addNamespace(), addNamespaceObject(), Ag(), attrs(), Blockquote() (+93 more)
 
 ### Community 3 - "Filament Stat Chart (Vendor)"
-Cohesion: 0.02
-Nodes (114): _a(), ac(), acquireContext(), addControllers(), addPlugins(), addScales(), afterDraw(), alpha() (+106 more)
+Cohesion: 0.04
+Nodes (152): aa(), Bg(), cc(), cw(), CY(), dynamicSlot(), ensureLineGaps(), maybeChild() (+144 more)
 
 ### Community 4 - "Filament Rich Editor — Marks/Formatting (Vendor)"
-Cohesion: 0.05
-Nodes (149): ad(), after(), allowedMarks(), allowsMarks(), am(), au(), Ay(), bc() (+141 more)
+Cohesion: 0.02
+Nodes (103): acquireContext(), addControllers(), addPlugins(), addScales(), afterDraw(), as(), bl(), bo() (+95 more)
 
 ### Community 5 - "Filament Code Editor — Editing Ops (Vendor)"
-Cohesion: 0.02
-Nodes (145): add(), addChunk(), addEventListener(), addInfoPane(), addInner(), addWindowListeners(), adjust(), annotation() (+137 more)
+Cohesion: 0.03
+Nodes (134): add(), addChunk(), addEventListener(), addInfoPane(), addInner(), addWindowListeners(), adjust(), annotation() (+126 more)
 
 ### Community 6 - "Filament Date/Time & Rich Editor Shortcuts (Vendor)"
 Cohesion: 0.05
-Nodes (135): d(), g(), p(), addCommands(), addInputRules(), addKeyboardShortcuts(), addMark(), addNodeView() (+127 more)
+Nodes (128): VariableDefinition(), _a(), ad(), addKeyboardShortcuts(), after(), am(), An(), apply() (+120 more)
 
 ### Community 7 - "Filament Chart Widget — Plugins/Scales (Vendor)"
-Cohesion: 0.03
-Nodes (107): $a(), addBox(), addControllers(), addElements(), addPlugins(), addScales(), afterBuildTicks(), afterCalculateLabelRotation() (+99 more)
+Cohesion: 0.05
+Nodes (117): addBadgesForSelectedOptions(), addSingleBadge(), addSingleSelectionDisplay(), Ae(), An(), applyDisabledState(), At(), be() (+109 more)
 
 ### Community 8 - "Filament Chart Widget — Ticks/Layout (Vendor)"
 Cohesion: 0.04
-Nodes (107): acquireContext(), adjustHitBoxes(), B(), bh(), buildTicks(), calculateLabelRotation(), _calculatePadding(), clear() (+99 more)
+Nodes (124): aa(), acquireContext(), addBox(), adjustHitBoxes(), B(), bh(), buildOrUpdateScales(), calculateLabelRotation() (+116 more)
 
 ### Community 9 - "Filament Markdown Editor (Vendor)"
-Cohesion: 0.04
-Nodes (96): ad(), af(), ai(), al(), An(), ao(), Ba(), bf() (+88 more)
+Cohesion: 0.03
+Nodes (116): addExtensions(), addNode(), addOptions(), af(), ag(), applyInitialSize(), Cc(), cg() (+108 more)
 
 ### Community 10 - "Filament Chart Widget — Utils (Vendor)"
-Cohesion: 0.04
-Nodes (96): ac(), ae(), after(), ag(), Al(), Am(), before(), bl() (+88 more)
+Cohesion: 0.03
+Nodes (110): accept(), activateHover(), active(), apply(), b0(), baseTheme(), between(), bi() (+102 more)
 
 ### Community 11 - "Filament Rich Editor — Node Attributes (Vendor)"
 Cohesion: 0.03
-Nodes (92): addAttributes(), addGlobalAttributes(), addNode(), af(), applyInitialSize(), b0(), Bn(), Cc() (+84 more)
+Nodes (85): AccordionContent, AccordionItem, AccordionTrigger, Alert, AlertDescription, AlertTitle, alertVariants, Avatar (+77 more)
 
 ### Community 12 - "Filament Code Editor — Tree Nodes (Vendor)"
 Cohesion: 0.04
-Nodes (91): addChild(), AQ(), au(), child(), childAfter(), childBefore(), continue(), cursor() (+83 more)
+Nodes (105): ac(), ae(), after(), ag(), Al(), Am(), before(), bl() (+97 more)
 
 ### Community 13 - "Filament Rich Editor — Extensions Setup (Vendor)"
 Cohesion: 0.04
-Nodes (89): addExtensions(), ag(), Ar(), cg(), configure(), coordsAtPos(), createExtensionManager(), $d() (+81 more)
+Nodes (103): AQ(), atLastNode(), au(), ch(), child(), childAfter(), childBefore(), continue() (+95 more)
 
 ### Community 14 - "Filament Code Editor — Composition/Selection (Vendor)"
 Cohesion: 0.04
-Nodes (87): addComposition(), addRange(), after(), aP(), before(), bP(), Ci(), clear() (+79 more)
+Nodes (96): af(), afterAutoSkip(), Ao(), aspectRatio(), at(), Ba(), buildLookupTable(), _calculateBarIndexPixels() (+88 more)
 
 ### Community 15 - "Filament Code Editor — Marks/Sets (Vendor)"
-Cohesion: 0.03
-Nodes (85): addActive(), addToSet(), Ar(), as(), bd(), between(), Bh(), blockTiles() (+77 more)
+Cohesion: 0.04
+Nodes (91): addComposition(), addRange(), after(), aP(), before(), bP(), checkHover(), Ci() (+83 more)
 
 ### Community 16 - "Filament Chart Widget — Scope/Clone (Vendor)"
-Cohesion: 0.03
-Nodes (83): Bc(), bg(), cg(), chartOptionScopes(), Cl(), clone(), constructor(), create() (+75 more)
+Cohesion: 0.04
+Nodes (91): addToSet(), applyChanges(), balanced(), baseIndent(), baseIndentFor(), blockAt(), cd(), changeByRange() (+83 more)
 
 ### Community 17 - "Filament Chart Widget — Event Handling (Vendor)"
-Cohesion: 0.04
-Nodes (81): addEventListener(), Ao(), apply(), applyStack(), aspectRatio(), au(), Ba(), bindResponsiveEvents() (+73 more)
+Cohesion: 0.06
+Nodes (86): [g](), accepts(), addCommands(), addGlobalAttributes(), ak(), allowsMarks(), Ap(), applyInner() (+78 more)
 
 ### Community 18 - "Filament Stat Chart — Axis Ticks (Vendor)"
 Cohesion: 0.05
-Nodes (79): addElements(), afterBuildTicks(), afterCalculateLabelRotation(), afterDataLimits(), afterFit(), afterSetDimensions(), afterTickToLabelConversion(), afterUpdate() (+71 more)
+Nodes (80): Aa(), ad(), af(), ai(), al(), An(), ao(), Ba() (+72 more)
 
 ### Community 19 - "Filament Code Editor — Actions/Stack (Vendor)"
-Cohesion: 0.05
-Nodes (76): addActions(), advance(), advanceFully(), advanceStack(), allActions(), apply(), break(), c0() (+68 more)
+Cohesion: 0.04
+Nodes (84): a$(), activeForPoint(), addActive(), addChanges(), addSelection(), Ah(), applyTransaction(), Ar() (+76 more)
 
 ### Community 20 - "Filament Code/Markdown Editor Fragment (Vendor)"
-Cohesion: 0.10
-Nodes (76): Dg(), Ig(), le(), Se(), at(), Be(), ca(), cd() (+68 more)
+Cohesion: 0.04
+Nodes (78): ar(), beforeDatasetDraw(), Cl(), clone(), create(), Ct(), dc(), Dl() (+70 more)
 
 ### Community 21 - "Filament Code Editor — Attrs Fragment (Vendor)"
-Cohesion: 0.07
-Nodes (63): a$(), Af(), al(), attrs(), AX(), B(), balance(), cc() (+55 more)
+Cohesion: 0.05
+Nodes (19): AdminLoginRequest, UserLoginRequest, LatestRsvps, GuestImportController, InvitationController, RsvpController, UserInvitationController, ImportGuestsRequest (+11 more)
 
 ### Community 22 - "Filament Code Editor — Hover/Active State (Vendor)"
 Cohesion: 0.05
-Nodes (67): aa(), accept(), activateHover(), active(), baseDirAt(), Bg(), bidiIn(), bidiSpansAt() (+59 more)
+Nodes (73): Image(), addStoredMark(), addToSet(), br(), coordsAtPos(), cy(), deleteNode(), deleteRange() (+65 more)
 
 ### Community 23 - "Filament Tables Component (Vendor)"
-Cohesion: 0.09
-Nodes (62): A(), ae(), areRecordsSelected(), areRecordsToggleable(), B(), be(), C(), canSelectAllRecords() (+54 more)
+Cohesion: 0.05
+Nodes (70): $a(), addEventListener(), afterBuildTicks(), afterCalculateLabelRotation(), afterDataLimits(), afterDraw(), afterFit(), afterSetDimensions() (+62 more)
 
 ### Community 24 - "Admin Dashboard & Auth Controllers"
-Cohesion: 0.06
-Nodes (16): AdminDashboardController, AdminAuthController, UserAuthController, Controller, DashboardController, DesignController, GuestController, TableController (+8 more)
+Cohesion: 0.08
+Nodes (23): AccountExpiryReminderMail, BigDayWishesMail, WelcomeClientMail, Guest, Rsvp, RsvpSubmitted, SendInvitationEmail, SendRsvpNotification (+15 more)
 
 ### Community 25 - "Filament Chart Widget — Draw Lifecycle (Vendor)"
-Cohesion: 0.04
-Nodes (66): ad(), ah(), average(), beforeDatasetsDraw(), beforeLayout(), bi(), bu(), cf() (+58 more)
+Cohesion: 0.05
+Nodes (66): addChild(), addElement(), addGaps(), addLeafElement(), addNode(), advance(), ATXHeading(), balance() (+58 more)
 
 ### Community 26 - "User Model & Admin Widgets"
-Cohesion: 0.05
-Nodes (23): LatestRsvps, StatsOverview, Guest, Rsvp, User, AdminPanelProvider, UserPanelProvider, ExampleTest (+15 more)
+Cohesion: 0.06
+Nodes (63): addMaps(), addStep(), addTransform(), allowedMarks(), appendMap(), appendMapping(), appendMappingInverted(), au() (+55 more)
 
-### Community 27 - "Filament Chart Widget — Misc Fragment (Vendor)"
-Cohesion: 0.05
-Nodes (63): aa(), add(), bd(), bo(), br(), bs(), ca(), _cachedScopes() (+55 more)
+### Community 27 - "User Dashboard Controllers (Guests, Memories, Settings)"
+Cohesion: 0.07
+Nodes (15): AdminDashboardController, AdminAuthController, UserAuthController, Controller, DashboardController, DesignController, GuestController, MemoryController (+7 more)
 
 ### Community 28 - "Filament Rich Editor — DOM Serialization (Vendor)"
-Cohesion: 0.06
-Nodes (62): addAll(), addDOM(), addElement(), addElementByRule(), addStoredMark(), addTextNode(), addToSet(), allowsMarkType() (+54 more)
+Cohesion: 0.05
+Nodes (42): apply(), ar(), as(), bo(), close(), closeQuietly(), co(), commit() (+34 more)
 
 ### Community 29 - "User Auth & Login Requests"
-Cohesion: 0.06
-Nodes (16): UserLoginRequest, GuestImportController, InvitationController, RsvpController, UserInvitationController, ImportGuestsRequest, StoreInvitationRequest, StoreRsvpRequest (+8 more)
+Cohesion: 0.07
+Nodes (63): adjustHitBoxes(), At(), bi(), calculateLabelRotation(), _calculatePadding(), clear(), _computeGridLineItems(), _computeLabelArea() (+55 more)
 
 ### Community 30 - "Filament Support Utilities (Vendor)"
 Cohesion: 0.06
-Nodes (40): as(), bo(), bs(), close(), closeQuietly(), co(), commit(), distribute() (+32 more)
+Nodes (61): afterBuildTicks(), afterCalculateLabelRotation(), afterDataLimits(), afterFit(), afterSetDimensions(), afterTickToLabelConversion(), afterUpdate(), apply() (+53 more)
 
 ### Community 31 - "Mail Commands & Notifications"
-Cohesion: 0.09
-Nodes (20): AccountExpiryReminderMail, BigDayWishesMail, WelcomeClientMail, Guest, GuestsRelationManager, SendInvitationEmail, SendRsvpNotification, SendRsvpReminder (+12 more)
+Cohesion: 0.05
+Nodes (13): ChristianWedding, MuslimWedding, SinhalaWedding, TableAssignment, TamilWedding, WeddingTable, GalleryPhoto, Guest (+5 more)
 
 ### Community 32 - "shadcn/ui Components — Accordion/Alert"
-Cohesion: 0.04
-Nodes (40): AccordionContent, AccordionItem, AccordionTrigger, Alert, AlertDescription, AlertTitle, alertVariants, Avatar (+32 more)
+Cohesion: 0.08
+Nodes (57): _a(), Ae(), ar(), as(), bc(), bf(), ci(), cl() (+49 more)
 
 ### Community 33 - "Wedding Settings & Type-Specific Models"
-Cohesion: 0.06
-Nodes (14): ChristianWedding, MuslimWedding, Rsvp, SinhalaWedding, TableAssignment, TamilWedding, WeddingGalleryImage, RsvpSubmitted (+6 more)
+Cohesion: 0.05
+Nodes (57): ad(), applyStack(), average(), beforeDatasetsDraw(), beforeLayout(), bi(), bu(), dataset() (+49 more)
 
 ### Community 34 - "Filament Stat Chart — Circumference/Ticks (Vendor)"
-Cohesion: 0.06
-Nodes (54): bh(), buildTicks(), calculateCircumference(), calculateLabelRotation(), _circumference(), cn(), _computeAngle(), _computeLabelItems() (+46 more)
+Cohesion: 0.07
+Nodes (52): Af(), al(), AX(), B(), combine(), compute(), flatten(), from() (+44 more)
 
 ### Community 35 - "Filament Rich Editor — Position Helpers (Vendor)"
-Cohesion: 0.05
-Nodes (50): Ah(), at(), atEnd(), atStart(), Ba(), Bo(), Ch(), childAfter() (+42 more)
+Cohesion: 0.10
+Nodes (46): addBadgesForSelectedOptions(), addSingleBadge(), addSingleSelectionDisplay(), applyDisabledState(), Bt(), closeDropdown(), constructor(), createBadgeElement() (+38 more)
 
 ### Community 36 - "Filament Code Editor — Block Widgets (Vendor)"
 Cohesion: 0.06
-Nodes (52): activeForPoint(), addBlock(), addBlockWidget(), addBreak(), addDelimiter(), addInlineWidget(), addLine(), addLineDeco() (+44 more)
+Nodes (56): an(), Ar(), buildOrUpdateScales(), buildTicks(), ch(), computeTickLimit(), D(), determineDataLimits() (+48 more)
 
 ### Community 37 - "Filament Notifications Widget (Vendor)"
-Cohesion: 0.06
-Nodes (31): actions(), button(), c(), close(), configureAnimations(), configureTransitions(), constructor(), danger() (+23 more)
+Cohesion: 0.17
+Nodes (55): Dg(), Ig(), le(), Se(), at(), Be(), ca(), Cr() (+47 more)
 
 ### Community 38 - "shadcn/ui Components — Badge/Breadcrumb"
 Cohesion: 0.06
-Nodes (42): Badge(), BadgeProps, badgeVariants, Breadcrumb, BreadcrumbEllipsis(), BreadcrumbItem, BreadcrumbLink, BreadcrumbList (+34 more)
+Nodes (52): Rd(), Ah(), at(), Ax(), Ba(), bx(), Ch(), ct() (+44 more)
 
 ### Community 39 - "Filament File Upload Component (Vendor)"
-Cohesion: 0.06
-Nodes (34): am(), Bp(), ca(), Cg(), clickPercent(), constructor(), Cp(), Dp() (+26 more)
+Cohesion: 0.05
+Nodes (14): Ud(), Bi(), Bn(), ce(), fe(), Hc(), ji(), te() (+6 more)
 
-### Community 40 - "Filament Chart Widget — Data Limits (Vendor)"
-Cohesion: 0.06
-Nodes (49): af(), afterAutoSkip(), at(), Bf(), buildLookupTable(), determineDataLimits(), df(), Fa() (+41 more)
+### Community 40 - "Public Invitation & Guest-Facing Controllers"
+Cohesion: 0.07
+Nodes (13): FindTableController, GuestSearchController, PublicInvitationController, PublicMemoryController, ShareMemoriesController, HandleInertiaRequests, InvitationView, Wedding (+5 more)
 
 ### Community 41 - "Filament Stat Chart — Layout Compute (Vendor)"
-Cohesion: 0.09
-Nodes (49): adjustHitBoxes(), At(), bi(), bo(), clear(), _computeLabelArea(), _computeTitleHeight(), De() (+41 more)
+Cohesion: 0.06
+Nodes (53): addActions(), advanceFully(), advanceStack(), allActions(), c0(), canShift(), close(), deadEnd() (+45 more)
 
 ### Community 42 - "Filament Stat Chart — Bar Pixels (Vendor)"
-Cohesion: 0.07
-Nodes (48): afterAutoSkip(), applyStack(), Ar(), buildLookupTable(), _calculateBarIndexPixels(), _calculateBarValuePixels(), _calculatePadding(), _computeGridLineItems() (+40 more)
+Cohesion: 0.06
+Nodes (53): aa(), ae(), alpha(), ba(), Bt(), ca(), _computeLabelSizes(), createResolver() (+45 more)
 
 ### Community 43 - "Filament File Upload & Markdown Editor Fragment (Vendor)"
-Cohesion: 0.07
-Nodes (45): define(), Ei(), Aa(), Ac(), bl(), ce(), cf(), Cn() (+37 more)
+Cohesion: 0.06
+Nodes (31): actions(), button(), c(), close(), configureAnimations(), configureTransitions(), constructor(), danger() (+23 more)
 
 ### Community 44 - "shadcn/ui Components — Alert Dialog"
-Cohesion: 0.09
-Nodes (39): AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter(), AlertDialogHeader(), AlertDialogOverlay, AlertDialogTitle (+31 more)
+Cohesion: 0.13
+Nodes (45): A(), ae(), B(), be(), C(), ce(), E(), ee() (+37 more)
 
 ### Community 45 - "Code Editor (Vendor Bundle)"
-Cohesion: 0.06
-Nodes (46): addElement(), applyChanges(), balanced(), baseIndent(), baseIndentFor(), blockAt(), column(), countColumn() (+38 more)
+Cohesion: 0.08
+Nodes (39): AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter(), AlertDialogHeader(), AlertDialogOverlay, AlertDialogTitle (+31 more)
 
 ### Community 46 - "Publicinvitationcontroller"
-Cohesion: 0.09
-Nodes (11): FindTableController, GuestSearchController, PublicInvitationController, PublicMemoryController, ShareMemoriesController, HandleInertiaRequests, InvitationView, Wedding (+3 more)
+Cohesion: 0.07
+Nodes (30): am(), Bp(), ca(), Cg(), clickPercent(), constructor(), Cp(), Dp() (+22 more)
 
 ### Community 47 - "Code Editor (Vendor Bundle)"
-Cohesion: 0.07
-Nodes (45): addChanges(), addSelection(), Ah(), applyTransaction(), asSingle(), changeByRange(), changes(), compose() (+37 more)
-
-### Community 48 - "Markdown Editor (Vendor Bundle)"
-Cohesion: 0.05
-Nodes (8): Ud(), Bi(), Bn(), ji(), te(), Vi(), Xc(), AdminUsersPage()
-
-### Community 49 - "Chart (Vendor Bundle)"
-Cohesion: 0.07
-Nodes (44): yf(), o(), Cl(), h(), Bt(), gu(), uu(), Xn() (+36 more)
-
-### Community 50 - "Select (Vendor Bundle)"
-Cohesion: 0.12
-Nodes (45): At(), b(), bi(), bn(), Ce(), ci(), cn(), ct() (+37 more)
-
-### Community 51 - "Slider (Vendor Bundle)"
 Cohesion: 0.09
 Nodes (38): We(), Ae(), ar(), Be(), Bt(), De(), _e(), Ee() (+30 more)
 
-### Community 52 - "Markdown Editor (Vendor Bundle)"
-Cohesion: 0.18
-Nodes (37): measureVisibleLineHeights(), wa(), yS(), b(), $c(), D(), f(), G() (+29 more)
+### Community 48 - "Markdown Editor (Vendor Bundle)"
+Cohesion: 0.06
+Nodes (28): url(), SheetContent, SheetContentProps, SheetDescription, SheetFooter(), SheetHeader(), SheetOverlay, SheetTitle (+20 more)
 
-### Community 53 - "Rich Editor (Vendor Bundle)"
-Cohesion: 0.07
-Nodes (42): addPasteRules(), append(), as(), check(), checkAttrs(), checkContent(), connectSelection(), dc() (+34 more)
+### Community 49 - "Chart (Vendor Bundle)"
+Cohesion: 0.08
+Nodes (43): afterAutoSkip(), applyStack(), buildLookupTable(), _calculateBarIndexPixels(), _calculateBarValuePixels(), calculateCircumference(), _circumference(), _computeAngle() (+35 more)
 
-### Community 54 - "Select (Vendor Bundle)"
-Cohesion: 0.10
-Nodes (32): Ae(), Ai(), An(), Bt(), Ce(), De(), ei(), en() (+24 more)
+### Community 50 - "Select (Vendor Bundle)"
+Cohesion: 0.13
+Nodes (42): At(), b(), bi(), bn(), Ce(), ci(), cn(), ct() (+34 more)
 
-### Community 55 - "Readme"
+### Community 51 - "Slider (Vendor Bundle)"
 Cohesion: 0.06
 Nodes (42): Aradhana Backend README, Admin Panel (/admin), Authenticated API (Sanctum), config/cors.php, User Panel (/dashboard), Database Queue, Filament v5, File Upload Storage Structure (+34 more)
 
-### Community 56 - "Sidebar"
+### Community 52 - "Markdown Editor (Vendor Bundle)"
 Cohesion: 0.06
 Nodes (36): react, react, useCarousel(), useChart(), useFormField(), Input, Separator, Sidebar (+28 more)
 
+### Community 53 - "Rich Editor (Vendor Bundle)"
+Cohesion: 0.07
+Nodes (14): Admin, WeddingType, DatabaseSeeder, GuestSeeder, RsvpSeeder, UserSeeder, AdminSeeder, DatabaseSeeder (+6 more)
+
+### Community 54 - "Select (Vendor Bundle)"
+Cohesion: 0.08
+Nodes (18): StatsOverview, User, AdminPanelProvider, UserPanelProvider, ExampleTest, MailRenderTest, PanelSmokeTest, TestCase (+10 more)
+
+### Community 55 - "Readme"
+Cohesion: 0.07
+Nodes (38): add(), bo(), br(), bs(), ca(), _cachedScopes(), Ch(), Ci() (+30 more)
+
+### Community 56 - "Sidebar"
+Cohesion: 0.08
+Nodes (38): _a(), average(), cc(), dataset(), first(), Ge(), getCenterPoint(), _getLegendItemAt() (+30 more)
+
 ### Community 57 - "Select (Vendor Bundle)"
-Cohesion: 0.14
-Nodes (41): At(), b(), bi(), bn(), ci(), cn(), ct(), di() (+33 more)
+Cohesion: 0.10
+Nodes (8): User, SendTestMailCommand, User, UserManagementController, User, Carbon, InvitationPolicy, Illuminate\Http\UploadedFile
 
 ### Community 58 - "Code Editor (Vendor Bundle)"
-Cohesion: 0.07
-Nodes (40): addGaps(), addLeafElement(), addNode(), ATXHeading(), _c(), char(), complete(), dm() (+32 more)
+Cohesion: 0.05
+Nodes (37): autoprefixer, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, laravel-vite-plugin, devDependencies (+29 more)
 
 ### Community 59 - "Chart (Vendor Bundle)"
-Cohesion: 0.08
-Nodes (40): buildOrUpdateElements(), buildOrUpdateScales(), Ce(), ch(), _createItems(), D(), _dataCheck(), _destroy() (+32 more)
+Cohesion: 0.07
+Nodes (37): addControllers(), addElements(), addPlugins(), addScales(), As(), buildOrUpdateControllers(), buildOrUpdateElements(), _dataCheck() (+29 more)
 
 ### Community 60 - "Sheet"
-Cohesion: 0.06
-Nodes (28): AdminSidebar(), AdminSidebarProps, navItems, AppTopbar(), AppTopbarProps, SheetContent, SheetContentProps, SheetDescription (+20 more)
+Cohesion: 0.07
+Nodes (36): baseDirAt(), bd(), Bh(), bidiIn(), bidiSpans(), bidiSpansAt(), clearDelayedAndroidKey(), cS() (+28 more)
 
 ### Community 61 - "Code Editor (Vendor Bundle)"
-Cohesion: 0.07
-Nodes (39): baseTheme(), bi(), bu(), cO(), dr(), EY(), Fe(), Fn() (+31 more)
+Cohesion: 0.08
+Nodes (36): themeClasses(), afterDatasetsUpdate(), Ao(), beforeDatasetDraw(), beforeDatasetsDraw(), beforeDraw(), co(), generateLabels() (+28 more)
 
 ### Community 62 - "Chart (Vendor Bundle)"
 Cohesion: 0.08
-Nodes (39): aa(), ae(), ba(), Bt(), ca(), createResolver(), da(), _e() (+31 more)
+Nodes (36): active(), add(), _animateOptions(), _cachedScopes(), cancel(), ci(), _createAnimations(), _createDescriptors() (+28 more)
 
 ### Community 63 - "Package"
-Cohesion: 0.05
-Nodes (37): autoprefixer, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, devDependencies, autoprefixer (+29 more)
+Cohesion: 0.06
+Nodes (34): axios, clsx, @hookform/resolvers, @inertiajs/react, input-otp, dependencies, axios, clsx (+26 more)
 
 ### Community 64 - "Markdown Editor (Vendor Bundle)"
-Cohesion: 0.13
-Nodes (37): m(), Ae(), ar(), as(), ci(), cl(), fa(), fl() (+29 more)
-
-### Community 65 - "Code Editor (Vendor Bundle)"
-Cohesion: 0.08
-Nodes (35): be(), bidiSpans(), computeBlockGapDeco(), createSet(), Df(), Dt(), elementAtHeight(), filter() (+27 more)
-
-### Community 66 - "Package"
-Cohesion: 0.06
-Nodes (35): class-variance-authority, cmdk, embla-carousel-react, @hookform/resolvers, howler, dependencies, class-variance-authority, cmdk (+27 more)
-
-### Community 67 - "Echo (Vendor Bundle)"
 Cohesion: 0.08
 Nodes (18): a(), ar(), at(), cr(), d(), Dt(), f(), H() (+10 more)
 
-### Community 68 - "Admin"
+### Community 65 - "Code Editor (Vendor Bundle)"
+Cohesion: 0.09
+Nodes (34): aO(), charCategorizer(), d0(), De(), E$(), f0(), Fc(), getCursor() (+26 more)
+
+### Community 66 - "Package"
 Cohesion: 0.08
-Nodes (12): Admin, DatabaseSeeder, GuestSeeder, RsvpSeeder, UserSeeder, AdminSeeder, DatabaseSeeder, UserSeeder (+4 more)
+Nodes (33): ac(), bh(), cn(), cs(), En(), Es(), getBasePosition(), getBaseValue() (+25 more)
+
+### Community 67 - "Echo (Vendor Bundle)"
+Cohesion: 0.19
+Nodes (31): br(), Bt(), Ca(), ct(), Da(), Ea(), ei(), Fi() (+23 more)
+
+### Community 68 - "Gilded Rose Invitation Shell (invitation-v2)"
+Cohesion: 0.11
+Nodes (18): AnimatedDesignProps, CeremonyEvent, GuestData, WeddingData, EnvelopeReveal(), EnvelopeRevealProps, DEFAULT_COLORS, FloatingPetals() (+10 more)
 
 ### Community 69 - "Rich Editor (Vendor Bundle)"
-Cohesion: 0.11
-Nodes (33): Rd(), Ax(), bx(), ct(), dx(), ex(), Fh(), Gh() (+25 more)
+Cohesion: 0.14
+Nodes (30): Jt(), ae(), B(), de(), dt(), Ee(), fr(), g() (+22 more)
 
 ### Community 70 - "Userdashboardpage"
-Cohesion: 0.08
-Nodes (21): url(), Toaster(), ToasterProps, routeMap, UserShell(), routeMap, GalleryImage, Settings() (+13 more)
+Cohesion: 0.12
+Nodes (29): addBlock(), addBlockWidget(), addBreak(), addDelimiter(), addInlineWidget(), addLine(), addLineDeco(), addLineStart() (+21 more)
 
 ### Community 71 - "Support (Vendor Bundle)"
-Cohesion: 0.17
-Nodes (33): br(), Bt(), Ca(), ct(), Da(), Ea(), ei(), Fi() (+25 more)
+Cohesion: 0.08
+Nodes (28): apply(), Bc(), bg(), chartOptionScopes(), constructor(), Cs(), dg(), features() (+20 more)
 
 ### Community 72 - "Usermanagementcontroller"
-Cohesion: 0.11
-Nodes (7): User, SendTestMailCommand, User, UserManagementController, User, Carbon, InvitationPolicy
-
-### Community 73 - "Select (Vendor Bundle)"
-Cohesion: 0.14
-Nodes (23): Ae(), Ai(), An(), Bt(), De(), ei(), en(), fn() (+15 more)
-
-### Community 74 - "Command"
-Cohesion: 0.08
-Nodes (26): Command, CommandDialogProps, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator (+18 more)
-
-### Community 75 - "Chart (Vendor Bundle)"
-Cohesion: 0.09
-Nodes (31): themeClasses(), afterDatasetsUpdate(), buildOrUpdateControllers(), _destroyDatasetMeta(), generateLabels(), getController(), getDatasetMeta(), getDataVisibility() (+23 more)
-
-### Community 76 - "Invitationresource"
-Cohesion: 0.13
-Nodes (11): BackedEnum, InvitationResource, RsvpsRelationManager, InvitationsTable, UsersTable, UserResource, InvitationResource, InvitationsTable (+3 more)
-
-### Community 77 - "Support (Vendor Bundle)"
-Cohesion: 0.15
-Nodes (29): _a(), Ai(), ar(), c(), Cn(), destroy(), f(), g() (+21 more)
-
-### Community 78 - "Invitationfactory"
 Cohesion: 0.10
 Nodes (10): GalleryPhotoFactory, GuestFactory, InvitationFactory, static, static, RsvpFactory, static, UserFactory (+2 more)
 
-### Community 79 - "Support (Vendor Bundle)"
-Cohesion: 0.16
-Nodes (28): ae(), B(), de(), dt(), Ee(), fr(), Ge(), Gt() (+20 more)
+### Community 73 - "Select (Vendor Bundle)"
+Cohesion: 0.11
+Nodes (27): add(), append(), as(), connectSelection(), dc(), descAt(), deselectNode(), findDiffEnd() (+19 more)
 
-### Community 80 - "Chart (Vendor Bundle)"
-Cohesion: 0.10
-Nodes (28): bc(), beforeLayout(), dc(), determineDataLimits(), eh(), fc(), gc(), getMinMax() (+20 more)
-
-### Community 81 - "Rich Editor (Vendor Bundle)"
-Cohesion: 0.10
-Nodes (27): addInner(), addStep(), apply(), applyInner(), applyTransaction(), bu(), dy(), fail() (+19 more)
-
-### Community 82 - "Chart (Vendor Bundle)"
+### Community 74 - "Command"
 Cohesion: 0.10
 Nodes (27): afterDatasetsUpdate(), An(), ef(), generateLabels(), getDatasetMeta(), getDataVisibility(), getMaxBorderWidth(), _getSortedDatasetMetas() (+19 more)
 
-### Community 83 - "Use Toast"
+### Community 75 - "Chart (Vendor Bundle)"
 Cohesion: 0.13
 Nodes (23): Toast, ToastAction, ToastActionElement, ToastClose, ToastDescription, ToastProps, ToastTitle, toastVariants (+15 more)
 
-### Community 84 - "Code Editor (Vendor Bundle)"
-Cohesion: 0.10
-Nodes (26): aO(), charCategorizer(), cS(), Fc(), getCursor(), getDeco(), gT(), highlight() (+18 more)
+### Community 76 - "Invitationresource"
+Cohesion: 0.16
+Nodes (26): _a(), Ai(), c(), Cn(), destroy(), f(), $i(), ir() (+18 more)
 
-### Community 85 - "Tsconfig.app"
+### Community 77 - "Support (Vendor Bundle)"
 Cohesion: 0.08
 Nodes (25): DOM, DOM.Iterable, ES2020, resources/js, vitest/globals, compilerOptions, allowImportingTsExtensions, isolatedModules (+17 more)
 
-### Community 86 - "Emaillog"
+### Community 78 - "Invitationfactory"
+Cohesion: 0.10
+Nodes (17): AdminSidebar(), AdminSidebarProps, navItems, AppTopbar(), AppTopbarProps, Toaster(), ToasterProps, DashboardPageProps (+9 more)
+
+### Community 79 - "Support (Vendor Bundle)"
+Cohesion: 0.12
+Nodes (7): ContactMessageResource, ContactMessageForm, InvitationForm, UserForm, InvitationForm, ContactMessage, Filament\Schemas\Schema
+
+### Community 80 - "Chart (Vendor Bundle)"
+Cohesion: 0.18
+Nodes (25): cd(), dt(), gl(), _i(), Ie(), it(), kt(), ld() (+17 more)
+
+### Community 81 - "Rich Editor (Vendor Bundle)"
 Cohesion: 0.12
 Nodes (8): ExpireUsersCommand, SendBigDayWishesCommand, SendExpiryReminderCommand, EmailLog, static, ExpireInvitations, SendRsvpReminders, Illuminate\Console\Command
 
+### Community 82 - "Chart (Vendor Bundle)"
+Cohesion: 0.13
+Nodes (8): ContactMessagesTable, InvitationsTable, RsvpsTable, UsersTable, InvitationsTable, Filament\Actions\Action, Filament\Tables\Table, Action
+
+### Community 83 - "Use Toast"
+Cohesion: 0.11
+Nodes (24): Eo(), addEventListener(), al(), bindResponsiveEvents(), bs(), cl(), datasetAnimationScopeKeys(), datasetElementScopeKeys() (+16 more)
+
+### Community 84 - "Code Editor (Vendor Bundle)"
+Cohesion: 0.12
+Nodes (24): addElements(), buildOrUpdateControllers(), buildOrUpdateElements(), Ce(), _dataCheck(), _destroy(), _destroyDatasetMeta(), ds() (+16 more)
+
+### Community 85 - "Tsconfig.app"
+Cohesion: 0.18
+Nodes (23): aa(), Dn(), fn(), ha(), ia(), Ii(), Jr(), jt() (+15 more)
+
+### Community 86 - "Emaillog"
+Cohesion: 0.11
+Nodes (13): AnimatedSection(), AnimatedSectionProps, EASE, PRESETS, Flourish(), FlourishProps, OrnamentalDivider(), OrnamentalDividerProps (+5 more)
+
 ### Community 87 - "Support (Vendor Bundle)"
-Cohesion: 0.17
-Nodes (24): aa(), Dn(), fn(), ha(), ia(), Ii(), Jr(), jt() (+16 more)
-
-### Community 88 - "Chart (Vendor Bundle)"
-Cohesion: 0.13
-Nodes (24): average(), cc(), dataset(), first(), getCenterPoint(), getProps(), hasValue(), Ho() (+16 more)
-
-### Community 89 - "Types"
-Cohesion: 0.15
-Nodes (18): AnimatedDesignProps, CeremonyEvent, formatTime12(), GuestData, WeddingData, PRESETS, Reveal(), RevealAnimation (+10 more)
-
-### Community 90 - "Floatingpetals"
-Cohesion: 0.16
-Nodes (14): EnvelopeReveal(), EnvelopeRevealProps, DEFAULT_COLORS, FloatingPetals(), FloatingPetalsProps, Seed, useSmoothScroll(), MusicControl() (+6 more)
-
-### Community 91 - "Listinvitations"
-Cohesion: 0.13
-Nodes (8): CreateInvitation, ListInvitations, CreateUser, ListUsers, CreateInvitation, ListInvitations, Filament\Resources\Pages\CreateRecord, Filament\Resources\Pages\ListRecords
-
-### Community 92 - "App (Vendor Bundle)"
 Cohesion: 0.13
 Nodes (11): close(), E(), G(), init(), P(), Q(), setUpResizeObserver(), X() (+3 more)
 
-### Community 93 - "Code Editor (Vendor Bundle)"
-Cohesion: 0.12
-Nodes (22): acceptToken(), allows(), blank(), eh(), g$(), Gc(), GO(), HorizontalRule() (+14 more)
+### Community 88 - "Chart (Vendor Bundle)"
+Cohesion: 0.14
+Nodes (21): define(), Ac(), Cc(), Dc(), Do(), Ec(), el(), Et() (+13 more)
 
-### Community 94 - "Invitationresource"
+### Community 89 - "Types"
 Cohesion: 0.15
 Nodes (7): GalleryPhotoResource, InvitationResource, Guest, static, RsvpResource, MediaUrl, Illuminate\Http\Resources\Json\JsonResource
 
-### Community 95 - "Package"
+### Community 90 - "Floatingpetals"
+Cohesion: 0.13
+Nodes (21): gw(), Xm(), addPasteRules(), check(), checkAttrs(), endIndex(), getObj(), hasProtocol() (+13 more)
+
+### Community 91 - "Listinvitations"
+Cohesion: 0.14
+Nodes (20): Ei(), bl(), ff(), Fr(), Ia(), Kc(), mt(), qf() (+12 more)
+
+### Community 92 - "App (Vendor Bundle)"
 Cohesion: 0.10
 Nodes (19): devDependencies, axios, concurrently, laravel-vite-plugin, tailwindcss, @tailwindcss/vite, vite, axios (+11 more)
 
-### Community 96 - "Contactsection"
-Cohesion: 0.12
-Nodes (10): EASE, GalleryCarousel(), GalleryCarouselProps, FlourishProps, OrnamentalDivider(), OrnamentalDividerProps, ContactCardProps, container (+2 more)
+### Community 93 - "Code Editor (Vendor Bundle)"
+Cohesion: 0.13
+Nodes (6): ListContactMessages, ListInvitations, ListRsvps, ListUsers, ListInvitations, Filament\Resources\Pages\ListRecords
 
-### Community 97 - "Utils"
-Cohesion: 0.18
-Nodes (16): DetailCard(), DetailCardProps, CountdownSection(), dateInWords(), dayOrdinalWords(), formatDateShort(), formatTime12(), googleCalendarUrl() (+8 more)
+### Community 94 - "Invitationresource"
+Cohesion: 0.13
+Nodes (19): A(), An(), be(), e(), gt(), In(), jn(), Ln() (+11 more)
 
-### Community 98 - "Contactmessageform"
-Cohesion: 0.16
-Nodes (5): ContactMessageForm, InvitationForm, UserForm, InvitationForm, Filament\Schemas\Schema
-
-### Community 99 - "Chart (Vendor Bundle)"
-Cohesion: 0.15
-Nodes (19): Eo(), addEventListener(), al(), bindResponsiveEvents(), bs(), cl(), di(), dl() (+11 more)
-
-### Community 100 - "Sharememoriespage"
+### Community 95 - "Image Crop Modal & Wedding Settings Page"
 Cohesion: 0.14
-Nodes (10): WatermarkFooter(), FindTablePage(), FindTablePageProps, GuestEntry, WeddingInfo, compressImage(), GuestEntry, ShareMemoriesPage() (+2 more)
+Nodes (13): ImageCropModal(), ImageCropModalProps, GalleryImage, SettingsPageProps, WeddingData, createImage(), getCroppedImageBlob(), PixelCrop (+5 more)
 
-### Community 101 - "Tsconfig.node"
+### Community 96 - "Contactsection"
 Cohesion: 0.11
 Nodes (17): ES2023, vite.config.ts, compilerOptions, allowImportingTsExtensions, isolatedModules, lib, module, moduleDetection (+9 more)
 
-### Community 102 - "Invitationconstants"
-Cohesion: 0.14
-Nodes (13): SolidHeroPreview(), InvitationTemplate, invitationTemplates, templateCategories, TemplateCategoryKey, typographyOptions, AuthWedding, CeremonyEvent (+5 more)
-
-### Community 103 - "Contactmessageresource"
+### Community 97 - "Utils"
 Cohesion: 0.15
-Nodes (5): ContactMessageResource, CreateContactMessage, ListContactMessages, ContactMessagesTable, ContactMessage
+Nodes (14): InvitationTemplate, invitationTemplates, templateCategories, TemplateCategoryKey, TypographyOption, typographyOptions, getSolidTheme(), SOLID_THEME_KEYS (+6 more)
 
-### Community 104 - "Select (Vendor Bundle)"
+### Community 98 - "Table Management Controller & PDF Seating Chart"
 Cohesion: 0.23
-Nodes (17): applyDisabledState(), closeDropdown(), constructor(), destroy(), disable(), enable(), focusNextOption(), focusPreviousOption() (+9 more)
+Nodes (3): TableController, TableRequest, Symfony\Component\HttpFoundation\Response
 
-### Community 105 - "Select (Vendor Bundle)"
+### Community 99 - "Chart (Vendor Bundle)"
+Cohesion: 0.21
+Nodes (6): BackedEnum, InvitationResource, RsvpResource, UserResource, InvitationResource, Filament\Resources\Resource
+
+### Community 100 - "Sharememoriespage"
 Cohesion: 0.23
-Nodes (17): applyDisabledState(), closeDropdown(), constructor(), destroy(), disable(), enable(), focusNextOption(), focusPreviousOption() (+9 more)
+Nodes (17): Ae(), Ai(), De(), fn(), Ft(), ht(), ii(), Le() (+9 more)
 
-### Community 106 - "Chart (Vendor Bundle)"
+### Community 101 - "Tsconfig.node"
+Cohesion: 0.21
+Nodes (17): areRecordsSelected(), areRecordsToggleable(), canSelectAllRecords(), deselectAllRecords(), deselectRecords(), getRecordsOnPage(), getSelectedRecordsCount(), handleCheckboxClick() (+9 more)
+
+### Community 102 - "Invitationconstants"
 Cohesion: 0.15
 Nodes (17): active(), _animateOptions(), cancel(), _createAnimations(), _createDescriptors(), _d(), _descriptors(), _notify() (+9 more)
 
-### Community 107 - "Chart (Vendor Bundle)"
-Cohesion: 0.13
-Nodes (17): Ao(), beforeDatasetDraw(), beforeDatasetsDraw(), beforeDraw(), co(), er(), Ge(), _getSortedDatasetMetas() (+9 more)
+### Community 103 - "Contactmessageresource"
+Cohesion: 0.19
+Nodes (14): computeParts(), CountdownTimer(), CountdownTimerProps, TimeParts, CountdownSection(), dateInWords(), dayOrdinalWords(), googleCalendarUrl() (+6 more)
 
-### Community 108 - "Viewmodel"
+### Community 104 - "RSVP Modal & Invitation View Model"
 Cohesion: 0.16
 Nodes (12): GuestLite, RsvpSection(), RsvpSectionProps, container, item, RsvpSectionWrapper(), RsvpSectionWrapperProps, GalleryPhoto (+4 more)
 
+### Community 105 - "Select (Vendor Bundle)"
+Cohesion: 0.17
+Nodes (13): Command, CommandDialogProps, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator (+5 more)
+
+### Community 106 - "Chart (Vendor Bundle)"
+Cohesion: 0.17
+Nodes (16): acceptToken(), allows(), eh(), g$(), GO(), kY(), lc(), oh() (+8 more)
+
+### Community 107 - "Chart (Vendor Bundle)"
+Cohesion: 0.14
+Nodes (16): ah(), Bf(), buildTicks(), contains(), Fa(), _generate(), getTickLimit(), gi() (+8 more)
+
+### Community 108 - "Viewmodel"
+Cohesion: 0.14
+Nodes (4): constructor(), style(), update(), [x]()
+
 ### Community 109 - "Wedding"
 Cohesion: 0.14
-Nodes (3): WeddingType, WeddingTypeSeeder, Illuminate\Database\Eloquent\Relations\HasMany
+Nodes (13): autoload-dev, psr-4, description, framework, laravel, keywords, license, minimum-stability (+5 more)
 
 ### Community 110 - "Memorycontroller"
-Cohesion: 0.23
-Nodes (3): MemoryController, Memory, Symfony\Component\HttpFoundation\StreamedResponse
+Cohesion: 0.14
+Nodes (13): autoload-dev, psr-4, description, framework, laravel, keywords, license, minimum-stability (+5 more)
 
 ### Community 111 - "Rsvpresource"
-Cohesion: 0.16
-Nodes (5): ListRsvps, RsvpResource, RsvpsTable, Filament\Actions\Action, Action
-
-### Community 112 - "Composer"
-Cohesion: 0.13
-Nodes (15): Composer\\Config::disableProcessTimeout, Illuminate\\Foundation\\ComposerScripts::prePackageUninstall, @php artisan config:clear --ansi, @php artisan key:generate --ansi, @php artisan migrate --graceful --ansi, @php artisan test, @php artisan vendor:publish --tag=laravel-assets --ansi --force, @php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\ (+7 more)
-
-### Community 113 - "Color Picker (Vendor Bundle)"
-Cohesion: 0.14
-Nodes (4): [g](), style(), update(), [x]()
-
-### Community 114 - "Composer"
-Cohesion: 0.14
-Nodes (13): autoload-dev, psr-4, description, framework, laravel, keywords, license, minimum-stability (+5 more)
-
-### Community 115 - "Support (Vendor Bundle)"
-Cohesion: 0.19
-Nodes (14): apply(), At(), cs(), En(), Hr(), it(), Mt(), _o() (+6 more)
-
-### Community 116 - "Select (Vendor Bundle)"
-Cohesion: 0.20
-Nodes (14): A(), be(), e(), gt(), In(), jn(), Ln(), O() (+6 more)
-
-### Community 117 - "Chart (Vendor Bundle)"
-Cohesion: 0.20
-Nodes (14): active(), _animateOptions(), cancel(), _createAnimations(), _createDescriptors(), _descriptors(), _notify(), _notifyStateChanges() (+6 more)
-
-### Community 118 - "Composer"
-Cohesion: 0.14
-Nodes (13): autoload-dev, psr-4, description, framework, laravel, keywords, license, minimum-stability (+5 more)
-
-### Community 119 - "Composer"
 Cohesion: 0.14
 Nodes (14): Composer\\Config::disableProcessTimeout, Illuminate\\Foundation\\ComposerScripts::postAutoloadDump, Illuminate\\Foundation\\ComposerScripts::prePackageUninstall, @php artisan config:clear --ansi, @php artisan package:discover --ansi, @php artisan test, @php artisan vendor:publish --tag=laravel-assets --ansi --force, scripts (+6 more)
 
-### Community 120 - "Form"
+### Community 112 - "Composer"
 Cohesion: 0.15
 Nodes (11): FormControl, FormDescription, FormFieldContext, FormFieldContextValue, FormItem, FormItemContext, FormItemContextValue, FormLabel (+3 more)
 
-### Community 121 - "Editcontactmessage"
+### Community 113 - "Color Picker (Vendor Bundle)"
+Cohesion: 0.16
+Nodes (10): WatermarkFooter(), routeMap, Settings(), ActivityItem, LatestMemory, PendingGuest, Stats, UserDashboardPage() (+2 more)
+
+### Community 114 - "Composer"
+Cohesion: 0.21
+Nodes (5): CreateContactMessage, CreateInvitation, CreateUser, CreateInvitation, Filament\Resources\Pages\CreateRecord
+
+### Community 115 - "Support (Vendor Bundle)"
 Cohesion: 0.21
 Nodes (5): EditContactMessage, EditInvitation, EditUser, EditInvitation, Filament\Resources\Pages\EditRecord
 
-### Community 122 - "Echo (Vendor Bundle)"
+### Community 116 - "Select (Vendor Bundle)"
 Cohesion: 0.17
 Nodes (13): Ce(), De(), Ht(), Ie(), ii(), Me(), oi(), Re() (+5 more)
 
-### Community 123 - "Select (Vendor Bundle)"
-Cohesion: 0.28
-Nodes (13): addBadgesForSelectedOptions(), addSingleBadge(), addSingleSelectionDisplay(), createBadgeElement(), createRemoveButton(), getLabelForSingleSelection(), getLabelsForMultipleSelection(), getSelectedOptionLabel() (+5 more)
+### Community 117 - "Chart (Vendor Bundle)"
+Cohesion: 0.23
+Nodes (13): cm(), De(), dm(), Ee(), Ht(), me(), nm(), oe() (+5 more)
 
-### Community 124 - "Select (Vendor Bundle)"
-Cohesion: 0.37
-Nodes (13): createOptionElement(), deferPositionDropdown(), filterOptions(), handleSearch(), hideLoadingState(), openDropdown(), populateLabelRepositoryFromOptions(), positionDropdown() (+5 more)
+### Community 118 - "Photo Story Invitation & Gallery Carousel"
+Cohesion: 0.21
+Nodes (8): EASE, GalleryCarousel(), GalleryCarouselProps, buildGoogleCalendarUrl(), longDate(), SolidHeroPreview(), SolidInvitation(), SolidInvitationProps
 
-### Community 125 - "Select (Vendor Bundle)"
-Cohesion: 0.28
-Nodes (13): addBadgesForSelectedOptions(), addSingleBadge(), addSingleSelectionDisplay(), createBadgeElement(), createRemoveButton(), getLabelForSingleSelection(), getLabelsForMultipleSelection(), getSelectedOptionLabel() (+5 more)
-
-### Community 126 - "Select (Vendor Bundle)"
-Cohesion: 0.37
-Nodes (13): createOptionElement(), deferPositionDropdown(), filterOptions(), handleSearch(), hideLoadingState(), openDropdown(), populateLabelRepositoryFromOptions(), positionDropdown() (+5 more)
-
-### Community 127 - "Carousel"
+### Community 119 - "Composer"
 Cohesion: 0.15
 Nodes (12): Carousel, CarouselApi, CarouselContent, CarouselContext, CarouselContextProps, CarouselItem, CarouselNext, CarouselOptions (+4 more)
 
-### Community 128 - "Menubar"
+### Community 120 - "Form"
+Cohesion: 0.26
+Nodes (12): addInner(), bl(), bu(), dy(), locals(), localsInner(), mapInner(), Mo() (+4 more)
+
+### Community 121 - "Editcontactmessage"
 Cohesion: 0.17
 Nodes (11): Menubar, MenubarCheckboxItem, MenubarContent, MenubarItem, MenubarLabel, MenubarRadioItem, MenubarSeparator, MenubarShortcut() (+3 more)
 
-### Community 129 - "Invitationformschema"
+### Community 122 - "Echo (Vendor Bundle)"
 Cohesion: 0.40
 Nodes (3): InvitationFormSchema, Filament\Schemas\Components\Tabs\Tab, Tab
 
-### Community 130 - "Echo (Vendor Bundle)"
+### Community 123 - "Select (Vendor Bundle)"
+Cohesion: 0.18
+Nodes (11): Composer\\Config::disableProcessTimeout, Illuminate\\Foundation\\ComposerScripts::prePackageUninstall, @php artisan config:clear --ansi, @php artisan test, @php artisan vendor:publish --tag=laravel-assets --ansi --force, scripts, dev, post-update-cmd (+3 more)
+
+### Community 124 - "Select (Vendor Bundle)"
 Cohesion: 0.22
 Nodes (11): Be(), ei(), Fe(), He(), le(), Mt(), ni(), r() (+3 more)
 
-### Community 131 - "File Upload (Vendor Bundle)"
+### Community 125 - "Select (Vendor Bundle)"
 Cohesion: 0.22
-Nodes (11): ba(), c(), _e(), It(), jt(), ot(), s(), sa() (+3 more)
+Nodes (11): bc(), beforeLayout(), fc(), gc(), jo(), mc(), $o(), override() (+3 more)
 
-### Community 132 - "File Upload (Vendor Bundle)"
-Cohesion: 0.29
-Nodes (11): cm(), De(), dm(), Ht(), me(), nm(), oe(), q() (+3 more)
-
-### Community 133 - "Rich Editor (Vendor Bundle)"
-Cohesion: 0.22
-Nodes (11): addMaps(), fx(), getBookmark(), getState(), L0(), ni(), ti(), wf() (+3 more)
-
-### Community 134 - "Chart (Vendor Bundle)"
-Cohesion: 0.22
-Nodes (11): ar(), beforeDatasetDraw(), getMinDaysInFirstWeek(), getMinimumDaysInFirstWeek(), getStartOfWeek(), getWeekendDays(), getWeekendWeekdays(), getWeekSettings() (+3 more)
-
-### Community 135 - "Animatedsection"
-Cohesion: 0.24
-Nodes (6): AnimatedSection(), AnimatedSectionProps, EASE, PRESETS, Flourish(), GuestGreetingProps
-
-### Community 136 - "Tsconfig"
+### Community 126 - "Select (Vendor Bundle)"
 Cohesion: 0.18
 Nodes (10): compilerOptions, allowJs, noImplicitAny, noUnusedLocals, noUnusedParameters, paths, skipLibCheck, strictNullChecks (+2 more)
 
-### Community 137 - "Appserviceprovider"
+### Community 127 - "Carousel"
 Cohesion: 0.27
 Nodes (3): AppServiceProvider, AppServiceProvider, Illuminate\Support\ServiceProvider
 
-### Community 138 - "Select (Vendor Bundle)"
+### Community 128 - "Menubar"
 Cohesion: 0.27
-Nodes (10): be(), e(), gt(), In(), jn(), Ln(), O(), Rn() (+2 more)
+Nodes (10): bs(), gs(), kn(), Mo(), qe(), _r(), St(), vt() (+2 more)
 
-### Community 139 - "Chart"
+### Community 129 - "Invitationformschema"
 Cohesion: 0.20
 Nodes (7): ChartConfig, ChartContainer, ChartContext, ChartContextProps, ChartLegendContent, ChartTooltipContent, THEMES
 
-### Community 140 - "Context Menu"
+### Community 130 - "Echo (Vendor Bundle)"
 Cohesion: 0.20
-Nodes (9): ContextMenuCheckboxItem, ContextMenuContent, ContextMenuItem, ContextMenuLabel, ContextMenuRadioItem, ContextMenuSeparator, ContextMenuShortcut(), ContextMenuSubContent (+1 more)
+Nodes (9): DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuShortcut(), DropdownMenuSubContent (+1 more)
 
-### Community 141 - "Invitationspermonthchart"
-Cohesion: 0.28
-Nodes (3): InvitationsPerMonthChart, RsvpBreakdownChart, Filament\Widgets\ChartWidget
-
-### Community 142 - "Actions (Vendor Bundle)"
+### Community 131 - "File Upload (Vendor Bundle)"
 Cohesion: 0.53
 Nodes (8): closeModal(), generateModalId(), getActionNestingIndexFromModalId(), init(), openModal(), rememberPreviouslyFocusedElement(), restorePreviouslyFocusedElement(), syncActionModals()
 
-### Community 144 - "Composer"
+### Community 133 - "Rich Editor (Vendor Bundle)"
 Cohesion: 0.22
 Nodes (9): require-dev, fakerphp/faker, laravel/pail, laravel/pint, laravel/sail, mockery/mockery, nunomaduro/collision, pestphp/pest (+1 more)
 
-### Community 145 - "Table"
-Cohesion: 0.22
-Nodes (8): Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow
+### Community 134 - "Chart (Vendor Bundle)"
+Cohesion: 0.28
+Nodes (4): FindTablePage(), FindTablePageProps, GuestEntry, WeddingInfo
 
-### Community 146 - "Composer"
+### Community 135 - "Animatedsection"
+Cohesion: 0.32
+Nodes (3): InvitationsPerMonthChart, RsvpBreakdownChart, Filament\Widgets\ChartWidget
+
+### Community 136 - "Tsconfig"
 Cohesion: 0.25
 Nodes (8): composer install, npm install, npm run build, @php artisan key:generate, @php artisan migrate --force, @php -r \"file_exists('.env') || copy('.env.example', '.env');\, post-root-package-install, setup
 
-### Community 147 - "Composer"
+### Community 137 - "Appserviceprovider"
 Cohesion: 0.25
 Nodes (8): require-dev, fakerphp/faker, laravel/pail, laravel/pint, laravel/sail, mockery/mockery, nunomaduro/collision, phpunit/phpunit
 
-### Community 148 - "Composer"
+### Community 138 - "Select (Vendor Bundle)"
+Cohesion: 0.32
+Nodes (8): _createItems(), Ea(), format(), getLabelAndValue(), getLabelForValue(), ne(), numeric(), Qc()
+
+### Community 139 - "Chart"
 Cohesion: 0.25
 Nodes (8): composer install, npm install, npm run build, @php artisan key:generate, @php artisan migrate --force, @php -r \"file_exists('.env') || copy('.env.example', '.env');\, post-root-package-install, setup
 
-### Community 149 - "Navigation Menu"
+### Community 140 - "Context Menu"
+Cohesion: 0.39
+Nodes (6): DetailCard(), DetailCardProps, formatDateShort(), formatTime12(), mapUrl(), CeremonyEventInput
+
+### Community 141 - "Invitationspermonthchart"
 Cohesion: 0.25
-Nodes (7): NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle, NavigationMenuViewport
+Nodes (7): SelectContent, SelectItem, SelectLabel, SelectScrollDownButton, SelectScrollUpButton, SelectSeparator, SelectTrigger
 
-### Community 150 - "Composer"
+### Community 142 - "Actions (Vendor Bundle)"
+Cohesion: 0.32
+Nodes (5): compressImage(), GuestEntry, ShareMemoriesPage(), ShareMemoriesPageProps, WeddingInfo
+
+### Community 143 - "Schemas (Vendor Bundle)"
+Cohesion: 0.33
+Nodes (3): GuestsRelationManager, RsvpsRelationManager, Filament\Resources\RelationManagers\RelationManager
+
+### Community 144 - "Composer"
 Cohesion: 0.29
 Nodes (7): pestphp/pest-plugin, php-http/discovery, config, allow-plugins, optimize-autoloader, preferred-install, sort-packages
 
-### Community 151 - "Markdown Editor (Vendor Bundle)"
-Cohesion: 0.33
-Nodes (7): dd(), jl(), lr(), rd(), uf(), xl(), yr()
-
-### Community 152 - "Rich Editor (Vendor Bundle)"
+### Community 145 - "Table"
 Cohesion: 0.38
-Nodes (7): _a(), gn(), posAtCoords(), Sk(), V0(), xk(), xp()
+Nodes (7): ba(), It(), jt(), ot(), sa(), tm(), xa()
 
-### Community 153 - "Chart (Vendor Bundle)"
+### Community 146 - "Composer"
 Cohesion: 0.33
-Nodes (7): contains(), gi(), splitAt(), toISOTime(), toMillis(), Vf(), ye()
+Nodes (7): At(), En(), Hr(), On(), rr(), un(), zt()
 
-### Community 154 - "Composer"
+### Community 147 - "Composer"
 Cohesion: 0.29
 Nodes (7): pestphp/pest-plugin, php-http/discovery, config, allow-plugins, optimize-autoloader, preferred-install, sort-packages
 
-### Community 155 - "Package"
+### Community 148 - "Composer"
 Cohesion: 0.29
 Nodes (6): private, scripts, build, dev, lint, type
 
-### Community 156 - "Safeboundary"
+### Community 149 - "Navigation Menu"
 Cohesion: 0.29
 Nodes (3): SafeBoundary, SafeBoundaryProps, SafeBoundaryState
 
-### Community 157 - "Card"
+### Community 150 - "Composer"
 Cohesion: 0.29
 Nodes (6): Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle
 
-### Community 158 - "Composer"
+### Community 151 - "Markdown Editor (Vendor Bundle)"
+Cohesion: 0.33
+Nodes (5): ToggleGroup, ToggleGroupContext, ToggleGroupItem, Toggle, toggleVariants
+
+### Community 152 - "Rich Editor (Vendor Bundle)"
 Cohesion: 0.33
 Nodes (6): require, filament/filament, laravel/framework, laravel/sanctum, laravel/tinker, php
 
-### Community 159 - "Echo (Vendor Bundle)"
+### Community 153 - "Chart (Vendor Bundle)"
 Cohesion: 0.33
 Nodes (5): di(), e(), g(), i(), xr()
 
-### Community 161 - "Robots"
+### Community 155 - "Package"
+Cohesion: 0.33
+Nodes (6): ei(), en(), ni(), Ot(), ve(), Ye()
+
+### Community 156 - "Safeboundary"
 Cohesion: 0.33
 Nodes (6): Backend Public robots.txt, Root Public robots.txt, Bingbot, facebookexternalhit, Googlebot, Twitterbot
 
-### Community 162 - "Composer"
+### Community 157 - "Card"
+Cohesion: 0.33
+Nodes (6): require, barryvdh/laravel-dompdf, inertiajs/inertia-laravel, laravel/framework, laravel/tinker, php
+
+### Community 158 - "Composer"
 Cohesion: 0.40
 Nodes (5): autoload, psr-4, App\\, Database\\Factories\\, Database\\Seeders\\
 
-### Community 163 - "Composer"
+### Community 159 - "Echo (Vendor Bundle)"
 Cohesion: 0.40
 Nodes (5): autoload, psr-4, App\\, Database\\Factories\\, Database\\Seeders\\
 
-### Community 164 - "Composer"
+### Community 160 - "Actions (Vendor Bundle)"
 Cohesion: 0.40
-Nodes (5): require, inertiajs/inertia-laravel, laravel/framework, laravel/tinker, php
+Nodes (3): PRESETS, RevealAnimation, RevealProps
 
-### Community 165 - "Countdowntimer"
-Cohesion: 0.50
-Nodes (4): computeParts(), CountdownTimer(), CountdownTimerProps, TimeParts
-
-### Community 166 - "Controller"
+### Community 161 - "Robots"
 Cohesion: 0.83
 Nodes (3): Controller, Illuminate\Foundation\Auth\Access\AuthorizesRequests, Illuminate\Foundation\Validation\ValidatesRequests
 
-### Community 167 - "Composer"
+### Community 162 - "Composer"
 Cohesion: 0.50
 Nodes (4): Illuminate\\Foundation\\ComposerScripts::postAutoloadDump, @php artisan package:discover --ansi, post-autoload-dump, @php artisan filament:upgrade
 
-### Community 169 - "Composer"
+### Community 163 - "Composer"
 Cohesion: 0.50
 Nodes (4): @php artisan key:generate --ansi, @php artisan migrate --graceful --ansi, @php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\, post-create-project-cmd
 
-### Community 175 - "Composer"
+### Community 165 - "Countdowntimer"
+Cohesion: 0.50
+Nodes (4): @php artisan key:generate --ansi, @php artisan migrate --graceful --ansi, @php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\, post-create-project-cmd
+
+### Community 171 - "Userlogin"
 Cohesion: 0.67
 Nodes (3): extra, laravel, dont-discover
 
-### Community 185 - "Composer"
+### Community 181 - "2026 07 09 090002 Create Gallery Photos Table"
+Cohesion: 0.67
+Nodes (3): _getTestState(), getType(), St()
+
+### Community 182 - "2026 07 09 090003 Create Guests Table"
 Cohesion: 0.67
 Nodes (3): extra, laravel, dont-discover
 
@@ -951,7 +936,7 @@ Nodes (3): extra, laravel, dont-discover
   backend/README.md · relation: conceptually_related_to
 
 ## Knowledge Gaps
-- **538 isolated node(s):** `$schema`, `name`, `type`, `description`, `laravel` (+533 more)
+- **542 isolated node(s):** `$schema`, `private`, `type`, `build`, `dev` (+537 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **54 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -962,12 +947,12 @@ _Questions this graph is uniquely positioned to answer:_
   _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
 - **What is the exact relationship between `Inertia.js (inertiajs/inertia-laravel)` and `FRONTEND_URL / React (Vite) Frontend`?**
   _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
-- **Why does `te()` connect `Markdown Editor (Vendor Bundle)` to `Markdown Editor (Vendor Bundle)`, `Filament Rich Editor — Core (Vendor)`, `Filament Date/Time & Rich Editor Shortcuts (Vendor)`, `Filament Markdown Editor (Vendor)`, `Select (Vendor Bundle)`, `Filament File Upload & Markdown Editor Fragment (Vendor)`, `Filament Code Editor — Tree Nodes (Vendor)`, `Chart (Vendor Bundle)`, `Slider (Vendor Bundle)`, `Filament Code/Markdown Editor Fragment (Vendor)`, `Filament Code Editor — Attrs Fragment (Vendor)`, `Filament Code Editor — Hover/Active State (Vendor)`, `Markdown Editor (Vendor Bundle)`?**
-  _High betweenness centrality (0.230) - this node is a cross-community bridge._
-- **Why does `cn()` connect `shadcn/ui Components — Badge/Breadcrumb` to `shadcn/ui Components — Accordion/Alert`, `Menubar`, `Command`, `Chart`, `shadcn/ui Components — Alert Dialog`, `Context Menu`, `Markdown Editor (Vendor Bundle)`, `Table`, `Use Toast`, `Navigation Menu`, `Form`, `Sidebar`, `Sheet`, `Card`, `Carousel`?**
-  _High betweenness centrality (0.188) - this node is a cross-community bridge._
-- **Why does `AdminUsersPage()` connect `Markdown Editor (Vendor Bundle)` to `shadcn/ui Components — Badge/Breadcrumb`, `Sheet`, `shadcn/ui Components — Alert Dialog`?**
-  _High betweenness centrality (0.187) - this node is a cross-community bridge._
+- **Why does `te()` connect `Filament File Upload Component (Vendor)` to `Filament Code Editor — Core (Vendor)`, `shadcn/ui Components — Accordion/Alert`, `Filament Chart Widget — Core (Vendor)`, `Filament Stat Chart — Circumference/Ticks (Vendor)`, `Filament Stat Chart (Vendor)`, `Filament Notifications Widget (Vendor)`, `Filament Chart Widget — Plugins/Scales (Vendor)`, `Filament Rich Editor — Extensions Setup (Vendor)`, `Code Editor (Vendor Bundle)`, `Filament Stat Chart — Axis Ticks (Vendor)`, `Listinvitations`?**
+  _High betweenness centrality (0.217) - this node is a cross-community bridge._
+- **Why does `AdminUsersPage()` connect `Filament File Upload Component (Vendor)` to `Filament Rich Editor — Node Attributes (Vendor)`, `Code Editor (Vendor Bundle)`, `Invitationfactory`?**
+  _High betweenness centrality (0.190) - this node is a cross-community bridge._
+- **Why does `cn()` connect `Filament Rich Editor — Node Attributes (Vendor)` to `Invitationformschema`, `Echo (Vendor Bundle)`, `Filament File Upload Component (Vendor)`, `Select (Vendor Bundle)`, `Chart (Vendor Bundle)`, `Code Editor (Vendor Bundle)`, `Invitationspermonthchart`, `Composer`, `Markdown Editor (Vendor Bundle)`, `Markdown Editor (Vendor Bundle)`, `Composer`, `Composer`, `Markdown Editor (Vendor Bundle)`, `Editcontactmessage`?**
+  _High betweenness centrality (0.190) - this node is a cross-community bridge._
 - **Are the 232 inferred relationships involving `o()` (e.g. with `G()` and `Be()`) actually correct?**
   _`o()` has 232 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 204 inferred relationships involving `l()` (e.g. with `L()` and `advance()`) actually correct?**

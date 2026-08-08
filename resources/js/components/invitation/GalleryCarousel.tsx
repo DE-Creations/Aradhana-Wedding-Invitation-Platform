@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface GalleryCarouselProps {
@@ -39,6 +39,8 @@ export function GalleryCarousel({
   const [[index, direction], setState] = useState<[number, number]>([0, 0]);
   const [paused, setPaused] = useState(false);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { once: true, amount: 0.4 });
   const count = images.length;
 
   const paginate = useCallback(
@@ -51,12 +53,12 @@ export function GalleryCarousel({
   const goTo = (i: number) => setState(([prev]) => [i, i > prev ? 1 : -1]);
 
   useEffect(() => {
-    if (count <= 1 || paused || autoMs <= 0) return;
+    if (count <= 1 || paused || autoMs <= 0 || !isInView) return;
     timer.current = setInterval(() => paginate(1), autoMs);
     return () => {
       if (timer.current) clearInterval(timer.current);
     };
-  }, [count, paused, autoMs, paginate]);
+  }, [count, paused, autoMs, paginate, isInView]);
 
   if (count === 0) return null;
 
@@ -68,6 +70,7 @@ export function GalleryCarousel({
 
   return (
     <div
+      ref={containerRef}
       className={className}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}

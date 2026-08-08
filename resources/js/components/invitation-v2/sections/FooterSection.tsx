@@ -22,7 +22,18 @@ export default function FooterSection({ invitation }: { invitation: InvitationVi
           <Flourish width={120} />
         </div>
         <p className="font-body" style={{ color: 'rgba(201,169,110,0.6)', fontSize: '0.85rem' }}>
-          &copy; {year} &middot; Made with love
+          &copy; {year} Aradhana. All rights reserved.
+        </p>
+        <p className="font-body" style={{ color: 'rgba(201,169,110,0.6)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
+          Designed &amp; developed by{' '}
+          <a
+            href="https://www.decreations.lk"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#C9A96E', textDecoration: 'underline', textUnderlineOffset: '2px' }}
+          >
+            DE Creations
+          </a>
         </p>
       </AnimatedSection>
     </footer>

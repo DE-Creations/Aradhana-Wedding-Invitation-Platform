@@ -84,7 +84,7 @@ export const FindTablePage = ({ wedding, token = "", tableManagement = true }: F
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Enter your mobile number (ex: 07xxxxxxxx)"
+                  placeholder="Enter your mobile number (ex: 771234567)"
                   inputMode="tel"
                   className="w-full pl-10 pr-10 py-3 rounded-xl border border-input bg-card text-sm outline-none focus:ring-2 focus:ring-primary/20"
                   autoFocus

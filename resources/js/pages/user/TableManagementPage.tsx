@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { router } from "@inertiajs/react";
-import { Plus, Edit, Trash2, Users, UserPlus, AlertTriangle, X } from "lucide-react";
+import { Plus, Edit, Trash2, Users, UserPlus, AlertTriangle, X, Printer } from "lucide-react";
 import { SectionCard, StatusBadge, FormField, EmptyState } from "@/components/ui-components";
 import {
   AlertDialog,
@@ -104,9 +104,19 @@ export const TableManagementPage = ({ tables, guests }: TableManagementPageProps
           <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground">Table Management</h1>
           <p className="text-sm text-muted-foreground mt-1">{tables.length} tables · {totalSeats} seats · {totalAssigned} assigned</p>
         </div>
-        <button onClick={() => setShowAdd(true)} className="px-4 py-2 rounded-lg bg-gradient-gold text-primary-foreground text-sm font-medium flex items-center gap-2 hover:opacity-90 self-start">
-          <Plus className="h-4 w-4" /> Add Table
-        </button>
+        <div className="flex items-center gap-2 self-start">
+          <a
+            href="/tables/print-pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 rounded-lg border border-border bg-card text-foreground text-sm font-medium flex items-center gap-2 hover:bg-muted"
+          >
+            <Printer className="h-4 w-4" /> Print Seating Chart
+          </a>
+          <button onClick={() => setShowAdd(true)} className="px-4 py-2 rounded-lg bg-gradient-gold text-primary-foreground text-sm font-medium flex items-center gap-2 hover:opacity-90">
+            <Plus className="h-4 w-4" /> Add Table
+          </button>
+        </div>
       </div>
 
       {/* Summary */}

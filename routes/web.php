@@ -64,6 +64,7 @@ Route::middleware('auth')->group(function () {
 
     // Tables
     Route::get('/tables', [TableController::class, 'index'])->name('tables.index');
+    Route::get('/tables/print-pdf', [TableController::class, 'printPdf'])->name('tables.print-pdf');
     Route::post('/tables', [TableController::class, 'store'])->name('tables.store');
     Route::post('/tables/{table}', [TableController::class, 'update'])->name('tables.update');
     Route::post('/tables/{table}/destroy', [TableController::class, 'destroy'])->name('tables.destroy');
