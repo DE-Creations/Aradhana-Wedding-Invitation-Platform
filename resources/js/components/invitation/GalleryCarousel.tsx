@@ -16,6 +16,10 @@ interface GalleryCarouselProps {
   dotClassName?: string;
   /** Auto-advance interval in ms (0 disables). */
   autoMs?: number;
+  /** When provided, overrides the component's own scroll-visibility detection —
+   *  autoplay starts as soon as this becomes true instead of waiting for the
+   *  carousel itself to scroll into view. */
+  autoplayTrigger?: boolean;
 }
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -35,12 +39,14 @@ export function GalleryCarousel({
   dotActiveClassName = "w-5 bg-white",
   dotClassName = "w-2 bg-white/50",
   autoMs = 4000,
+  autoplayTrigger,
 }: GalleryCarouselProps) {
   const [[index, direction], setState] = useState<[number, number]>([0, 0]);
   const [paused, setPaused] = useState(false);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { once: true, amount: 0.4 });
+  const selfInView = useInView(containerRef, { once: true, amount: 0.4 });
+  const isInView = autoplayTrigger === undefined ? selfInView : autoplayTrigger;
   const count = images.length;
 
   const paginate = useCallback(
