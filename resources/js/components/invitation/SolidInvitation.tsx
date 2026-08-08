@@ -311,7 +311,7 @@ export function SolidInvitation({
         )}
 
         {/* ── Footer ── */}
-        <Reveal animation="fadeIn" className="mt-16 text-center">
+        <Reveal animation="fadeIn" className="mt-16 pb-16 text-center md:pb-24">
           <p className={`text-4xl ${typography.headingFont} ${theme.accentToneClassName}`}>Thank You</p>
           <p className={`mt-3 text-sm ${typography.bodyFont} ${theme.subTextToneClassName}`}>With love and gratitude</p>
           <p className={`mt-2 text-lg ${typography.bodyFont} ${theme.textToneClassName}`}>
