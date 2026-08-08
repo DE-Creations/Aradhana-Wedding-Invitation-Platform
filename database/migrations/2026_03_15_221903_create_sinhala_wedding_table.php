@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('sinhala_wedding', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('wedding_id');
-            $table->date('event_date');
-            $table->string('venue');
+            $table->date('event_date')->nullable();
+            $table->string('venue')->nullable();
             $table->string('google_maps_link', 2048)->nullable();
-            $table->time('start_time');
-            $table->time('poruwa_time');
+            $table->time('start_time')->nullable();
+            $table->time('poruwa_time')->nullable();
             $table->time('end_time')->nullable();
             $table->timestamps();
 
