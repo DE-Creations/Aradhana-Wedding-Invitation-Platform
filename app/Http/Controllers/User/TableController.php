@@ -7,11 +7,13 @@ use App\Http\Requests\User\TableRequest;
 use App\Models\Guest;
 use App\Models\TableAssignment;
 use App\Models\WeddingTable;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class TableController extends Controller
 {
@@ -142,6 +144,39 @@ class TableController extends Controller
         Guest::where('id', $request->guest_id)->update(['table_id' => null]);
 
         return back()->with('success', 'Guest unassigned.');
+    }
+
+    public function printPdf(): HttpResponse
+    {
+        $wedding = Auth::user()->wedding;
+
+        abort_if(! $wedding, 404);
+
+        $tables = $wedding->tables()
+            ->with(['assignments.guest:id,guest_name,attending_count,rsvp_status'])
+            ->orderBy('table_name')
+            ->get()
+            ->map(fn ($t) => [
+                'table_name'     => $t->table_name,
+                'seat_count'     => $t->seat_count,
+                'assigned_count' => $t->assignments->sum('assigned_count'),
+                'guests'         => $t->assignments->map(fn ($a) => [
+                    'guest_name'      => $a->guest->guest_name,
+                    'attending_count' => $a->guest->attending_count ?? 0,
+                    'rsvp_status'     => $a->guest->rsvp_status,
+                    'assigned_count'  => $a->assigned_count,
+                ])->values(),
+            ]);
+
+        $pdf = Pdf::loadView('pdf.table-seating-chart', [
+            'wedding' => $wedding,
+            'tables'  => $tables,
+        ])->setPaper('a4', 'portrait');
+
+        $coupleNames = trim(($wedding->groom_name ?? '') . '-' . ($wedding->bride_name ?? ''));
+        $filename = 'seating-chart-' . (str($coupleNames)->slug() ?: 'aradhana') . '.pdf';
+
+        return $pdf->stream($filename);
     }
 
     private function authorizeTable(WeddingTable $table): void

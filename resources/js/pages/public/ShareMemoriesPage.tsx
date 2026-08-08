@@ -309,7 +309,7 @@ export const ShareMemoriesPage = ({
                         <input
                           value={memGuestSearch}
                           onChange={(e) => setMemGuestSearch(e.target.value)}
-                          placeholder="Type your mobile number (ex: 07xxxxxxxx)"
+                          placeholder="Type your mobile number (ex: 771234567)"
                           inputMode="tel"
                           className="w-full pl-10 pr-10 py-3 rounded-xl border border-input bg-card text-sm outline-none focus:ring-2 focus:ring-primary/20"
                         />

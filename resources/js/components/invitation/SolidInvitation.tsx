@@ -309,7 +309,18 @@ export function SolidInvitation({
             {w.bride_name} &amp; {w.groom_name}
           </p>
           <p className={`mt-4 text-xs ${typography.bodyFont} ${theme.subTextToneClassName}`}>
-            &copy; {new Date().getFullYear()}
+            &copy; {new Date().getFullYear()} Aradhana. All rights reserved.
+          </p>
+          <p className={`mt-1 text-xs ${typography.bodyFont} ${theme.subTextToneClassName}`}>
+            Designed &amp; developed by{" "}
+            <a
+              href="https://www.decreations.lk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`underline underline-offset-2 hover:opacity-80 ${theme.accentToneClassName}`}
+            >
+              DE Creations
+            </a>
           </p>
         </Reveal>
       </div>

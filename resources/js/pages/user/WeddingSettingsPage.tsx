@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { Save, Upload, GripVertical, X, Image as ImageIcon, CalendarIcon, Clock, Trash2 } from "lucide-react";
 import { SectionCard, FormField, ConfirmModal } from "@/components/ui-components";
+import { ImageCropModal } from "@/components/ImageCropModal";
 import { invitationTemplates, typographyOptions } from "@/data/invitationConstants";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
@@ -143,6 +144,7 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, eventDetails }: We
   const [confirmDeleteMain, setConfirmDeleteMain] = useState(false);
   const mainImageRef = useRef<HTMLInputElement>(null);
   const galleryImageRef = useRef<HTMLInputElement>(null);
+  const [cropTarget, setCropTarget] = useState<{ type: "main" | "gallery"; file: File } | null>(null);
 
   const updateField = <K extends keyof typeof form>(field: K, value: (typeof form)[K]) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -163,29 +165,48 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, eventDetails }: We
   const handleMainImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setIsUploadingMain(true);
-    router.post("/settings/main-image", { main_image: file }, {
-      preserveScroll: true,
-      forceFormData: true,
-      onFinish: () => {
-        setIsUploadingMain(false);
-        if (mainImageRef.current) mainImageRef.current.value = "";
-      },
-    });
+    setCropTarget({ type: "main", file });
   };
 
   const handleGalleryImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setIsUploadingGallery(true);
-    router.post("/settings/gallery", { image: file }, {
-      preserveScroll: true,
-      forceFormData: true,
-      onFinish: () => {
-        setIsUploadingGallery(false);
-        if (galleryImageRef.current) galleryImageRef.current.value = "";
-      },
-    });
+    setCropTarget({ type: "gallery", file });
+  };
+
+  const handleCropCancel = () => {
+    setCropTarget(null);
+    if (mainImageRef.current) mainImageRef.current.value = "";
+    if (galleryImageRef.current) galleryImageRef.current.value = "";
+  };
+
+  const handleCropped = (blob: Blob) => {
+    if (!cropTarget) return;
+    const { type, file } = cropTarget;
+    const croppedFile = new File([blob], file.name.replace(/\.[^.]+$/, ".jpg"), { type: "image/jpeg" });
+    setCropTarget(null);
+
+    if (type === "main") {
+      setIsUploadingMain(true);
+      router.post("/settings/main-image", { main_image: croppedFile }, {
+        preserveScroll: true,
+        forceFormData: true,
+        onFinish: () => {
+          setIsUploadingMain(false);
+          if (mainImageRef.current) mainImageRef.current.value = "";
+        },
+      });
+    } else {
+      setIsUploadingGallery(true);
+      router.post("/settings/gallery", { image: croppedFile }, {
+        preserveScroll: true,
+        forceFormData: true,
+        onFinish: () => {
+          setIsUploadingGallery(false);
+          if (galleryImageRef.current) galleryImageRef.current.value = "";
+        },
+      });
+    }
   };
 
   const handleRemoveGalleryImage = (id: string) => {
@@ -214,6 +235,13 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, eventDetails }: We
         description="This will permanently delete your main couple photo. You can upload a new one at any time."
         confirmLabel="Remove Image"
         variant="destructive"
+      />
+      <ImageCropModal
+        file={cropTarget?.file ?? null}
+        aspect={cropTarget?.type === "main" ? 1 : 3 / 2}
+        title={cropTarget?.type === "main" ? "Crop Main Image (1:1)" : "Crop Gallery Image (3:2)"}
+        onCancel={handleCropCancel}
+        onCropped={handleCropped}
       />
       <div className="flex items-center justify-between">
         <div>
@@ -446,7 +474,7 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, eventDetails }: We
         <SectionCard title="Main Image" description="Your primary couple photo for the invitation">
           <div className="flex flex-col md:flex-row gap-4 items-start">
             {wedding.main_image_url && (
-              <div className="relative w-40 h-52 rounded-xl overflow-hidden border border-border shrink-0 group">
+              <div className="relative w-40 h-40 rounded-xl overflow-hidden border border-border shrink-0 group">
                 <img src={wedding.main_image_url} alt="Couple" className="w-full h-full object-cover" />
                 <button
                   type="button"
@@ -470,7 +498,7 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, eventDetails }: We
                 <p className="text-sm font-medium text-foreground">
                   {isUploadingMain ? "Uploading..." : "Click to upload main image"}
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WebP up to 15MB</p>
+                <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WebP up to 15MB &middot; cropped to 1:1</p>
               </button>
             </div>
           </div>
@@ -480,7 +508,7 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, eventDetails }: We
         <SectionCard title="Gallery Images" description="Photos shown in the invitation slider">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
             {galleryImages.map((img) => (
-              <div key={img.id} className="relative group rounded-lg overflow-hidden border border-border aspect-video">
+              <div key={img.id} className="relative group rounded-lg overflow-hidden border border-border aspect-[3/2]">
                 <img src={img.image_url} alt="" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
                   <div className="flex gap-1">
@@ -494,7 +522,7 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, eventDetails }: We
               </div>
             ))}
             <div
-              className="border-2 border-dashed border-input rounded-lg aspect-video flex flex-col items-center justify-center hover:border-primary/30 transition-colors cursor-pointer"
+              className="border-2 border-dashed border-input rounded-lg aspect-[3/2] flex flex-col items-center justify-center hover:border-primary/30 transition-colors cursor-pointer"
               onClick={() => galleryImageRef.current?.click()}
             >
               {isUploadingGallery ? (

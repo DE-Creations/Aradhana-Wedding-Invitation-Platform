@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Heart, X, Check } from "lucide-react";
+import { Heart, X, Check, Minus, Plus } from "lucide-react";
 import axios from "axios";
 
 interface GuestLite {
@@ -55,6 +55,7 @@ export function RsvpSection({
   const [attending, setAttending] = useState<boolean | null>(null);
   const [count, setCount] = useState(1);
   const [note, setNote] = useState("");
+  const maxAttendees = guest?.max_attendees ?? 10;
 
   const openModal = () => {
     setOpen(true);
@@ -165,34 +166,61 @@ export function RsvpSection({
                     <div>
                       <p className={`mb-2 text-sm font-medium ${bodyFont}`}>Will you be attending?</p>
                       <div className="flex gap-3">
-                        <button
+                        <motion.button
                           type="button"
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.96 }}
                           onClick={() => setAttending(true)}
-                          className={`flex-1 rounded-lg border py-2.5 text-sm font-medium transition-all ${attending === true ? "border-emerald-500 bg-emerald-500/10 text-emerald-700" : "border-black/15 hover:bg-black/5"}`}
+                          className={`flex-1 rounded-lg border-2 py-2.5 text-sm font-semibold transition-all ${
+                            attending === true
+                              ? "border-emerald-500 bg-emerald-500 text-white shadow-md shadow-emerald-500/30"
+                              : "border-emerald-500 bg-transparent text-emerald-600 hover:bg-emerald-50"
+                          }`}
                         >
-                          Joyfully Accept
-                        </button>
-                        <button
+                          Accept
+                        </motion.button>
+                        <motion.button
                           type="button"
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.96 }}
                           onClick={() => setAttending(false)}
-                          className={`flex-1 rounded-lg border py-2.5 text-sm font-medium transition-all ${attending === false ? "border-rose-400 bg-rose-400/10 text-rose-600" : "border-black/15 hover:bg-black/5"}`}
+                          className={`flex-1 rounded-lg border-2 py-2.5 text-sm font-semibold transition-all ${
+                            attending === false
+                              ? "border-rose-500 bg-rose-500 text-white shadow-md shadow-rose-500/30"
+                              : "border-rose-500 bg-transparent text-rose-600 hover:bg-rose-50"
+                          }`}
                         >
-                          Respectfully Decline
-                        </button>
+                          Decline
+                        </motion.button>
                       </div>
                     </div>
                     {attending && (
                       <div>
                         <p className={`mb-1.5 text-sm font-medium ${bodyFont}`}>Number of guests</p>
-                        <input
-                          type="number"
-                          min={1}
-                          max={guest?.max_attendees ?? 10}
-                          value={count}
-                          onChange={(e) => setCount(Number(e.target.value))}
-                          className="w-full rounded-lg border border-black/15 bg-white px-3 py-2 text-sm text-zinc-900"
-                        />
-                        <p className="mt-1 text-xs opacity-60">Max: {guest?.max_attendees ?? 10}</p>
+                        <div className="flex items-center justify-between rounded-lg border border-black/15 bg-white px-2 py-1.5">
+                          <motion.button
+                            type="button"
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => setCount((c) => Math.max(1, c - 1))}
+                            disabled={count <= 1}
+                            aria-label="Decrease guest count"
+                            className="flex h-8 w-8 items-center justify-center rounded-md bg-black/5 text-zinc-700 transition-colors hover:bg-black/10 disabled:opacity-30"
+                          >
+                            <Minus className="h-4 w-4" />
+                          </motion.button>
+                          <span className="text-base font-semibold text-zinc-900 tabular-nums">{count}</span>
+                          <motion.button
+                            type="button"
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => setCount((c) => Math.min(maxAttendees, c + 1))}
+                            disabled={count >= maxAttendees}
+                            aria-label="Increase guest count"
+                            className="flex h-8 w-8 items-center justify-center rounded-md bg-black/5 text-zinc-700 transition-colors hover:bg-black/10 disabled:opacity-30"
+                          >
+                            <Plus className="h-4 w-4" />
+                          </motion.button>
+                        </div>
+                        <p className="mt-1 text-xs opacity-60">Max: {maxAttendees}</p>
                       </div>
                     )}
                     <div>
@@ -207,10 +235,11 @@ export function RsvpSection({
                     </div>
                     <motion.button
                       type="button"
+                      whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.97 }}
                       onClick={submit}
                       disabled={attending === null}
-                      className={`w-full rounded-lg py-2.5 text-sm font-medium uppercase tracking-wide transition-opacity hover:opacity-90 disabled:opacity-50 ${ctaClassName}`}
+                      className={`w-full rounded-lg py-2.5 text-sm font-medium uppercase tracking-wide shadow-md transition-shadow hover:shadow-lg disabled:opacity-50 disabled:shadow-none ${ctaClassName}`}
                     >
                       Submit RSVP
                     </motion.button>
