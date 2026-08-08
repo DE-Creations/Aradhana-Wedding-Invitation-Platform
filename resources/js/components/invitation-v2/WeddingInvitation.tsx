@@ -77,7 +77,7 @@ export default function WeddingInvitation(props: InvitationViewModelProps) {
             <FloatingPetals />
           </SafeBoundary>
           <ScrollProgress />
-          {invitation.music_url && <MusicControl src={invitation.music_url} />}
+          {invitation.music_url && <MusicControl src={invitation.music_url} autoPlay />}
         </>
       )}
 

@@ -5,59 +5,72 @@ import { Volume2, VolumeX } from "lucide-react";
 interface MusicControlProps {
   src: string;
   label?: string | null;
+  /** Start playback as soon as this mounts — used when it's only rendered
+   *  after the guest has already tapped the envelope open (a real gesture),
+   *  instead of attempting silent/muted autoplay on page load. */
+  autoPlay?: boolean;
 }
 
-export function MusicControl({ src, label }: MusicControlProps) {
+// No page-load autoplay — mobile browsers (Android Chrome in particular) block
+// it inconsistently, which left the player stuck needing a mute/unmute dance
+// to actually start. Playback starts either from the envelope tap (autoPlay,
+// this component only mounts after that tap) or a direct tap on the button.
+export function MusicControl({ src, label, autoPlay = false }: MusicControlProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [muted, setMuted] = useState(false);
-  const unmutedOnGestureRef = useRef(false);
+  const [playing, setPlaying] = useState(false);
 
-  // Attempt unmuted autoplay on mount. If the browser blocks it, fall back to
-  // muted autoplay and silently unmute on the first user gesture.
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
-
-    audio.muted = false;
-    audio
-      .play()
-      .then(() => {
-        setMuted(false);
-      })
-      .catch(() => {
-        // Browser blocked unmuted autoplay — switch to muted and arm a one-shot
-        // unmute on the first pointer/keyboard interaction.
-        audio.muted = true;
-        setMuted(true);
-        audio.play().catch(() => {
-          // Muted autoplay also blocked (very rare). User must tap the button.
+    if (autoPlay && audio) {
+      audio
+        .play()
+        .then(() => setPlaying(true))
+        .catch(() => {
+          // Browser still blocked it — user can start it with the button.
         });
-
-        const unmuteOnGesture = () => {
-          if (unmutedOnGestureRef.current) return;
-          unmutedOnGestureRef.current = true;
-          audio.muted = false;
-          setMuted(false);
-          audio.play().catch(() => {});
-        };
-
-        window.addEventListener("pointerdown", unmuteOnGesture, { once: true });
-        window.addEventListener("keydown", unmuteOnGesture, { once: true });
-      });
-
+    }
     return () => {
-      audio.pause();
+      audio?.pause();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [src]);
+
+  // Pause when the tab is backgrounded/minimized and resume when it comes
+  // back — only if it was actually playing (not if the guest had paused it).
+  useEffect(() => {
+    const wasPlaying = { current: false };
+    const handleVisibilityChange = () => {
+      const audio = audioRef.current;
+      if (!audio) return;
+      if (document.hidden) {
+        if (!audio.paused) {
+          wasPlaying.current = true;
+          audio.pause();
+          setPlaying(false);
+        }
+      } else if (wasPlaying.current) {
+        wasPlaying.current = false;
+        audio
+          .play()
+          .then(() => setPlaying(true))
+          .catch(() => {});
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
 
   const toggle = () => {
     const audio = audioRef.current;
     if (!audio) return;
-    const next = !muted;
-    audio.muted = next;
-    setMuted(next);
-    if (!next) {
-      audio.play().catch(() => {});
+    if (playing) {
+      audio.pause();
+      setPlaying(false);
+    } else {
+      audio
+        .play()
+        .then(() => setPlaying(true))
+        .catch(() => {});
     }
   };
 
@@ -66,15 +79,15 @@ export function MusicControl({ src, label }: MusicControlProps) {
       {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
       <audio ref={audioRef} src={src} loop preload="auto" playsInline />
       <motion.button
-        aria-label={muted ? `Unmute music${label ? ` — ${label}` : ""}` : `Mute music`}
-        title={muted ? "Unmute background music" : "Mute background music"}
+        aria-label={playing ? `Pause music${label ? ` — ${label}` : ""}` : `Play music${label ? ` — ${label}` : ""}`}
+        title={playing ? "Pause background music" : "Play background music"}
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.6, duration: 0.3 }}
         onClick={toggle}
         className="fixed bottom-4 right-4 z-50 flex items-center justify-center rounded-full bg-black/60 p-3 text-white shadow-lg backdrop-blur-sm transition-colors hover:bg-black/75"
       >
-        {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+        {playing ? <Volume2 size={20} /> : <VolumeX size={20} />}
       </motion.button>
     </>
   );

@@ -92,8 +92,8 @@ export const PublicInvitationPage = ({
   ) : null;
 
   const musicControl =
-    w.background_music_url && w.background_music_enabled ? (
-      <MusicControl src={w.background_music_url} label={w.background_music_label} />
+    revealed && w.background_music_url && w.background_music_enabled ? (
+      <MusicControl src={w.background_music_url} label={w.background_music_label} autoPlay />
     ) : null;
 
   // ── Solid designs: borderless, full-bleed, scroll-animated ──────────────────
