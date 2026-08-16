@@ -111,7 +111,7 @@ export function RsvpSection({
         >
           <Heart className="h-4 w-4 fill-current" />
         </motion.span>
-        RSVP Now
+        Respond Now
       </motion.button>
 
       {rsvpDeadline && (

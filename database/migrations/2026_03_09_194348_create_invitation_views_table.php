@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamp('created_at')->useCurrent();
 
             $table->foreign('wedding_id')->references('id')->on('weddings');
-            $table->foreign('guest_id')->references('id')->on('guests');
+            $table->foreign('guest_id')->references('id')->on('guests')->cascadeOnDelete();
         });
     }
 

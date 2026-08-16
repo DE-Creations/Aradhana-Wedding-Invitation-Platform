@@ -21,7 +21,7 @@ return new class extends Migration
 
             $table->foreign('wedding_id')->references('id')->on('weddings');
             $table->foreign('table_id')->references('id')->on('tables');
-            $table->foreign('guest_id')->references('id')->on('guests');
+            $table->foreign('guest_id')->references('id')->on('guests')->cascadeOnDelete();
         });
     }
 

@@ -14,7 +14,7 @@ We noticed we haven't yet received your RSVP for the wedding of
 It would mean the world to us to know whether you can join our celebration.
 
 @component('mail::button', ['url' => $url, 'color' => 'primary'])
-RSVP Now
+Respond Now
 @endcomponent
 
 With love,
