@@ -28,6 +28,7 @@ class SendBigDayWishesCommand extends Command
                 'christianDetails',
                 'tamilDetails',
                 'muslimDetails',
+                'homecomingDetails',
             ])
             ->get();
 

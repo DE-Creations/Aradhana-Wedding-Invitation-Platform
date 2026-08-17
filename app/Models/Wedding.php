@@ -72,6 +72,11 @@ class Wedding extends Model
         return $this->hasOne(MuslimWedding::class);
     }
 
+    public function homecomingDetails(): HasOne
+    {
+        return $this->hasOne(HomecomingWedding::class);
+    }
+
     public function galleryImages(): HasMany
     {
         return $this->hasMany(WeddingGalleryImage::class);
@@ -100,6 +105,7 @@ class Wedding extends Model
      *  - Christian → church_event_date (falls back to reception_event_date)
      *  - Tamil     → muhurtham_event_date (falls back to reception_event_date)
      *  - Muslim    → nikkah_event_date (falls back to reception_event_date)
+     *  - Homecoming → event_date
      */
     public function primaryEventDate(): ?Carbon
     {
@@ -126,6 +132,13 @@ class Wedding extends Model
             $date = $this->muslimDetails->nikkah_event_date
                 ?? $this->muslimDetails->reception_event_date;
             return $date ? Carbon::parse($date) : null;
+        }
+
+        if ($this->homecomingDetails) {
+            return $this->homecomingDetails->event_date instanceof Carbon
+                ? $this->homecomingDetails->event_date
+                : ($this->homecomingDetails->event_date
+                    ? Carbon::parse($this->homecomingDetails->event_date) : null);
         }
 
         return null;

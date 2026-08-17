@@ -16,7 +16,7 @@ class DesignController extends Controller
         $user = Auth::user();
 
         /** @var Wedding|null $wedding */
-        $wedding = $user?->wedding()->with(['weddingType', 'sinhalaDetails', 'christianDetails', 'tamilDetails', 'muslimDetails'])->first();
+        $wedding = $user?->wedding()->with(['weddingType', 'sinhalaDetails', 'christianDetails', 'tamilDetails', 'muslimDetails', 'homecomingDetails'])->first();
 
         if (! $wedding) {
             return redirect()->route('settings.index')
@@ -71,7 +71,7 @@ class DesignController extends Controller
         $ceremonyEvents = [];
 
         if ($wedding) {
-            $wedding->load(['sinhalaDetails', 'christianDetails', 'tamilDetails', 'muslimDetails']);
+            $wedding->load(['sinhalaDetails', 'christianDetails', 'tamilDetails', 'muslimDetails', 'homecomingDetails']);
 
             $mainImageUrl = $wedding->main_image
                 ? asset('storage/' . $wedding->main_image)
@@ -194,6 +194,20 @@ class DesignController extends Controller
                             'google_maps_link' => $d->reception_event_google_maps_link ?? '',
                         ];
                     }
+                }
+                break;
+
+            case 5: // Homecoming
+                $d = $wedding->homecomingDetails;
+                if ($d) {
+                    $events[] = [
+                        'label'            => 'Homecoming',
+                        'date'             => $d->event_date?->toDateString() ?? '',
+                        'venue'            => $d->venue ?? '',
+                        'start_time'       => $d->start_time ?? '',
+                        'end_time'         => $d->end_time ?? '',
+                        'google_maps_link' => $d->google_maps_link ?? '',
+                    ];
                 }
                 break;
         }

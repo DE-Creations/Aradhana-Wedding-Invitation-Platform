@@ -16,7 +16,7 @@ class PublicInvitationController extends Controller
     {
         $wedding = Wedding::where('event_token', $token)
             ->where('status', '!=', 'draft')
-            ->with(['weddingType', 'sinhalaDetails', 'christianDetails', 'tamilDetails', 'muslimDetails'])
+            ->with(['weddingType', 'sinhalaDetails', 'christianDetails', 'tamilDetails', 'muslimDetails', 'homecomingDetails'])
             ->firstOrFail();
 
         $guestToken = $request->query('guest');
@@ -294,6 +294,20 @@ class PublicInvitationController extends Controller
                             'google_maps_link' => $d->reception_event_google_maps_link ?? '',
                         ];
                     }
+                }
+                break;
+
+            case 5: // Homecoming
+                $d = $wedding->homecomingDetails;
+                if ($d) {
+                    $events[] = [
+                        'label'            => 'Homecoming',
+                        'date'             => $d->event_date?->toDateString() ?? '',
+                        'venue'            => $d->venue ?? '',
+                        'start_time'       => $d->start_time ?? '',
+                        'end_time'         => $d->end_time ?? '',
+                        'google_maps_link' => $d->google_maps_link ?? '',
+                    ];
                 }
                 break;
         }

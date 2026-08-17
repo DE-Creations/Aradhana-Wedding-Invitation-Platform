@@ -411,7 +411,26 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, eventDetails }: We
             </div>
           )}
 
-          {!["1","2","3","4"].includes(wedding.wedding_type_id) && (
+          {wedding.wedding_type_id === "5" && (
+            <div className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <DatePickerField label="Event Date" value={(eventForm.event_date as string) ?? ""} onChange={(v) => updateEventField("event_date", v)} />
+                <DatePickerField label="RSVP Deadline" value={form.rsvp_deadline} onChange={(v) => updateField("rsvp_deadline", v)} />
+              </div>
+              <div className="grid md:grid-cols-2 gap-4">
+                <TimePickerField label="Start Time" value={(eventForm.start_time as string) ?? "09:00"} onChange={(v) => updateEventField("start_time", v)} />
+                <TimePickerField label="End Time (leave blank for onwards)" value={(eventForm.end_time as string) ?? ""} onChange={(v) => updateEventField("end_time", v)} />
+              </div>
+              <FormField label="Venue">
+                <input value={(eventForm.venue as string) ?? ""} onChange={(e) => updateEventField("venue", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
+              </FormField>
+              <FormField label="Google Maps Link">
+                <input value={(eventForm.google_maps_link as string) ?? ""} onChange={(e) => updateEventField("google_maps_link", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" placeholder="https://maps.google.com/..." />
+              </FormField>
+            </div>
+          )}
+
+          {!["1","2","3","4","5"].includes(wedding.wedding_type_id) && (
             <p className="text-sm text-muted-foreground">Event details are not configured. Contact your administrator.</p>
           )}
         </SectionCard>

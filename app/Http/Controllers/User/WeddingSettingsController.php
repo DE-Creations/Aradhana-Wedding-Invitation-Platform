@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\ChristianWedding;
 use App\Models\EmailLog;
+use App\Models\HomecomingWedding;
 use App\Models\MuslimWedding;
 use App\Models\SinhalaWedding;
 use App\Models\TamilWedding;
@@ -112,13 +113,13 @@ class WeddingSettingsController extends Controller
         $wedding->update($baseValidated);
 
         // Capture event date before saving to detect if it changes.
-        $wedding->loadMissing(['sinhalaDetails', 'christianDetails', 'tamilDetails', 'muslimDetails']);
+        $wedding->loadMissing(['sinhalaDetails', 'christianDetails', 'tamilDetails', 'muslimDetails', 'homecomingDetails']);
         $oldEventDate = $wedding->primaryEventDate()?->toDateString();
 
         $this->saveEventDetails($request, $wedding);
 
         // If the event date changed, reset the big day wishes log so a new email fires on the new date.
-        $wedding->load(['sinhalaDetails', 'christianDetails', 'tamilDetails', 'muslimDetails']);
+        $wedding->load(['sinhalaDetails', 'christianDetails', 'tamilDetails', 'muslimDetails', 'homecomingDetails']);
         $newEventDate = $wedding->primaryEventDate()?->toDateString();
 
         if ($oldEventDate !== $newEventDate) {
@@ -355,6 +356,16 @@ class WeddingSettingsController extends Controller
                     'reception_start_time'             => $d?->reception_start_time ?? '',
                     'reception_event_google_maps_link' => $d?->reception_event_google_maps_link ?? '',
                 ];
+            case 5: // Homecoming
+                $d = $wedding->homecomingDetails;
+                return [
+                    'type'             => 'homecoming',
+                    'event_date'       => $d?->event_date?->toDateString() ?? '',
+                    'venue'            => $d?->venue ?? '',
+                    'start_time'       => $d?->start_time ?? '',
+                    'end_time'         => $d?->end_time ?? '',
+                    'google_maps_link' => $d?->google_maps_link ?? '',
+                ];
             default:
                 return null;
         }
@@ -423,6 +434,17 @@ class WeddingSettingsController extends Controller
                     'reception_event_google_maps_link' => ['nullable', 'url', 'max:2048'],
                 ]);
                 MuslimWedding::updateOrCreate(['wedding_id' => $wedding->id], $validated);
+                break;
+
+            case 5: // Homecoming
+                $validated = $request->validate([
+                    'event_date'       => ['nullable', 'date'],
+                    'venue'            => ['nullable', 'string', 'max:255'],
+                    'start_time'       => ['nullable', 'regex:/^\d{2}:\d{2}(:\d{2})?$/'],
+                    'end_time'         => ['nullable', 'regex:/^\d{2}:\d{2}(:\d{2})?$/'],
+                    'google_maps_link' => ['nullable', 'url', 'max:2048'],
+                ]);
+                HomecomingWedding::updateOrCreate(['wedding_id' => $wedding->id], $validated);
                 break;
         }
     }
