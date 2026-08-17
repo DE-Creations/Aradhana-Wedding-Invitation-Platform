@@ -206,8 +206,9 @@ class WeddingSettingsController extends Controller
             Storage::disk('public')->delete($wedding->background_music_path);
         }
 
+        $folderName = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $user->name ?? 'user_' . $user->id);
         $file = $request->file('background_music');
-        $path = $file->store('weddings/' . $wedding->id . '/music', 'public');
+        $path = $file->store('weddings/' . $folderName . '/music', 'public');
 
         $wedding->update([
             'background_music_path'  => $path,

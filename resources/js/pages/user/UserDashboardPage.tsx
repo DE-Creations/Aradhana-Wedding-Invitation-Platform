@@ -130,7 +130,7 @@ export const UserDashboardPage = ({ onNavigate, wedding, stats, pendingGuests, r
             onClick={() => {
               if (action.disabled) return;
               if (action.page === "preview") {
-                window.open(eventToken ? `/invitation/${eventToken}` : "/invitation", "_blank");
+                window.open("/design/preview", "_blank");
               } else if (action.page === "find-table") {
                 window.open(eventToken ? `/find-table?token=${eventToken}` : "/find-table", "_blank");
               } else if (action.page === "share-memories") {
