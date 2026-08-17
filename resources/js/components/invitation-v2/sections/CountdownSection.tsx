@@ -11,7 +11,7 @@ export default function CountdownSection({ invitation }: { invitation: Invitatio
   const targetDateTime = firstEvent.start_time ? `${firstEvent.date}T${firstEvent.start_time}` : firstEvent.date;
 
   return (
-    <section className="section-full bg-radial-wine" style={{ textAlign: 'center' }}>
+    <section className="section-pad bg-radial-wine" style={{ textAlign: 'center' }}>
       <h2 className="font-serif-display" style={{ color: '#C9A96E', fontStyle: 'italic', fontSize: 'clamp(1.75rem, 5vw, 2.25rem)' }}>
         Counting Down to Forever
       </h2>
@@ -26,7 +26,7 @@ export default function CountdownSection({ invitation }: { invitation: Invitatio
         />
       </div>
 
-      <p className="font-body" style={{ color: '#E8D5A3', fontStyle: 'italic', fontSize: '1.25rem', marginTop: '2.5rem', maxWidth: 560 }}>
+      <p className="font-body" style={{ color: '#E8D5A3', fontStyle: 'italic', fontSize: '1.25rem', margin: '2.5rem auto 0', maxWidth: 560 }}>
         {dateInWords(firstEvent.date)}
       </p>
 

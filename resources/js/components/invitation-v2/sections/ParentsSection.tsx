@@ -36,13 +36,13 @@ export default function ParentsSection({ invitation }: { invitation: InvitationV
   if (!invitation.groom_parents_names && !invitation.bride_parents_names) return null;
 
   return (
-    <section className="section-full bg-wine" style={{ textAlign: 'center' }}>
+    <section className="section-pad bg-wine" style={{ textAlign: 'center' }}>
       <h2 className="font-serif-display" style={{ color: '#C9A96E', fontStyle: 'italic', fontSize: 'clamp(1.75rem, 5vw, 2.25rem)' }}>
         With the Blessings of
       </h2>
       <OrnamentalDivider />
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', maxWidth: 900, width: '100%', marginTop: '1.5rem' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', maxWidth: 900, width: '100%', margin: '1.5rem auto 0' }}>
         <FamilyColumn label="Family of the Groom" names={invitation.groom_parents_names} from="left" />
 
         <div className="gold-line-vertical hide-mobile" style={{ height: 120, alignSelf: 'center' }} aria-hidden="true" />
