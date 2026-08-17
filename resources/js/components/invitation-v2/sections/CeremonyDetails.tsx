@@ -63,13 +63,13 @@ export default function CeremonyDetails({ events }: { events: CeremonyEventInput
   if (events.length === 0) return null;
 
   return (
-    <section className="section-full bg-charcoal" style={{ textAlign: 'center' }}>
+    <section className="section-pad bg-charcoal" style={{ textAlign: 'center' }}>
       <h2 className="font-serif-display" style={{ color: '#C9A96E', fontStyle: 'italic', fontSize: 'clamp(1.75rem, 5vw, 2.25rem)' }}>
         Ceremony Details
       </h2>
       <OrnamentalDivider />
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', justifyContent: 'center', alignItems: 'stretch', maxWidth: 900, width: '100%', marginTop: '1.5rem' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', justifyContent: 'center', alignItems: 'stretch', maxWidth: 900, width: '100%', margin: '1.5rem auto 0' }}>
         {events.map((event, i) => (
           <DetailCard key={`${event.label}-${i}`} event={event} delay={i * 0.2} />
         ))}

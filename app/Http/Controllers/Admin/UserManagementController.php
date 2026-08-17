@@ -146,15 +146,28 @@ class UserManagementController extends Controller
 
         // Send welcome email after the transaction completes successfully.
         // Re-fetch with wedding so the email can include couple names if a wedding was created.
+        // A mail delivery failure (SMTP down, quota, etc.) must not turn an
+        // already-successful user creation into a 500 — the user row is
+        // committed regardless of whether the email goes out.
         $newUserId = User::where('email', $validated['email'])->value('id');
+        $emailSent = false;
         if ($newUserId) {
             $createdUser = User::with('wedding')->find($newUserId);
-            Mail::to($createdUser->email, $createdUser->name)
-                ->send(new WelcomeClientMail($createdUser, $createdUser->wedding));
-            EmailLog::record($newUserId, EmailLog::TYPE_WELCOME);
+            try {
+                Mail::to($createdUser->email, $createdUser->name)
+                    ->send(new WelcomeClientMail($createdUser, $createdUser->wedding));
+                EmailLog::record($newUserId, EmailLog::TYPE_WELCOME);
+                $emailSent = true;
+            } catch (\Throwable $e) {
+                report($e);
+            }
         }
 
-        return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
+        $message = $emailSent
+            ? 'User created successfully.'
+            : 'User created successfully, but the welcome email could not be sent.';
+
+        return redirect()->route('admin.users.index')->with('success', $message);
     }
 
     public function update(Request $request, User $user): RedirectResponse
@@ -306,6 +319,7 @@ class UserManagementController extends Controller
                 $wedding->christianDetails()->delete();
                 $wedding->tamilDetails()->delete();
                 $wedding->muslimDetails()->delete();
+                $wedding->homecomingDetails()->delete();
 
                 $wedding->delete();
             }

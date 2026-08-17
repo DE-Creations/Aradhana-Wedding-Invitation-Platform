@@ -5,7 +5,7 @@ export default function GallerySection({ photos }: { photos: string[] }) {
   if (photos.length === 0) return null;
 
   return (
-    <section className="section-full bg-wine" style={{ textAlign: 'center' }}>
+    <section className="section-pad bg-wine" style={{ textAlign: 'center' }}>
       <h2 className="font-serif-display" style={{ color: '#C9A96E', fontStyle: 'italic', fontSize: 'clamp(1.75rem, 5vw, 2.25rem)' }}>
         Our Moments
       </h2>
@@ -14,7 +14,7 @@ export default function GallerySection({ photos }: { photos: string[] }) {
       </p>
       <OrnamentalDivider />
 
-      <div style={{ width: '100%', maxWidth: 560, marginTop: '1rem' }}>
+      <div style={{ width: '100%', maxWidth: 560, margin: '1rem auto 0' }}>
         <GalleryCarousel
           images={photos}
           stageClassName="rounded-xl border border-[#C9A96E]"

@@ -77,6 +77,14 @@ class DashboardController extends Controller
                     }
                 }
                 break;
+
+            case 5: // Homecoming
+                $details = $wedding->homecomingDetails;
+                if ($details && $details->event_date) {
+                    $eventDate = $details->event_date->format('Y-m-d');
+                    $venueName = $details->venue;
+                }
+                break;
         }
 
         $stats = [
