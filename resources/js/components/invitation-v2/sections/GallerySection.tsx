@@ -1,3 +1,4 @@
+import { Heart } from 'lucide-react';
 import { GalleryCarousel } from '@/components/invitation/GalleryCarousel';
 import { OrnamentalDivider } from '../components/Ornaments';
 
@@ -12,6 +13,9 @@ export default function GallerySection({ photos }: { photos: string[] }) {
       <p className="font-body" style={{ color: '#E8D5A3', fontSize: '1.05rem' }}>
         A glimpse into our journey together
       </p>
+      <span className="heartbeat" style={{ display: 'inline-block', color: '#C9A96E', marginTop: '0.35rem' }} aria-hidden="true">
+        <Heart size={16} fill="#C9A96E" strokeWidth={0} />
+      </span>
       <OrnamentalDivider />
 
       <div style={{ width: '100%', maxWidth: 560, margin: '1rem auto 0' }}>

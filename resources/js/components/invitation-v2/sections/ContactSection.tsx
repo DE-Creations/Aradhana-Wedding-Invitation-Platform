@@ -62,7 +62,7 @@ export default function ContactSection({ invitation }: { invitation: InvitationV
         {invitation.contact_number_1 && <ContactCard name={invitation.groom_name} role="The Groom" phone={invitation.contact_number_1} />}
 
         {invitation.contact_number_1 && invitation.contact_number_2 && (
-          <span className="hide-mobile" style={{ color: '#8B3A4A' }}>
+          <span className="hide-mobile heartbeat" style={{ color: '#8B3A4A', display: 'inline-block' }}>
             <Heart size={24} fill="#8B3A4A" strokeWidth={0} />
           </span>
         )}

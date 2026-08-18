@@ -8,6 +8,7 @@ import { useSmoothScroll } from '@/components/invitation/hooks/useSmoothScroll';
 
 import ScrollProgress from './components/ScrollProgress';
 import SafeBoundary from './components/SafeBoundary';
+import FloatingStickers from './components/FloatingStickers';
 
 import HeroSection from './sections/HeroSection';
 import GuestGreeting from './sections/GuestGreeting';
@@ -74,7 +75,12 @@ export default function WeddingInvitation(props: InvitationViewModelProps) {
       {revealed && (
         <>
           <SafeBoundary>
-            <FloatingPetals />
+            {/* Above <main>'s zIndex:3 (which has opaque section backgrounds) so
+                the ambient layers are actually visible over the content, not
+                hidden behind it. Below MusicControl (z-50) and the envelope
+                overlay (z-[120]) so those stay on top. */}
+            <FloatingPetals zIndex={4} />
+            <FloatingStickers zIndex={5} />
           </SafeBoundary>
           <ScrollProgress />
           {invitation.music_url && <MusicControl src={invitation.music_url} autoPlay />}
