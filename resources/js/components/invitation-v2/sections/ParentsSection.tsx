@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Heart } from 'lucide-react';
 import { OrnamentalDivider, Flourish } from '../components/Ornaments';
 import type { InvitationViewModel } from '../viewModel';
 
@@ -40,6 +41,9 @@ export default function ParentsSection({ invitation }: { invitation: InvitationV
       <h2 className="font-serif-display" style={{ color: '#C9A96E', fontStyle: 'italic', fontSize: 'clamp(1.75rem, 5vw, 2.25rem)' }}>
         With the Blessings of
       </h2>
+      <span className="heartbeat" style={{ display: 'inline-block', color: '#8B3A4A', marginTop: '0.5rem' }} aria-hidden="true">
+        <Heart size={18} fill="#8B3A4A" strokeWidth={0} />
+      </span>
       <OrnamentalDivider />
 
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', maxWidth: 900, width: '100%', margin: '1.5rem auto 0' }}>

@@ -28,18 +28,28 @@ interface OrnamentalDividerProps {
   className?: string;
 }
 
-/** Full ornamental divider with a diamond center motif. */
+/**
+ * Full ornamental divider with a diamond center motif. The dip is a single
+ * mirror-symmetric curve about the horizontal center (x=150) rather than an
+ * S-wave, so it reads as a clean, balanced flourish at any size.
+ */
 export function OrnamentalDivider({ width = 280, className = '' }: OrnamentalDividerProps) {
   return (
     <div className={className} style={{ display: 'flex', justifyContent: 'center', margin: '1.5rem 0' }}>
-      <svg width={width} height={width * 0.14} viewBox="0 0 300 42" fill="none" aria-hidden="true">
-        <line x1="20" y1="21" x2="120" y2="21" stroke={gold} strokeWidth="1" opacity="0.6" />
-        <line x1="180" y1="21" x2="280" y2="21" stroke={gold} strokeWidth="1" opacity="0.6" />
-        <path d="M120 21 C 132 8, 132 34, 150 21 C 168 8, 168 34, 180 21" stroke={gold} strokeWidth="1.3" strokeLinecap="round" />
-        <path d="M150 12 l6 9 l-6 9 l-6 -9 z" stroke={gold} strokeWidth="1.2" fill="none" />
-        <circle cx="150" cy="21" r="2" fill={gold} />
-        <circle cx="118" cy="21" r="2" fill={gold} />
-        <circle cx="182" cy="21" r="2" fill={gold} />
+      <svg width={width} height={width * 0.15} viewBox="0 0 300 46" fill="none" aria-hidden="true">
+        <line x1="20" y1="18" x2="116" y2="18" stroke={gold} strokeWidth="1" opacity="0.6" />
+        <line x1="184" y1="18" x2="280" y2="18" stroke={gold} strokeWidth="1" opacity="0.6" />
+        <path
+          d="M116 18 C 130 18, 136 32, 150 32 C 164 32, 170 18, 184 18"
+          stroke={gold}
+          strokeWidth="1.3"
+          strokeLinecap="round"
+          fill="none"
+        />
+        <circle cx="116" cy="18" r="1.8" fill={gold} />
+        <circle cx="184" cy="18" r="1.8" fill={gold} />
+        <path d="M150 26 L155.5 32 L150 38 L144.5 32 Z" stroke={gold} strokeWidth="1.2" fill="none" />
+        <circle cx="150" cy="32" r="1.6" fill={gold} />
       </svg>
     </div>
   );

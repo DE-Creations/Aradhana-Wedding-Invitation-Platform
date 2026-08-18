@@ -1,4 +1,4 @@
-import { Calendar } from 'lucide-react';
+import { Calendar, Sparkles } from 'lucide-react';
 import { CountdownTimer } from '@/components/invitation/CountdownTimer';
 import { OrnamentalDivider } from '../components/Ornaments';
 import { dateInWords, googleCalendarUrl } from '../utils';
@@ -15,6 +15,9 @@ export default function CountdownSection({ invitation }: { invitation: Invitatio
       <h2 className="font-serif-display" style={{ color: '#C9A96E', fontStyle: 'italic', fontSize: 'clamp(1.75rem, 5vw, 2.25rem)' }}>
         Counting Down to Forever
       </h2>
+      <span className="seal-glow" style={{ display: 'inline-block', color: '#E8D5A3', marginTop: '0.5rem' }} aria-hidden="true">
+        <Sparkles size={18} />
+      </span>
       <OrnamentalDivider />
 
       <div style={{ marginTop: '1rem' }}>
