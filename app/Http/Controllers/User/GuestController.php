@@ -90,6 +90,23 @@ class GuestController extends Controller
         return back()->with('success', 'Guest deleted.');
     }
 
+    public function rotateStatus(Guest $guest): RedirectResponse
+    {
+        $this->authorizeGuest($guest);
+
+        $next = match ($guest->rsvp_status) {
+            'pending'   => 'viewed',
+            'viewed'    => 'attending',
+            'attending' => 'declined',
+            'declined'  => 'pending',
+            default     => 'pending',
+        };
+
+        $guest->update(['rsvp_status' => $next]);
+
+        return back()->with('success', 'Guest status updated.');
+    }
+
     private function authorizeGuest(Guest $guest): void
     {
         $wedding = Auth::user()->wedding;

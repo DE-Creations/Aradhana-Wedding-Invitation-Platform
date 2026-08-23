@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { router } from "@inertiajs/react";
-import { Plus, Search, Edit, Trash2, Copy, Users, AlertTriangle, ArrowUpDown, FileSpreadsheet, Download, Upload, X as XIcon, StickyNote } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Copy, Users, AlertTriangle, ArrowUpDown, FileSpreadsheet, Download, Upload, X as XIcon, StickyNote, RotateCw } from "lucide-react";
 import { SectionCard, StatusBadge, FormField, EmptyState } from "@/components/ui-components";
 import {
   AlertDialog,
@@ -123,6 +123,10 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
     });
   };
 
+  const handleRotateStatus = (id: string) => {
+    router.post(`/guests/${id}/rotate-status`, {}, { preserveScroll: true });
+  };
+
   const openEdit = (guest: Guest) => {
     setEditGuest(guest);
     setEditForm({ guest_name: guest.guest_name, phone: guest.phone, max_attendees: guest.max_attendees });
@@ -211,6 +215,7 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
                       </button>
                       <div className="flex items-center gap-1 ml-auto">
                         <button onClick={() => openEdit(guest)} className="p-1.5 rounded-md hover:bg-muted"><Edit className="h-3.5 w-3.5 text-muted-foreground" /></button>
+                        <button onClick={() => handleRotateStatus(guest.id)} title={`Status: ${guest.rsvp_status} · click to advance`} className="p-1.5 rounded-md hover:bg-muted"><RotateCw className="h-3.5 w-3.5 text-muted-foreground" /></button>
                         {guest.note && (
                           <button onClick={() => setViewNoteGuest(guest)} className="p-1.5 rounded-md hover:bg-primary/10" title="View note">
                             <StickyNote className="h-3.5 w-3.5 text-primary" />
@@ -271,6 +276,7 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
                       <td className="py-3 px-3">
                         <div className="flex items-center gap-1">
                           <button onClick={() => openEdit(guest)} className="p-1.5 rounded-md hover:bg-muted"><Edit className="h-3.5 w-3.5 text-muted-foreground" /></button>
+                          <button onClick={() => handleRotateStatus(guest.id)} title={`Status: ${guest.rsvp_status} · click to advance`} className="p-1.5 rounded-md hover:bg-muted"><RotateCw className="h-3.5 w-3.5 text-muted-foreground" /></button>
                           {guest.note && (
                             <button onClick={() => setViewNoteGuest(guest)} className="p-1.5 rounded-md hover:bg-primary/10" title="View note">
                               <StickyNote className="h-3.5 w-3.5 text-primary" />

@@ -60,6 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/guests/import', [GuestController::class, 'import'])->name('guests.import');
     Route::post('/guests', [GuestController::class, 'store'])->name('guests.store');
     Route::post('/guests/{guest}', [GuestController::class, 'update'])->name('guests.update');
+    Route::post('/guests/{guest}/rotate-status', [GuestController::class, 'rotateStatus'])->name('guests.rotate-status');
     Route::post('/guests/{guest}/destroy', [GuestController::class, 'destroy'])->name('guests.destroy');
 
     // Tables
