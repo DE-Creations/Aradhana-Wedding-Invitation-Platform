@@ -5,6 +5,10 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\GuestRequest;
 use App\Models\Guest;
+use App\Models\InvitationView;
+use App\Models\Memory;
+use App\Models\Rsvp;
+use App\Models\TableAssignment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -84,6 +88,14 @@ class GuestController extends Controller
     public function destroy(Guest $guest): RedirectResponse
     {
         $this->authorizeGuest($guest);
+
+        // Clear dependent rows first — none of these FKs cascade, so deleting
+        // the guest directly fails once they've opened the invitation, RSVP'd,
+        // been seated, or uploaded a memory.
+        Rsvp::where('guest_id', $guest->id)->delete();
+        InvitationView::where('guest_id', $guest->id)->delete();
+        TableAssignment::where('guest_id', $guest->id)->delete();
+        Memory::where('guest_id', $guest->id)->update(['guest_id' => null]);
 
         $guest->delete();
 
