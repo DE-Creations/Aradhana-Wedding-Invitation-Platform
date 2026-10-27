@@ -1,10 +1,11 @@
 import { useState, useRef } from "react";
-import { Eye, Check, Smartphone, Monitor, Music, Upload, Trash2, Play, Pause, ChevronDown, ChevronUp, Layers } from "lucide-react";
+import { Eye, Save, Check, Smartphone, Monitor, Music, Upload, Trash2, Play, Pause, ChevronDown, ChevronUp, Layers } from "lucide-react";
 import { invitationTemplates, typographyOptions, CINEMATIC_TEMPLATE_KEY, type InvitationTemplate } from "@/data/invitationConstants";
 import { getSolidTheme, SOLID_THEMES } from "@/data/invitationThemes";
 import { SolidHeroPreview } from "@/components/invitation/SolidInvitation";
 import { motion, AnimatePresence } from "framer-motion";
 import { router } from "@inertiajs/react";
+import { toast } from "@/components/ui/sonner";
 
 interface WeddingData {
   bride_name?: string;
@@ -36,6 +37,7 @@ interface InvitationDesignPageProps {
   backgroundMusicUrl?: string | null;
   backgroundMusicLabel?: string | null;
   backgroundMusicEnabled?: boolean;
+  onSaved?: () => void;
 }
 
 /** Compact preview for the cinematic design (matches its envelope-reveal palette). */
@@ -70,6 +72,7 @@ export const InvitationDesignPage = ({
   backgroundMusicUrl,
   backgroundMusicLabel,
   backgroundMusicEnabled = true,
+  onSaved,
 }: InvitationDesignPageProps) => {
   void coupleGalleryImages;
   const brideName = weddingData?.bride_name ?? "Bride";
@@ -84,6 +87,7 @@ export const InvitationDesignPage = ({
   const [solidCollapsed, setSolidCollapsed] = useState(false);
 
   const [musicEnabled, setMusicEnabled] = useState(backgroundMusicEnabled);
+  const [isSaving, setIsSaving] = useState(false);
   const [musicUploading, setMusicUploading] = useState(false);
   const [musicDeleting, setMusicDeleting] = useState(false);
   const musicFileRef = useRef<HTMLInputElement | null>(null);
@@ -108,11 +112,22 @@ export const InvitationDesignPage = ({
     router.post("/settings/music/destroy", {}, { onFinish: () => setMusicDeleting(false) });
   };
 
-  const handleMusicEnabledToggle = () => {
-    const next = !musicEnabled;
-    setMusicEnabled(next);
-    router.post("/settings", { background_music_enabled: next, status: "draft" } as Record<string, unknown>, {
+  const handleMusicEnabledToggle = () => setMusicEnabled((prev) => !prev);
+
+  const handleSave = () => {
+    setIsSaving(true);
+    router.post("/design", {
+      template_key: selectedTemplate,
+      typography_key: selectedTypography,
+      background_music_enabled: musicEnabled,
+    }, {
       preserveScroll: true,
+      onSuccess: () => {
+        onSaved?.();
+        toast.success("Invitation design saved");
+      },
+      onError: () => toast.error("Could not save the invitation design"),
+      onFinish: () => setIsSaving(false),
     });
   };
 
@@ -361,6 +376,9 @@ export const InvitationDesignPage = ({
             </button>
             <button onClick={() => onNavigate("invitation")} className="flex items-center gap-1.5 rounded-lg bg-gradient-gold px-3 py-1.5 text-sm font-medium text-primary-foreground hover:opacity-90">
               <Eye className="h-3.5 w-3.5" /> Full Preview
+            </button>
+            <button onClick={handleSave} disabled={isSaving} className="flex items-center gap-1.5 rounded-lg bg-gradient-gold px-3 py-1.5 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-60">
+              <Save className="h-3.5 w-3.5" /> {isSaving ? "Saving..." : "Save"}
             </button>
           </div>
         </div>

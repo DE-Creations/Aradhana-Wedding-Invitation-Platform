@@ -4,7 +4,7 @@ import { GuestManagementPage } from '@/pages/user/GuestManagementPage';
 
 export default function Guests() {
   const { guests, tables, event_token, bride_name, groom_name } = usePage<{
-    guests: Array<{ id: string; guest_name: string; phone: string; max_attendees: number; rsvp_status: string; attending_count: number; invitation_opened_at: string | null; rsvp_clicked_at: string | null; responded_at: string | null; table_id: string | null; table_name: string | null; guest_token: string }>;
+    guests: Array<{ id: string; guest_name: string; side: 'bride' | 'groom' | null; phone: string; max_attendees: number; rsvp_status: string; attending_count: number; invitation_opened_at: string | null; rsvp_clicked_at: string | null; responded_at: string | null; table_id: string | null; table_name: string | null; guest_token: string }>;
     tables: Array<{ id: string; table_name: string }>;
     event_token: string;
     bride_name: string;

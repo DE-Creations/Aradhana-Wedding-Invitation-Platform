@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 import { Save, Upload, GripVertical, X, Image as ImageIcon, CalendarIcon, Clock, Trash2 } from "lucide-react";
 import { SectionCard, FormField, ConfirmModal } from "@/components/ui-components";
 import { ImageCropModal } from "@/components/ImageCropModal";
-import { invitationTemplates, typographyOptions } from "@/data/invitationConstants";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -21,8 +20,6 @@ type WeddingData = {
   rsvp_deadline: string;
   contact_number_1: string;
   contact_number_2: string;
-  template_key: string;
-  typography_key: string;
   status: "draft" | "active" | "completed";
   main_image_url: string | null;
 };
@@ -127,8 +124,6 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, eventDetails }: We
     rsvp_deadline: wedding?.rsvp_deadline ?? "",
     contact_number_1: wedding?.contact_number_1 ?? "",
     contact_number_2: wedding?.contact_number_2 ?? "",
-    template_key: wedding?.template_key ?? (invitationTemplates[0]?.key ?? ""),
-    typography_key: wedding?.typography_key ?? (typographyOptions[0]?.key ?? ""),
     status: (wedding?.status ?? "draft") as "draft" | "active" | "completed",
   });
 
@@ -443,30 +438,6 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, eventDetails }: We
             </FormField>
             <FormField label="Contact Number 2">
               <input value={form.contact_number_2} onChange={(e) => updateField("contact_number_2", e.target.value)} maxLength={10} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
-            </FormField>
-          </div>
-        </SectionCard>
-
-        {/* Invitation Selection */}
-        <SectionCard title="Invitation Selection" description="Choose your invitation template and typography">
-          <div className="grid md:grid-cols-2 gap-4">
-            <FormField label="Template">
-              <SearchableSelect
-                value={form.template_key}
-                onChange={(v) => updateField("template_key", v)}
-                options={invitationTemplates.map((t) => ({ value: t.key, label: t.name }))}
-                searchPlaceholder="Search template..."
-                searchable={false}
-              />
-            </FormField>
-            <FormField label="Typography">
-              <SearchableSelect
-                value={form.typography_key}
-                onChange={(v) => updateField("typography_key", v)}
-                options={typographyOptions.map((t) => ({ value: t.key, label: t.name }))}
-                searchPlaceholder="Search typography..."
-                searchable={false}
-              />
             </FormField>
           </div>
         </SectionCard>

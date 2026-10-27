@@ -39,6 +39,7 @@ class GuestController extends Controller
             ->map(fn ($g) => [
                 'id'                  => $g->id,
                 'guest_name'          => $g->guest_name,
+                'side'                => $g->side,
                 'phone'               => $g->phone,
                 'max_attendees'       => $g->max_attendees,
                 'rsvp_status'         => $g->rsvp_status,
@@ -149,10 +150,12 @@ class GuestController extends Controller
                 continue;
             }
 
-            // Support both full-export format (10 cols) and simple format (3 cols: Name, Phone, Max)
+            // Columns: Name, Phone, Max, Side (optional; "bride" or "groom"). Extra export columns are ignored.
             $guestName    = trim($row[0] ?? '');
             $phone        = trim($row[1] ?? '');
             $maxAttendees = (int) ($row[2] ?? 1);
+            $side         = strtolower(trim($row[3] ?? ''));
+            $side         = in_array($side, ['bride', 'groom'], true) ? $side : null;
 
             if ($guestName === '') {
                 $skipped++;
@@ -170,6 +173,7 @@ class GuestController extends Controller
 
             $wedding->guests()->create([
                 'guest_name'    => $guestName,
+                'side'          => $side,
                 'phone'         => $phone ?: null,
                 'max_attendees' => $maxAttendees,
             ]);
@@ -213,6 +217,7 @@ class GuestController extends Controller
                 'Guest Name',
                 'Phone',
                 'Max Attendees',
+                'Side',
                 'RSVP Status',
                 'Attending Count',
                 'Invitation Opened At',
@@ -227,6 +232,7 @@ class GuestController extends Controller
                     $g->guest_name,
                     $g->phone,
                     $g->max_attendees,
+                    $g->side ?? '',
                     $g->rsvp_status,
                     $g->attending_count ?? 0,
                     $g->invitation_opened_at?->toDateTimeString() ?? '',

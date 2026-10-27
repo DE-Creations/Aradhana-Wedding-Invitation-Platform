@@ -13,8 +13,6 @@ type WeddingData = {
 	rsvp_deadline: string;
 	contact_number_1: string;
 	contact_number_2: string;
-	template_key: string;
-	typography_key: string;
 	status: 'draft' | 'active' | 'completed';
 	main_image_url: string | null;
 };

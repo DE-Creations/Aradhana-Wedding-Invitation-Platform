@@ -13,6 +13,7 @@ class Guest extends Model
         'wedding_id',
         'guest_token',
         'guest_name',
+        'side',
         'phone',
         'max_attendees',
         'rsvp_status',

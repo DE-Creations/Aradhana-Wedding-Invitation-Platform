@@ -69,6 +69,10 @@ export default function Design({ coupleMainImage, coupleGalleryImages, ceremonyE
         backgroundMusicUrl={backgroundMusicUrl}
         backgroundMusicLabel={backgroundMusicLabel}
         backgroundMusicEnabled={backgroundMusicEnabled}
+        onSaved={() => {
+          sessionStorage.removeItem('invitation.templateKey');
+          sessionStorage.removeItem('invitation.typographyKey');
+        }}
         onTemplateChange={(templateKey) => {
           sessionStorage.setItem('invitation.templateKey', templateKey);
           setPreferences((current) => ({ ...current, templateKey }));

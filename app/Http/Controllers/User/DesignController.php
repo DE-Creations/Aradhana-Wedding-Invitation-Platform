@@ -5,6 +5,8 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Wedding;
 use App\Models\WeddingGalleryImage;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -97,6 +99,25 @@ class DesignController extends Controller
             'backgroundMusicLabel'     => $wedding?->background_music_label,
             'backgroundMusicEnabled'   => (bool) ($wedding?->background_music_enabled ?? true),
         ]);
+    }
+
+    public function save(Request $request): RedirectResponse
+    {
+        $wedding = Auth::user()?->wedding;
+
+        if (! $wedding) {
+            return back()->withErrors(['wedding' => 'No wedding found for your account.']);
+        }
+
+        $validated = $request->validate([
+            'template_key'             => ['required', 'string', 'max:120'],
+            'typography_key'           => ['nullable', 'string', 'max:120'],
+            'background_music_enabled' => ['required', 'boolean'],
+        ]);
+
+        $wedding->update($validated);
+
+        return back()->with('success', 'Invitation design saved successfully.');
     }
 
     private function buildCeremonyEvents(Wedding $wedding): array

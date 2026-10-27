@@ -71,6 +71,22 @@ export const StatusBadge = ({ status, className = "" }: StatusBadgeProps) => (
   </span>
 );
 
+export type GuestSide = "bride" | "groom";
+
+const sideStyles: Record<GuestSide, string> = {
+  bride: "bg-blush-dark/10 text-blush-dark border-blush-dark/20",
+  groom: "bg-info/10 text-info border-info/20",
+};
+
+export const SideTag = ({ side, className = "" }: { side?: string | null; className?: string }) => {
+  if (side !== "bride" && side !== "groom") return null;
+  return (
+    <span className={`inline-flex shrink-0 items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium border capitalize ${sideStyles[side]} ${className}`}>
+      {side}
+    </span>
+  );
+};
+
 interface SectionCardProps {
   title: string;
   description?: string;

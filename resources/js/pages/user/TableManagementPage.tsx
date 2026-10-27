@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { router } from "@inertiajs/react";
 import { Plus, Edit, Trash2, Users, UserPlus, AlertTriangle, X, Printer } from "lucide-react";
-import { SectionCard, StatusBadge, FormField, EmptyState } from "@/components/ui-components";
+import { SectionCard, StatusBadge, SideTag, FormField, EmptyState } from "@/components/ui-components";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,6 +17,7 @@ import { motion } from "framer-motion";
 interface TableGuest {
   id: string;
   guest_name: string;
+  side?: "bride" | "groom" | null;
   attending_count: number;
   rsvp_status: string;
   assigned_count: number;
@@ -35,6 +36,7 @@ interface WeddingTable {
 interface AllGuest {
   id: string;
   guest_name: string;
+  side?: "bride" | "groom" | null;
   max_attendees: number;
   rsvp_status: string;
   table_id: string | null;
@@ -185,9 +187,12 @@ export const TableManagementPage = ({ tables, guests }: TableManagementPageProps
                 <div className="mt-3 pt-3 border-t border-border space-y-1">
                   {table.guests.map((g) => (
                     <div key={g.id} className="flex items-center justify-between py-1">
-                      <span className="text-xs text-foreground">{g.guest_name}</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground">{g.attending_count} pax</span>
+                      <div className="flex flex-wrap items-center gap-1.5 min-w-0">
+                        <span className="text-xs text-foreground">{g.guest_name}</span>
+                        <SideTag side={g.side} />
+                      </div>
+                      <div className="flex shrink-0 items-center gap-2">
+                        <span className="text-xs text-muted-foreground whitespace-nowrap">{g.attending_count} pax</span>
                         <button onClick={() => handleUnassign(table.id, g.id)} className="p-0.5 rounded hover:bg-destructive/10"><X className="h-3 w-3 text-destructive" /></button>
                       </div>
                     </div>
@@ -206,7 +211,10 @@ export const TableManagementPage = ({ tables, guests }: TableManagementPageProps
             {unassignedGuests.map((g) => (
               <div key={g.id} className="flex items-center justify-between py-2 px-3 rounded-lg border border-border">
                 <div>
-                  <p className="text-sm font-medium text-foreground">{g.guest_name}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium text-foreground">{g.guest_name}</p>
+                    <SideTag side={g.side} />
+                  </div>
                   <p className="text-xs text-muted-foreground">Max {g.max_attendees} attendees</p>
                 </div>
                 <StatusBadge status={g.rsvp_status} />
@@ -268,7 +276,10 @@ export const TableManagementPage = ({ tables, guests }: TableManagementPageProps
             {filteredAssignGuests.map((g) => (
               <div key={g.id} className="flex items-center justify-between py-2 px-3 rounded-lg border border-border hover:bg-muted/30 transition-colors">
                 <div>
-                  <p className="text-sm font-medium text-foreground">{g.guest_name}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium text-foreground">{g.guest_name}</p>
+                    <SideTag side={g.side} />
+                  </div>
                   <p className="text-xs text-muted-foreground">{g.attending_count} attendees · {g.rsvp_status}</p>
                 </div>
                 <button onClick={() => handleAssign(g.id)} className="px-3 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors">Assign</button>
