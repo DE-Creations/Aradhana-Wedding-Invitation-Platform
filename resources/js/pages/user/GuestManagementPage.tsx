@@ -12,6 +12,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { motion } from "framer-motion";
 
 interface Guest {
@@ -137,11 +138,16 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
   };
 
   const sideSelect = (value: string, onChange: (side: string) => void) => (
-    <select value={value} onChange={(e) => onChange(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm">
-      <option value="" disabled>Select side</option>
-      <option value="bride">Bride's side{bride_name ? ` (${bride_name})` : ""}</option>
-      <option value="groom">Groom's side{groom_name ? ` (${groom_name})` : ""}</option>
-    </select>
+    <SearchableSelect
+      value={value}
+      onChange={onChange}
+      placeholder="Select side"
+      searchable={false}
+      options={[
+        { value: "bride", label: `Bride's side${bride_name ? ` (${bride_name})` : ""}` },
+        { value: "groom", label: `Groom's side${groom_name ? ` (${groom_name})` : ""}` },
+      ]}
+    />
   );
 
   return (
@@ -174,18 +180,34 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search guests..." className="w-full pl-9 pr-4 py-2 rounded-lg border border-input bg-card text-sm outline-none focus:ring-2 focus:ring-ring/20" />
         </div>
-        <select value={filter} onChange={(e) => setFilter(e.target.value)} className="px-3 py-2 rounded-lg border border-input bg-card text-sm">
-          <option value="all">All Status</option>
-          <option value="pending">Pending</option>
-          <option value="attending">Attending</option>
-          <option value="declined">Declined</option>
-          <option value="viewed">Viewed</option>
-        </select>
-        <select value={sideFilter} onChange={(e) => setSideFilter(e.target.value)} className="px-3 py-2 rounded-lg border border-input bg-card text-sm">
-          <option value="all">All Sides</option>
-          <option value="bride">Bride Side</option>
-          <option value="groom">Groom Side</option>
-        </select>
+        <div className="sm:w-40">
+          <SearchableSelect
+            value={filter}
+            onChange={setFilter}
+            searchable={false}
+            triggerClassName="bg-card py-2"
+            options={[
+              { value: "all", label: "All Status" },
+              { value: "pending", label: "Pending" },
+              { value: "attending", label: "Attending" },
+              { value: "declined", label: "Declined" },
+              { value: "viewed", label: "Viewed" },
+            ]}
+          />
+        </div>
+        <div className="sm:w-40">
+          <SearchableSelect
+            value={sideFilter}
+            onChange={setSideFilter}
+            searchable={false}
+            triggerClassName="bg-card py-2"
+            options={[
+              { value: "all", label: "All Sides" },
+              { value: "bride", label: "Bride Side" },
+              { value: "groom", label: "Groom Side" },
+            ]}
+          />
+        </div>
         <button onClick={() => setSortAZ(!sortAZ)} className={`px-3 py-2 rounded-lg border text-sm flex items-center gap-1.5 transition-colors ${sortAZ ? "border-primary bg-primary/5 text-primary" : "border-input hover:bg-muted"}`}>
           <ArrowUpDown className="h-3.5 w-3.5" /> A-Z
         </button>

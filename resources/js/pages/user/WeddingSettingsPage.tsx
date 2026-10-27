@@ -1,11 +1,12 @@
 import { useState, useRef } from "react";
-import { Save, Upload, GripVertical, X, Image as ImageIcon, CalendarIcon, Clock, Trash2 } from "lucide-react";
+import { Save, Upload, GripVertical, X, Image as ImageIcon, CalendarIcon, Trash2 } from "lucide-react";
 import { SectionCard, FormField, ConfirmModal } from "@/components/ui-components";
 import { ImageCropModal } from "@/components/ImageCropModal";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { SearchableSelect } from "@/components/ui/searchable-select";
+import { TimePicker } from "@/components/ui/time-picker";
 import { cn } from "@/lib/utils";
 import { router } from "@inertiajs/react";
 
@@ -38,54 +39,11 @@ interface WeddingSettingsPageProps {
   eventDetails: EventDetails | null;
 }
 
-const TimePickerField = ({ value, onChange, label }: { value: string; onChange: (val: string) => void; label: string }) => {
-  const [open, setOpen] = useState(false);
-  const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, "0"));
-  const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, "0"));
-  const [h, m] = value.split(":");
-
-  return (
-    <FormField label={label}>
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <button type="button" className={cn(
-            "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border border-input bg-background text-sm text-left",
-            !value && "text-muted-foreground"
-          )}>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-            {value || "Select time"}
-          </button>
-        </PopoverTrigger>
-        <PopoverContent className="w-56 p-3 pointer-events-auto" align="start">
-          <div className="flex gap-2">
-            <div className="flex-1">
-              <p className="text-xs font-medium text-muted-foreground mb-1.5">Hour</p>
-              <div className="max-h-48 overflow-y-auto space-y-0.5">
-                {hours.map((hr) => (
-                  <button key={hr} type="button" onClick={() => onChange(`${hr}:${m || "00"}`)}
-                    className={cn("w-full text-left px-2 py-1 rounded text-sm transition-colors", h === hr ? "bg-primary text-primary-foreground" : "hover:bg-muted")}>
-                    {hr}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="flex-1">
-              <p className="text-xs font-medium text-muted-foreground mb-1.5">Min</p>
-              <div className="max-h-48 overflow-y-auto space-y-0.5">
-                {minutes.map((min) => (
-                  <button key={min} type="button" onClick={() => { onChange(`${h || "00"}:${min}`); setOpen(false); }}
-                    className={cn("w-full text-left px-2 py-1 rounded text-sm transition-colors", m === min ? "bg-primary text-primary-foreground" : "hover:bg-muted")}>
-                    {min}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </PopoverContent>
-      </Popover>
-    </FormField>
-  );
-};
+const TimePickerField = ({ value, onChange, label, clearable }: { value: string; onChange: (val: string) => void; label: string; clearable?: boolean }) => (
+  <FormField label={label}>
+    <TimePicker value={value} onChange={onChange} clearable={clearable} />
+  </FormField>
+);
 
 const DatePickerField = ({ value, onChange, label }: { value: string; onChange: (val: string) => void; label: string }) => {
   const [open, setOpen] = useState(false);
@@ -414,7 +372,7 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, eventDetails }: We
               </div>
               <div className="grid md:grid-cols-2 gap-4">
                 <TimePickerField label="Start Time" value={(eventForm.start_time as string) ?? "09:00"} onChange={(v) => updateEventField("start_time", v)} />
-                <TimePickerField label="End Time (leave blank for onwards)" value={(eventForm.end_time as string) ?? ""} onChange={(v) => updateEventField("end_time", v)} />
+                <TimePickerField label="End Time (leave blank for onwards)" clearable value={(eventForm.end_time as string) ?? ""} onChange={(v) => updateEventField("end_time", v)} />
               </div>
               <FormField label="Venue">
                 <input value={(eventForm.venue as string) ?? ""} onChange={(e) => updateEventField("venue", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
