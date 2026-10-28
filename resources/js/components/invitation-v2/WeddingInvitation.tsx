@@ -102,7 +102,7 @@ export default function WeddingInvitation(props: InvitationViewModelProps) {
         <GallerySection photos={invitation.gallery_photos.map((p) => p.photo_path)} />
         <RsvpSectionWrapper invitation={invitation} guest={guest} eventToken={eventToken} />
         <ContactSection invitation={invitation} />
-        <FooterSection invitation={invitation} />
+        <FooterSection invitation={invitation} showTable={!!props.tableInfo?.enabled} />
       </main>
     </div>
   );

@@ -37,7 +37,7 @@ export default function CrimsonInvitation(props: InvitationViewModelProps) {
         <GallerySection photos={invitation.gallery_photos.map((p) => p.photo_path)} />
         <RsvpBlock invitation={invitation} guest={guest} eventToken={eventToken} />
         <ContactSection invitation={invitation} />
-        <FooterSection invitation={invitation} />
+        <FooterSection invitation={invitation} showTable={!!tableInfo?.enabled} />
       </main>
     </div>
   );

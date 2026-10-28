@@ -40,7 +40,7 @@
 }
 .inv4-section {
   position: relative;
-  padding: clamp(3.5rem, 9vw, 6rem) 1.25rem;
+  padding: clamp(1.75rem, 5vw, 3rem) 1.25rem;
   text-align: center;
 }
 .inv4-inner {
@@ -121,7 +121,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  margin: 1.25rem auto;
+  margin: 1rem auto;
   color: var(--inv4-accent);
 }
 .inv4-divider::before,
@@ -227,47 +227,6 @@
   padding: 2rem 1.25rem 1.75rem;
   text-align: center;
   animation: inv4-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-/* ---------- Timeline ---------- */
-.inv4-timeline {
-  position: relative;
-  margin: 1.5rem auto 0;
-  max-width: 28rem;
-  text-align: left;
-}
-.inv4-timeline::before {
-  content: "";
-  position: absolute;
-  left: 1.2rem;
-  top: 0.5rem;
-  bottom: 0.5rem;
-  width: 1px;
-  background: linear-gradient(to bottom, transparent, var(--inv4-accent), transparent);
-}
-.inv4-step {
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 0.6rem 0;
-}
-.inv4-step__num {
-  z-index: 1;
-  display: flex;
-  height: 2.4rem;
-  width: 2.4rem;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9999px;
-  border: 1px solid var(--inv4-silver);
-  background: #fff;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  color: var(--inv4-accent);
-  box-shadow: 0 4px 12px rgba(60, 80, 120, 0.12);
 }
 
 /* ---------- Keyframes ---------- */

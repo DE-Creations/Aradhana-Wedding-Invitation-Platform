@@ -1,8 +1,9 @@
 import { Reveal } from "@/components/invitation/Reveal";
+import { FooterQuickLinks } from "@/components/invitation/FooterQuickLinks";
 import { Ornament } from "../components/Ornament";
 import type { InvitationViewModel } from "../../invitation-v2/viewModel";
 
-export default function FooterSection({ invitation }: { invitation: InvitationViewModel }) {
+export default function FooterSection({ invitation, showTable = false }: { invitation: InvitationViewModel; showTable?: boolean }) {
   const year = new Date().getFullYear();
 
   return (
@@ -14,6 +15,12 @@ export default function FooterSection({ invitation }: { invitation: InvitationVi
           {invitation.bride_name} &amp; {invitation.groom_name}
         </p>
         <Ornament />
+        <FooterQuickLinks
+          className="mb-8"
+          showTable={showTable}
+          fontClassName="font-t-body"
+          buttonClassName="border border-[rgba(201,162,39,0.6)] bg-black/10 text-[#F8E6A6]"
+        />
         <p className="inv3-text-soft font-t-body text-xs">&copy; {year} Aradhana. All rights reserved.</p>
         <p className="inv3-text-soft font-t-body mt-1 text-xs">
           Designed &amp; developed by{" "}

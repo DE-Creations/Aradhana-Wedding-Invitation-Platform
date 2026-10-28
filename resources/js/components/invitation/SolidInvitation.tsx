@@ -11,6 +11,7 @@ import { GalleryCarousel } from "./GalleryCarousel";
 import { RsvpSection } from "./RsvpModal";
 import { HeroActions } from "./HeroActions";
 import { YourTableSection } from "./YourTableSection";
+import { FooterQuickLinks } from "./FooterQuickLinks";
 
 interface SolidInvitationProps {
   theme: SolidTheme;
@@ -155,7 +156,7 @@ export function SolidInvitation({
         </motion.div>
       </div>
 
-      <div className="relative z-10 mx-auto w-full max-w-3xl px-5 py-20 md:px-8">
+      <div className="relative z-10 mx-auto w-full max-w-3xl px-5 pb-4 pt-20 md:px-8">
         {/* ── Guest greeting ── */}
         <Reveal animation="blurIn" className="text-center">
           <p className={sectionLabel}>Dear</p>
@@ -349,13 +350,19 @@ export function SolidInvitation({
         )}
 
         {/* ── Footer ── */}
-        <Reveal animation="fadeIn" className="mt-16 pb-16 text-center md:pb-24">
+        <Reveal animation="fadeIn" className="mt-12 pb-12 text-center">
           <p className={`text-4xl ${typography.headingFont} ${theme.accentToneClassName}`}>Thank You</p>
           <p className={`mt-3 text-sm ${typography.bodyFont} ${theme.subTextToneClassName}`}>With love and gratitude</p>
           <p className={`mt-2 text-lg ${typography.bodyFont} ${theme.textToneClassName}`}>
             {w.bride_name} &amp; {w.groom_name}
           </p>
-          <p className={`mt-4 text-xs ${typography.bodyFont} ${theme.subTextToneClassName}`}>
+          <FooterQuickLinks
+            className="mt-6"
+            showTable={!!tableInfo?.enabled}
+            fontClassName={typography.bodyFont}
+            buttonClassName={theme.chipClassName}
+          />
+          <p className={`mt-6 text-xs ${typography.bodyFont} ${theme.subTextToneClassName}`}>
             &copy; {new Date().getFullYear()} Aradhana. All rights reserved.
           </p>
           <p className={`mt-1 text-xs ${typography.bodyFont} ${theme.subTextToneClassName}`}>

@@ -6,9 +6,11 @@ import { formatLongDate } from "../lineup";
 import type { CeremonyEventInput } from "../../invitation-v2/viewModel";
 
 function EventCard({ event, index }: { event: CeremonyEventInput; index: number }) {
-  const time = event.end_time
+  const range = event.end_time
     ? `${formatTime12(event.start_time)} - ${formatTime12(event.end_time)}`
     : `${formatTime12(event.start_time)} onwards`;
+  // e.g. "8:00 AM - 4:00 PM · Poruwa 9:00 AM" (same wording as the other designs)
+  const time = event.poruwa_time ? `${range} · Poruwa ${formatTime12(event.poruwa_time)}` : range;
 
   return (
     <Reveal animation="fadeUp" delay={index * 0.08} className="inv4-glass w-full max-w-md flex-1 basis-72 p-6 text-left">
