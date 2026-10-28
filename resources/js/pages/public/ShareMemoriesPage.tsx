@@ -245,7 +245,7 @@ export const ShareMemoriesPage = ({
         <div className="max-w-lg mx-auto px-6 py-10">
           {/* Header */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-            <img src="/images/logo-text.png" alt="Aradhana" className="h-[14rem] w-auto mx-auto mb-3 object-contain" />
+            <img src="/images/logo-text.png" alt="Aradhana" className="h-28 sm:h-[14rem] w-auto mx-auto mb-3 object-contain" />
             {wedding && (
               <h1 className="font-display text-3xl font-bold text-foreground">
                 {wedding.bride_name} & {wedding.groom_name}

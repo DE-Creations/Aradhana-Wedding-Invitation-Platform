@@ -16,6 +16,15 @@ export interface GuestData {
   rsvp_status: string;
 }
 
+/** What the "Your Table" section shows; computed on the server (App\Support\TableInfoResolver). */
+export interface TableInfo {
+  /** False when the client does not have Table Management: no Find Table button, no section. */
+  enabled: boolean;
+  state?: "no_guest" | "before_event" | "unassigned" | "assigned";
+  table_name?: string | null;
+  event_date?: string | null;
+}
+
 export interface WeddingData {
   bride_name: string;
   groom_name: string;
@@ -29,7 +38,6 @@ export interface WeddingData {
   rsvp_deadline?: string | null;
   background_music_url?: string | null;
   background_music_label?: string | null;
-  background_music_enabled?: boolean;
 }
 
 export interface AnimatedDesignProps {

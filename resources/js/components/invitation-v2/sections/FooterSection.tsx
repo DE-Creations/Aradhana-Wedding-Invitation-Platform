@@ -1,8 +1,9 @@
 import AnimatedSection from '../components/AnimatedSection';
 import { Flourish } from '../components/Ornaments';
+import { FooterQuickLinks } from '@/components/invitation/FooterQuickLinks';
 import type { InvitationViewModel } from '../viewModel';
 
-export default function FooterSection({ invitation }: { invitation: InvitationViewModel }) {
+export default function FooterSection({ invitation, showTable = false }: { invitation: InvitationViewModel; showTable?: boolean }) {
   const year = new Date().getFullYear();
   const couple = `${invitation.groom_name?.split(' ')[0]} & ${invitation.bride_name?.split(' ')[0]}`;
 
@@ -21,6 +22,12 @@ export default function FooterSection({ invitation }: { invitation: InvitationVi
         <div style={{ margin: '1.5rem 0' }}>
           <Flourish width={120} />
         </div>
+        <FooterQuickLinks
+          className="mb-8"
+          showTable={showTable}
+          fontClassName="font-body"
+          buttonClassName="border border-[rgba(201,169,110,0.6)] text-[#C9A96E]"
+        />
         <p className="font-body" style={{ color: 'rgba(201,169,110,0.6)', fontSize: '0.85rem' }}>
           &copy; {year} Aradhana. All rights reserved.
         </p>

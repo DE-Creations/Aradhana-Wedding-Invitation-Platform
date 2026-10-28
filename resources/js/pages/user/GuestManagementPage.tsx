@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { router } from "@inertiajs/react";
-import { Plus, Search, Edit, Trash2, Copy, Users, AlertTriangle, ArrowUpDown, FileSpreadsheet, Download, Upload, X as XIcon, StickyNote } from "lucide-react";
-import { SectionCard, StatusBadge, FormField, EmptyState } from "@/components/ui-components";
+import { Plus, Search, Edit, Trash2, Copy, Users, AlertTriangle, ArrowUpDown, FileSpreadsheet, Download, Upload, X as XIcon, StickyNote, RotateCw } from "lucide-react";
+import { SectionCard, StatusBadge, SideTag, FormField, EmptyState } from "@/components/ui-components";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,11 +12,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { motion } from "framer-motion";
 
 interface Guest {
   id: string;
   guest_name: string;
+  side: "bride" | "groom" | null;
   phone: string;
   max_attendees: number;
   rsvp_status: string;
@@ -46,6 +48,7 @@ interface GuestManagementPageProps {
 export const GuestManagementPage = ({ guests, tables, event_token, bride_name, groom_name }: GuestManagementPageProps) => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
+  const [sideFilter, setSideFilter] = useState("all");
   const [sortAZ, setSortAZ] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [showImport, setShowImport] = useState(false);
@@ -58,21 +61,23 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
   const [viewNoteGuest, setViewNoteGuest] = useState<Guest | null>(null);
 
   // Add form state
-  const [addForm, setAddForm] = useState({ guest_name: "", phone: "", max_attendees: 2 });
+  const emptyGuestForm = { guest_name: "", side: "", phone: "", max_attendees: 2 };
+  const [addForm, setAddForm] = useState(emptyGuestForm);
   // Edit form state
-  const [editForm, setEditForm] = useState({ guest_name: "", phone: "", max_attendees: 2 });
+  const [editForm, setEditForm] = useState(emptyGuestForm);
 
   let filtered = guests.filter((g) => {
     const matchSearch = g.guest_name.toLowerCase().includes(search.toLowerCase());
     const matchFilter = filter === "all" || g.rsvp_status === filter;
-    return matchSearch && matchFilter;
+    const matchSide = sideFilter === "all" || g.side === sideFilter;
+    return matchSearch && matchFilter && matchSide;
   });
   if (sortAZ) filtered = [...filtered].sort((a, b) => a.guest_name.localeCompare(b.guest_name));
 
   const handleDownloadTemplate = () => {
     const bom = "\uFEFF";
-    const header = "Guest Name,Phone,Max Attendees\n";
-    const example = "Nimal & Family,+94 71 234 5678,4\nKumari Perera,+94 77 987 6543,2\n";
+    const header = "Guest Name,Phone,Max Attendees,Side\n";
+    const example = "Nimal & Family,+94 71 234 5678,4,groom\nKumari Perera,+94 77 987 6543,2,bride\n";
     const blob = new Blob([bom + header + example], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -106,7 +111,7 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
 
   const handleAdd = () => {
     router.post("/guests", addForm, {
-      onSuccess: () => { setShowAdd(false); setAddForm({ guest_name: "", phone: "", max_attendees: 2 }); },
+      onSuccess: () => { setShowAdd(false); setAddForm(emptyGuestForm); },
     });
   };
 
@@ -123,10 +128,27 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
     });
   };
 
+  const handleRotateStatus = (id: string) => {
+    router.post(`/guests/${id}/rotate-status`, {}, { preserveScroll: true });
+  };
+
   const openEdit = (guest: Guest) => {
     setEditGuest(guest);
-    setEditForm({ guest_name: guest.guest_name, phone: guest.phone, max_attendees: guest.max_attendees });
+    setEditForm({ guest_name: guest.guest_name, side: guest.side ?? "", phone: guest.phone, max_attendees: guest.max_attendees });
   };
+
+  const sideSelect = (value: string, onChange: (side: string) => void) => (
+    <SearchableSelect
+      value={value}
+      onChange={onChange}
+      placeholder="Select side"
+      searchable={false}
+      options={[
+        { value: "bride", label: `Bride's side${bride_name ? ` (${bride_name})` : ""}` },
+        { value: "groom", label: `Groom's side${groom_name ? ` (${groom_name})` : ""}` },
+      ]}
+    />
+  );
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -158,13 +180,34 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search guests..." className="w-full pl-9 pr-4 py-2 rounded-lg border border-input bg-card text-sm outline-none focus:ring-2 focus:ring-ring/20" />
         </div>
-        <select value={filter} onChange={(e) => setFilter(e.target.value)} className="px-3 py-2 rounded-lg border border-input bg-card text-sm">
-          <option value="all">All Status</option>
-          <option value="pending">Pending</option>
-          <option value="attending">Attending</option>
-          <option value="declined">Declined</option>
-          <option value="viewed">Viewed</option>
-        </select>
+        <div className="sm:w-40">
+          <SearchableSelect
+            value={filter}
+            onChange={setFilter}
+            searchable={false}
+            triggerClassName="bg-card py-2"
+            options={[
+              { value: "all", label: "All Status" },
+              { value: "pending", label: "Pending" },
+              { value: "attending", label: "Attending" },
+              { value: "declined", label: "Declined" },
+              { value: "viewed", label: "Viewed" },
+            ]}
+          />
+        </div>
+        <div className="sm:w-40">
+          <SearchableSelect
+            value={sideFilter}
+            onChange={setSideFilter}
+            searchable={false}
+            triggerClassName="bg-card py-2"
+            options={[
+              { value: "all", label: "All Sides" },
+              { value: "bride", label: "Bride Side" },
+              { value: "groom", label: "Groom Side" },
+            ]}
+          />
+        </div>
         <button onClick={() => setSortAZ(!sortAZ)} className={`px-3 py-2 rounded-lg border text-sm flex items-center gap-1.5 transition-colors ${sortAZ ? "border-primary bg-primary/5 text-primary" : "border-input hover:bg-muted"}`}>
           <ArrowUpDown className="h-3.5 w-3.5" /> A-Z
         </button>
@@ -191,6 +234,7 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <div className="flex items-center gap-2 min-w-0">
                         <span className="font-medium text-sm text-foreground truncate">{guest.guest_name}</span>
+                        <SideTag side={guest.side} />
                         {isOverLimit && (
                           <span className="shrink-0 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-destructive/10 text-destructive border border-destructive/20">
                             <AlertTriangle className="h-2.5 w-2.5" /> Over
@@ -211,6 +255,7 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
                       </button>
                       <div className="flex items-center gap-1 ml-auto">
                         <button onClick={() => openEdit(guest)} className="p-1.5 rounded-md hover:bg-muted"><Edit className="h-3.5 w-3.5 text-muted-foreground" /></button>
+                        <button onClick={() => handleRotateStatus(guest.id)} title={`Status: ${guest.rsvp_status} · click to advance`} className="p-1.5 rounded-md hover:bg-muted"><RotateCw className="h-3.5 w-3.5 text-muted-foreground" /></button>
                         {guest.note && (
                           <button onClick={() => setViewNoteGuest(guest)} className="p-1.5 rounded-md hover:bg-primary/10" title="View note">
                             <StickyNote className="h-3.5 w-3.5 text-primary" />
@@ -248,6 +293,7 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
                       <td className="py-3 px-3">
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-foreground">{guest.guest_name}</span>
+                          <SideTag side={guest.side} />
                           {isOverLimit && (
                             <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-destructive/10 text-destructive border border-destructive/20">
                               <AlertTriangle className="h-2.5 w-2.5" /> Over Limit
@@ -271,6 +317,7 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
                       <td className="py-3 px-3">
                         <div className="flex items-center gap-1">
                           <button onClick={() => openEdit(guest)} className="p-1.5 rounded-md hover:bg-muted"><Edit className="h-3.5 w-3.5 text-muted-foreground" /></button>
+                          <button onClick={() => handleRotateStatus(guest.id)} title={`Status: ${guest.rsvp_status} · click to advance`} className="p-1.5 rounded-md hover:bg-muted"><RotateCw className="h-3.5 w-3.5 text-muted-foreground" /></button>
                           {guest.note && (
                             <button onClick={() => setViewNoteGuest(guest)} className="p-1.5 rounded-md hover:bg-primary/10" title="View note">
                               <StickyNote className="h-3.5 w-3.5 text-primary" />
@@ -294,7 +341,7 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
         <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle>Import Guests from CSV</AlertDialogTitle>
-            <AlertDialogDescription>Upload a CSV file with columns: Guest Name, Phone, Max Attendees.</AlertDialogDescription>
+            <AlertDialogDescription>Upload a CSV file with columns: Guest Name, Phone, Max Attendees, Side (bride or groom).</AlertDialogDescription>
           </AlertDialogHeader>
           <div className="space-y-4 py-2">
             {/* Template download */}
@@ -302,7 +349,7 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
               <FileSpreadsheet className="h-5 w-5 text-muted-foreground mt-0.5 shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground">CSV Format</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Columns: <span className="font-mono">Guest Name, Phone, Max Attendees</span></p>
+                <p className="text-xs text-muted-foreground mt-0.5">Columns: <span className="font-mono">Guest Name, Phone, Max Attendees, Side</span></p>
               </div>
               <button
                 onClick={handleDownloadTemplate}
@@ -366,6 +413,7 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
           </AlertDialogHeader>
           <div className="space-y-4 py-2">
             <FormField label="Guest Name" required><input value={addForm.guest_name} onChange={(e) => setAddForm((f) => ({ ...f, guest_name: e.target.value }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" placeholder="e.g. Nimal & Family" /></FormField>
+            <FormField label="Side" required>{sideSelect(addForm.side, (side) => setAddForm((f) => ({ ...f, side })))}</FormField>
             <FormField label="Phone"><input value={addForm.phone} onChange={(e) => setAddForm((f) => ({ ...f, phone: e.target.value }))} maxLength={10} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" placeholder="+94 7X XXX XXXX" /></FormField>
             <FormField label="Max Attendees" required><input type="number" min={1} value={addForm.max_attendees} onChange={(e) => setAddForm((f) => ({ ...f, max_attendees: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" /></FormField>
           </div>
@@ -373,7 +421,8 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
             <AlertDialogCancel onClick={() => setShowAdd(false)}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleAdd}
-              className="bg-gradient-gold text-primary-foreground hover:opacity-90"
+              disabled={!addForm.guest_name.trim() || !addForm.side}
+              className="bg-gradient-gold text-primary-foreground hover:opacity-90 disabled:opacity-50"
             >
               Add Guest
             </AlertDialogAction>
@@ -390,12 +439,13 @@ export const GuestManagementPage = ({ guests, tables, event_token, bride_name, g
           </AlertDialogHeader>
           <div className="space-y-4 py-2">
             <FormField label="Guest Name"><input value={editForm.guest_name} onChange={(e) => setEditForm((f) => ({ ...f, guest_name: e.target.value }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" /></FormField>
+            <FormField label="Side" required>{sideSelect(editForm.side, (side) => setEditForm((f) => ({ ...f, side })))}</FormField>
             <FormField label="Phone"><input value={editForm.phone} onChange={(e) => setEditForm((f) => ({ ...f, phone: e.target.value }))} maxLength={10} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" /></FormField>
             <FormField label="Max Attendees"><input type="number" value={editForm.max_attendees} onChange={(e) => setEditForm((f) => ({ ...f, max_attendees: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" /></FormField>
           </div>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setEditGuest(null)}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleEdit} className="bg-gradient-gold text-primary-foreground hover:opacity-90">Save</AlertDialogAction>
+            <AlertDialogAction onClick={handleEdit} disabled={!editForm.guest_name.trim() || !editForm.side} className="bg-gradient-gold text-primary-foreground hover:opacity-90 disabled:opacity-50">Save</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

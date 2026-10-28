@@ -5,6 +5,10 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\GuestRequest;
 use App\Models\Guest;
+use App\Models\InvitationView;
+use App\Models\Memory;
+use App\Models\Rsvp;
+use App\Models\TableAssignment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,6 +39,7 @@ class GuestController extends Controller
             ->map(fn ($g) => [
                 'id'                  => $g->id,
                 'guest_name'          => $g->guest_name,
+                'side'                => $g->side,
                 'phone'               => $g->phone,
                 'max_attendees'       => $g->max_attendees,
                 'rsvp_status'         => $g->rsvp_status,
@@ -85,9 +90,34 @@ class GuestController extends Controller
     {
         $this->authorizeGuest($guest);
 
+        // Clear dependent rows first — none of these FKs cascade, so deleting
+        // the guest directly fails once they've opened the invitation, RSVP'd,
+        // been seated, or uploaded a memory.
+        Rsvp::where('guest_id', $guest->id)->delete();
+        InvitationView::where('guest_id', $guest->id)->delete();
+        TableAssignment::where('guest_id', $guest->id)->delete();
+        Memory::where('guest_id', $guest->id)->update(['guest_id' => null]);
+
         $guest->delete();
 
         return back()->with('success', 'Guest deleted.');
+    }
+
+    public function rotateStatus(Guest $guest): RedirectResponse
+    {
+        $this->authorizeGuest($guest);
+
+        $next = match ($guest->rsvp_status) {
+            'pending'   => 'viewed',
+            'viewed'    => 'attending',
+            'attending' => 'declined',
+            'declined'  => 'pending',
+            default     => 'pending',
+        };
+
+        $guest->update(['rsvp_status' => $next]);
+
+        return back()->with('success', 'Guest status updated.');
     }
 
     private function authorizeGuest(Guest $guest): void
@@ -120,10 +150,12 @@ class GuestController extends Controller
                 continue;
             }
 
-            // Support both full-export format (10 cols) and simple format (3 cols: Name, Phone, Max)
+            // Columns: Name, Phone, Max, Side (optional; "bride" or "groom"). Extra export columns are ignored.
             $guestName    = trim($row[0] ?? '');
             $phone        = trim($row[1] ?? '');
             $maxAttendees = (int) ($row[2] ?? 1);
+            $side         = strtolower(trim($row[3] ?? ''));
+            $side         = in_array($side, ['bride', 'groom'], true) ? $side : null;
 
             if ($guestName === '') {
                 $skipped++;
@@ -141,6 +173,7 @@ class GuestController extends Controller
 
             $wedding->guests()->create([
                 'guest_name'    => $guestName,
+                'side'          => $side,
                 'phone'         => $phone ?: null,
                 'max_attendees' => $maxAttendees,
             ]);
@@ -184,6 +217,7 @@ class GuestController extends Controller
                 'Guest Name',
                 'Phone',
                 'Max Attendees',
+                'Side',
                 'RSVP Status',
                 'Attending Count',
                 'Invitation Opened At',
@@ -198,6 +232,7 @@ class GuestController extends Controller
                     $g->guest_name,
                     $g->phone,
                     $g->max_attendees,
+                    $g->side ?? '',
                     $g->rsvp_status,
                     $g->attending_count ?? 0,
                     $g->invitation_opened_at?->toDateTimeString() ?? '',

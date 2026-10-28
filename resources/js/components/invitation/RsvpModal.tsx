@@ -135,7 +135,7 @@ export function RsvpSection({
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: 40, opacity: 0 }}
               transition={{ type: "spring", damping: 26, stiffness: 260 }}
-              className={`relative w-full max-w-md rounded-t-2xl border p-6 shadow-2xl sm:rounded-2xl ${modalClassName} ${modalTextClassName}`}
+              className={`relative max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-t-2xl border p-6 shadow-2xl sm:rounded-2xl ${modalClassName} ${modalTextClassName}`}
             >
               <button
                 type="button"

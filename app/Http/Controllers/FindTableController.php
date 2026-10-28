@@ -47,9 +47,11 @@ class FindTableController extends Controller
 
         $wedding = Wedding::where('event_token', $token)
             ->where('status', '!=', 'draft')
+            ->with('user')
             ->first();
 
-        if (! $wedding) {
+        // The lookup is part of the Table Management feature, so it is off for clients without it.
+        if (! $wedding || ! ($wedding->user?->table_management ?? false)) {
             return response()->json([]);
         }
 

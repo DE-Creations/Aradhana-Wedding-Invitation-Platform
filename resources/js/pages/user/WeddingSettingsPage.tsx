@@ -1,12 +1,12 @@
 import { useState, useRef } from "react";
-import { Save, Upload, GripVertical, X, Image as ImageIcon, CalendarIcon, Clock, Trash2 } from "lucide-react";
+import { Save, Upload, GripVertical, X, Image as ImageIcon, CalendarIcon, Trash2 } from "lucide-react";
 import { SectionCard, FormField, ConfirmModal } from "@/components/ui-components";
 import { ImageCropModal } from "@/components/ImageCropModal";
-import { invitationTemplates, typographyOptions } from "@/data/invitationConstants";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { SearchableSelect } from "@/components/ui/searchable-select";
+import { TimePicker } from "@/components/ui/time-picker";
 import { cn } from "@/lib/utils";
 import { router } from "@inertiajs/react";
 
@@ -21,8 +21,6 @@ type WeddingData = {
   rsvp_deadline: string;
   contact_number_1: string;
   contact_number_2: string;
-  template_key: string;
-  typography_key: string;
   status: "draft" | "active" | "completed";
   main_image_url: string | null;
 };
@@ -41,54 +39,11 @@ interface WeddingSettingsPageProps {
   eventDetails: EventDetails | null;
 }
 
-const TimePickerField = ({ value, onChange, label }: { value: string; onChange: (val: string) => void; label: string }) => {
-  const [open, setOpen] = useState(false);
-  const hours = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, "0"));
-  const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, "0"));
-  const [h, m] = value.split(":");
-
-  return (
-    <FormField label={label}>
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <button type="button" className={cn(
-            "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg border border-input bg-background text-sm text-left",
-            !value && "text-muted-foreground"
-          )}>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-            {value || "Select time"}
-          </button>
-        </PopoverTrigger>
-        <PopoverContent className="w-56 p-3 pointer-events-auto" align="start">
-          <div className="flex gap-2">
-            <div className="flex-1">
-              <p className="text-xs font-medium text-muted-foreground mb-1.5">Hour</p>
-              <div className="max-h-48 overflow-y-auto space-y-0.5">
-                {hours.map((hr) => (
-                  <button key={hr} type="button" onClick={() => onChange(`${hr}:${m || "00"}`)}
-                    className={cn("w-full text-left px-2 py-1 rounded text-sm transition-colors", h === hr ? "bg-primary text-primary-foreground" : "hover:bg-muted")}>
-                    {hr}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="flex-1">
-              <p className="text-xs font-medium text-muted-foreground mb-1.5">Min</p>
-              <div className="max-h-48 overflow-y-auto space-y-0.5">
-                {minutes.map((min) => (
-                  <button key={min} type="button" onClick={() => { onChange(`${h || "00"}:${min}`); setOpen(false); }}
-                    className={cn("w-full text-left px-2 py-1 rounded text-sm transition-colors", m === min ? "bg-primary text-primary-foreground" : "hover:bg-muted")}>
-                    {min}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </PopoverContent>
-      </Popover>
-    </FormField>
-  );
-};
+const TimePickerField = ({ value, onChange, label, clearable }: { value: string; onChange: (val: string) => void; label: string; clearable?: boolean }) => (
+  <FormField label={label}>
+    <TimePicker value={value} onChange={onChange} clearable={clearable} />
+  </FormField>
+);
 
 const DatePickerField = ({ value, onChange, label }: { value: string; onChange: (val: string) => void; label: string }) => {
   const [open, setOpen] = useState(false);
@@ -127,8 +82,6 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, eventDetails }: We
     rsvp_deadline: wedding?.rsvp_deadline ?? "",
     contact_number_1: wedding?.contact_number_1 ?? "",
     contact_number_2: wedding?.contact_number_2 ?? "",
-    template_key: wedding?.template_key ?? (invitationTemplates[0]?.key ?? ""),
-    typography_key: wedding?.typography_key ?? (typographyOptions[0]?.key ?? ""),
     status: (wedding?.status ?? "draft") as "draft" | "active" | "completed",
   });
 
@@ -419,7 +372,7 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, eventDetails }: We
               </div>
               <div className="grid md:grid-cols-2 gap-4">
                 <TimePickerField label="Start Time" value={(eventForm.start_time as string) ?? "09:00"} onChange={(v) => updateEventField("start_time", v)} />
-                <TimePickerField label="End Time (leave blank for onwards)" value={(eventForm.end_time as string) ?? ""} onChange={(v) => updateEventField("end_time", v)} />
+                <TimePickerField label="End Time (leave blank for onwards)" clearable value={(eventForm.end_time as string) ?? ""} onChange={(v) => updateEventField("end_time", v)} />
               </div>
               <FormField label="Venue">
                 <input value={(eventForm.venue as string) ?? ""} onChange={(e) => updateEventField("venue", e.target.value)} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
@@ -443,30 +396,6 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, eventDetails }: We
             </FormField>
             <FormField label="Contact Number 2">
               <input value={form.contact_number_2} onChange={(e) => updateField("contact_number_2", e.target.value)} maxLength={10} className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm" />
-            </FormField>
-          </div>
-        </SectionCard>
-
-        {/* Invitation Selection */}
-        <SectionCard title="Invitation Selection" description="Choose your invitation template and typography">
-          <div className="grid md:grid-cols-2 gap-4">
-            <FormField label="Template">
-              <SearchableSelect
-                value={form.template_key}
-                onChange={(v) => updateField("template_key", v)}
-                options={invitationTemplates.map((t) => ({ value: t.key, label: t.name }))}
-                searchPlaceholder="Search template..."
-                searchable={false}
-              />
-            </FormField>
-            <FormField label="Typography">
-              <SearchableSelect
-                value={form.typography_key}
-                onChange={(v) => updateField("typography_key", v)}
-                options={typographyOptions.map((t) => ({ value: t.key, label: t.name }))}
-                searchPlaceholder="Search typography..."
-                searchable={false}
-              />
             </FormField>
           </div>
         </SectionCard>
@@ -559,7 +488,7 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, eventDetails }: We
       </div>
 
       {/* Sticky Save Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-t border-border py-4 px-6 flex justify-end z-50">
+      <div className="fixed bottom-0 left-0 right-0 md:left-64 bg-card/95 backdrop-blur-sm border-t border-border py-4 px-6 flex justify-end z-50">
         <button
           type="button"
           onClick={handleSave}

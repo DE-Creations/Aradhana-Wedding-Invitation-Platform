@@ -2,6 +2,7 @@ import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import UserShell from '@/inertia/layouts/UserShell';
 import { InvitationDesignPage } from '@/pages/user/InvitationDesignPage';
+import { DEFAULT_TYPOGRAPHY_KEY } from '@/data/invitationConstants';
 
 interface DesignProps {
   coupleMainImage: string | null;
@@ -9,7 +10,6 @@ interface DesignProps {
   ceremonyEvents: CeremonyEvent[];
   backgroundMusicUrl?: string | null;
   backgroundMusicLabel?: string | null;
-  backgroundMusicEnabled?: boolean;
 }
 
 interface CeremonyEvent {
@@ -31,11 +31,11 @@ interface AuthWedding {
   venue_name?: string;
 }
 
-export default function Design({ coupleMainImage, coupleGalleryImages, ceremonyEvents, backgroundMusicUrl, backgroundMusicLabel, backgroundMusicEnabled }: DesignProps) {
+export default function Design({ coupleMainImage, coupleGalleryImages, ceremonyEvents, backgroundMusicUrl, backgroundMusicLabel }: DesignProps) {
   const { auth } = usePage<{ auth: { wedding: AuthWedding | null } }>().props;
   const [preferences, setPreferences] = useState(() => ({
     templateKey: sessionStorage.getItem('invitation.templateKey') ?? auth?.wedding?.template_key ?? 'noir-aurelle',
-    typographyKey: sessionStorage.getItem('invitation.typographyKey') ?? auth?.wedding?.typography_key ?? 'gilded-garamond',
+    typographyKey: sessionStorage.getItem('invitation.typographyKey') ?? auth?.wedding?.typography_key ?? DEFAULT_TYPOGRAPHY_KEY,
   }));
 
   const weddingData = auth?.wedding ? {
@@ -68,7 +68,10 @@ export default function Design({ coupleMainImage, coupleGalleryImages, ceremonyE
         ceremonyEvents={ceremonyEvents}
         backgroundMusicUrl={backgroundMusicUrl}
         backgroundMusicLabel={backgroundMusicLabel}
-        backgroundMusicEnabled={backgroundMusicEnabled}
+        onSaved={() => {
+          sessionStorage.removeItem('invitation.templateKey');
+          sessionStorage.removeItem('invitation.typographyKey');
+        }}
         onTemplateChange={(templateKey) => {
           sessionStorage.setItem('invitation.templateKey', templateKey);
           setPreferences((current) => ({ ...current, templateKey }));

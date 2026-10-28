@@ -140,7 +140,7 @@ export const MemoriesPage = ({ memories }: MemoriesPageProps) => {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-xl border border-primary/20 bg-primary/5 p-4 flex items-center justify-between"
+          className="rounded-xl border border-primary/20 bg-primary/5 p-4 flex flex-wrap items-center justify-between gap-2"
         >
           <p className="text-sm font-medium text-foreground">{selectedIds.size} selected</p>
           <div className="flex gap-2">

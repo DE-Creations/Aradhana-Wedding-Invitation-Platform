@@ -25,7 +25,7 @@ class WeddingSeeder extends Seeder
                 'contact_number_1'     => '0771234567',
                 'contact_number_2'     => '0712345678',
                 'template_key'         => 'noir-aurelle',
-                'typography_key'       => 'gilded-garamond',
+                'typography_key'       => 'professional-playfair-montserrat',
             ]);
     }
 }

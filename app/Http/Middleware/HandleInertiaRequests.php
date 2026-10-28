@@ -40,7 +40,6 @@ class HandleInertiaRequests extends Middleware
                     'typography_key'           => $wedding->typography_key,
                     'event_date'               => $wedding->event_date?->toDateString(),
                     'venue_name'               => $wedding->venue_name,
-                    'background_music_enabled' => (bool) $wedding->background_music_enabled,
                 ] : null,
             ],
             'flash' => [

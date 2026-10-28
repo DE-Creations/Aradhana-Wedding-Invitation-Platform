@@ -4,6 +4,37 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mobile safety net: a single over-wide element must never widen the page (which makes phones zoom out or pan). */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+@supports not (overflow: clip) {
+  body {
+    overflow-x: hidden;
+  }
+}
+img,
+video,
+svg,
+canvas {
+  max-width: 100%;
+}
+/* iOS Safari zooms into any focused field under 16px and never zooms back out. */
+@media (max-width: 767px) {
+  /* !important because utility classes like text-sm would otherwise win over an element selector */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
 @layer base {
   :root {
     --background: 40 33% 98%;
@@ -130,6 +161,13 @@
   }
   .font-classic {
     font-family: 'Cinzel', serif;
+  }
+  /* Typography pairing chosen in Invitation Design; --t-* are set on the invitation root. */
+  .font-t-heading {
+    font-family: var(--t-heading, 'Playfair Display', serif);
+  }
+  .font-t-body {
+    font-family: var(--t-body, 'Montserrat', sans-serif);
   }
   .text-gradient-gold {
     @apply bg-clip-text text-transparent;

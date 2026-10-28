@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Flourish } from '../components/Ornaments';
+import { HeroActions } from '@/components/invitation/HeroActions';
 import type { InvitationViewModel } from '../viewModel';
 
 const container = {
@@ -12,7 +13,7 @@ const item = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
 };
 
-export default function HeroSection({ invitation }: { invitation: InvitationViewModel }) {
+export default function HeroSection({ invitation, showFindTable = false }: { invitation: InvitationViewModel; showFindTable?: boolean }) {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -61,6 +62,15 @@ export default function HeroSection({ invitation }: { invitation: InvitationView
         >
           {invitation.bride_name}
         </motion.h1>
+
+        <motion.div variants={item} style={{ width: '100%', marginTop: '1.5rem', padding: '0 0.5rem' }}>
+          <HeroActions
+            showFindTable={showFindTable}
+            fontClassName="font-body"
+            primaryClassName="bg-gradient-to-r from-[#C9A96E] to-[#8B3A4A] text-white shadow-lg"
+            secondaryClassName="border border-[rgba(201,169,110,0.6)] text-[#C9A96E]"
+          />
+        </motion.div>
 
         <motion.div variants={item} className="gold-line" />
 

@@ -29,7 +29,7 @@ class TableController extends Controller
         }
 
         $tables = $wedding->tables()
-            ->with(['assignments.guest:id,guest_name,attending_count,rsvp_status'])
+            ->with(['assignments.guest:id,guest_name,side,attending_count,rsvp_status'])
             ->get()
             ->map(fn ($t) => [
                 'id'         => $t->id,
@@ -39,6 +39,7 @@ class TableController extends Controller
                 'guests'     => $t->assignments->map(fn ($a) => [
                     'id'              => $a->guest->id,
                     'guest_name'      => $a->guest->guest_name,
+                    'side'            => $a->guest->side,
                     'attending_count' => $a->guest->attending_count ?? 0,
                     'rsvp_status'     => $a->guest->rsvp_status,
                     'assigned_count'  => $a->assigned_count,
@@ -48,11 +49,12 @@ class TableController extends Controller
             ]);
 
         $guests = $wedding->guests()
-            ->select('id', 'guest_name', 'max_attendees', 'rsvp_status', 'table_id', 'attending_count')
+            ->select('id', 'guest_name', 'side', 'max_attendees', 'rsvp_status', 'table_id', 'attending_count')
             ->get()
             ->map(fn ($g) => [
                 'id'              => $g->id,
                 'guest_name'      => $g->guest_name,
+                'side'            => $g->side,
                 'max_attendees'   => $g->max_attendees,
                 'rsvp_status'     => $g->rsvp_status,
                 'table_id'        => $g->table_id,

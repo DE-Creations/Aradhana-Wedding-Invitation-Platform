@@ -115,7 +115,7 @@ export function EnvelopeReveal({
           <svg width="70" height="70" viewBox="0 0 70 70" aria-hidden="true">
             <circle cx="35" cy="35" r="30" fill={sealColor} stroke={accent} strokeWidth="2" />
             <circle cx="35" cy="35" r="24" fill="none" stroke={accent} strokeWidth="0.8" opacity="0.6" />
-            <text x="35" y="42" textAnchor="middle" fontFamily="'Playfair Display', serif" fontSize="18" fill="#E8D5A3">
+            <text x="35" y="42" textAnchor="middle" style={{ fontFamily: "var(--t-heading, 'Playfair Display', serif)" }} fontSize="18" fill="#E8D5A3">
               {brideInitial}&amp;{groomInitial}
             </text>
           </svg>

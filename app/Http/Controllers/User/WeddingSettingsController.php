@@ -51,16 +51,12 @@ class WeddingSettingsController extends Controller
                 'rsvp_deadline'       => $wedding->rsvp_deadline?->toDateString() ?? '',
                 'contact_number_1'    => $wedding->contact_number_1 ?? '',
                 'contact_number_2'    => $wedding->contact_number_2 ?? '',
-                'template_key'             => $wedding->template_key ?? '',
-                'template_category'        => $wedding->template_category ?? 'solid',
-                'typography_key'           => $wedding->typography_key ?? '',
-                'status'                   => $wedding->status ?? 'draft',
+                'status'                  => $wedding->status ?? 'draft',
                 'main_image_url'           => $this->resolveImageUrl($wedding->main_image),
                 'background_music_url'     => $wedding->background_music_path
                     ? asset('storage/' . $wedding->background_music_path)
                     : null,
                 'background_music_label'   => $wedding->background_music_label,
-                'background_music_enabled' => (bool) $wedding->background_music_enabled,
             ];
 
             $eventDetails = $this->loadEventDetails($wedding);
@@ -103,10 +99,6 @@ class WeddingSettingsController extends Controller
             'rsvp_deadline'            => ['nullable', 'date'],
             'contact_number_1'         => ['nullable', 'string', 'max:10'],
             'contact_number_2'         => ['nullable', 'string', 'max:10'],
-            'template_key'             => ['nullable', 'string', 'max:120'],
-            'template_category'        => ['nullable', 'in:solid,animated'],
-            'typography_key'           => ['nullable', 'string', 'max:120'],
-            'background_music_enabled' => ['nullable', 'boolean'],
             'status'                   => ['required', 'in:draft,active,completed'],
         ]);
 

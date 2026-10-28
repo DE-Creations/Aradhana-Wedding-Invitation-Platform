@@ -466,7 +466,7 @@ export const AdminUsersPage = ({
                             />
                             {errors?.phone && <p className="text-xs text-destructive mt-1">{errors.phone}</p>}
                         </FormField>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <FormField label="Status">
                                 <SearchableSelect
                                     value={createForm.status}
@@ -482,7 +482,7 @@ export const AdminUsersPage = ({
                                 onChange={(v) => updateCreateField("expire_date", v)}
                             />
                         </div>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <FormField label="Table Management">
                                 <div className="flex gap-2">
                                     {([true, false] as const).map((val) => (
@@ -548,7 +548,7 @@ export const AdminUsersPage = ({
                     {/* Wedding Setup */}
                     <div className="space-y-4 rounded-xl border border-border bg-card p-4 md:p-5">
                         <h4 className="font-display text-base font-semibold text-foreground border-b border-border pb-2">Wedding Setup</h4>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <FormField label="Bride Name">
                                 <input
                                     value={createForm.bride_name}
@@ -682,7 +682,7 @@ export const AdminUsersPage = ({
                                 />
                                 {errors?.phone && <p className="text-xs text-destructive mt-1">{errors.phone}</p>}
                             </FormField>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <FormField label="Status">
                                     <SearchableSelect
                                         value={editForm.status}
@@ -698,7 +698,7 @@ export const AdminUsersPage = ({
                                     onChange={(v) => updateEditField("expire_date", v)}
                                 />
                             </div>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <FormField label="Table Management">
                                     <div className="flex gap-2">
                                         {([true, false] as const).map((val) => (
@@ -764,7 +764,7 @@ export const AdminUsersPage = ({
                         {/* Wedding Setup */}
                         <div className="space-y-4 rounded-xl border border-border bg-card p-4 md:p-5">
                             <h4 className="font-display text-base font-semibold text-foreground border-b border-border pb-2">Wedding Setup</h4>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <FormField label="Bride Name">
                                     <input
                                         value={editForm.bride_name}
