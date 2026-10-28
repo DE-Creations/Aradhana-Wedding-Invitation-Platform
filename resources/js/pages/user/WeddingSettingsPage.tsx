@@ -488,7 +488,7 @@ export const WeddingSettingsPage = ({ wedding, galleryImages, eventDetails }: We
       </div>
 
       {/* Sticky Save Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-t border-border py-4 px-6 flex justify-end z-50">
+      <div className="fixed bottom-0 left-0 right-0 md:left-64 bg-card/95 backdrop-blur-sm border-t border-border py-4 px-6 flex justify-end z-50">
         <button
           type="button"
           onClick={handleSave}

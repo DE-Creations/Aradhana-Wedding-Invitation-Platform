@@ -18,7 +18,7 @@ export const UserLayout = ({ children, currentPage, onNavigate, onLogout }: User
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="h-screen flex w-full bg-background overflow-hidden">
+    <div className="h-dvh flex w-full bg-background overflow-hidden">
       <UserSidebar
         currentPage={currentPage}
         onNavigate={onNavigate}
@@ -29,7 +29,7 @@ export const UserLayout = ({ children, currentPage, onNavigate, onLogout }: User
         mobileMenuOpen={mobileMenuOpen}
         onCloseMobileMenu={() => setMobileMenuOpen(false)}
       />
-      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col h-dvh overflow-hidden">
         <AppTopbar
           title={title}
           subtitle="Wedding Dashboard"

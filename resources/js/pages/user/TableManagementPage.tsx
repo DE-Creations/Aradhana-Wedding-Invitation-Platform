@@ -106,7 +106,7 @@ export const TableManagementPage = ({ tables, guests }: TableManagementPageProps
           <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground">Table Management</h1>
           <p className="text-sm text-muted-foreground mt-1">{tables.length} tables · {totalSeats} seats · {totalAssigned} assigned</p>
         </div>
-        <div className="flex items-center gap-2 self-start">
+        <div className="flex flex-wrap items-center gap-2 self-start">
           <a
             href="/tables/print-pdf"
             target="_blank"

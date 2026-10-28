@@ -16,6 +16,9 @@
 
   background-color: var(--inv2-charcoal);
   color: var(--inv2-gold-light);
+  /* hidden first as the fallback for browsers without overflow: clip (Safari < 16) */
+  overflow-x: hidden;
+  overflow-x: clip;
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -54,6 +57,7 @@
 /* ---------- Section scaffolding ---------- */
 .inv2-root .section-full {
   min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   align-items: center;

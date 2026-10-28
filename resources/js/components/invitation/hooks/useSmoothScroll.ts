@@ -58,4 +58,15 @@ export function scrollToSection(id: string) {
   el.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: spare > 0 ? "center" : "start" });
 }
 
+/** Smoothly scrolls back to the top of the page (Lenis when running, native otherwise). */
+export function scrollToTop() {
+  if (typeof window === "undefined") return;
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (activeLenis) {
+    activeLenis.scrollTo(0, { duration: reduced ? 0 : 1.2 });
+    return;
+  }
+  window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+}
+
 export default useSmoothScroll;

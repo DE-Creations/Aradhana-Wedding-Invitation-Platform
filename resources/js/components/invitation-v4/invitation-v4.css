@@ -1,0 +1,344 @@
+/*
+  Silver Pearl (invitation-v4): pearl white and silver-blue, frosted glass.
+  Every rule is scoped under .inv4-root so nothing leaks into the dashboard.
+  Theme values are CSS variables (same idea as a swappable theme palette).
+  Mobile first: svh heights, safe-area insets, clamp() type, no element wider than the screen.
+*/
+
+.inv4-root {
+  --inv4-bg: #eef2f8;
+  --inv4-primary: #1c2a44; /* navy text and buttons */
+  --inv4-secondary: #dfe7f3;
+  --inv4-accent: #5b7aa6; /* steel blue */
+  --inv4-silver: #c9d3e3;
+  --inv4-muted: #5f6f8c;
+  --inv4-surface: rgba(255, 255, 255, 0.72);
+
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  min-height: 100svh;
+  /* hidden first as the fallback for browsers without overflow: clip (Safari < 16) */
+  overflow-x: hidden;
+  overflow-x: clip;
+  color: var(--inv4-primary);
+  font-weight: 400;
+  background: linear-gradient(165deg, #f8fafd 0%, #eaeff7 45%, #dce5f2 100%);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.inv4-root img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ---------- Layout ---------- */
+.inv4-main {
+  position: relative;
+  z-index: 1;
+}
+.inv4-section {
+  position: relative;
+  padding: clamp(3.5rem, 9vw, 6rem) 1.25rem;
+  text-align: center;
+}
+.inv4-inner {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 44rem;
+}
+
+/* ---------- Type helpers ---------- */
+.inv4-eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--inv4-accent);
+}
+.inv4-title {
+  margin: 0.5rem 0 0;
+  font-size: clamp(1.9rem, 7vw, 2.6rem);
+  line-height: 1.15;
+  color: var(--inv4-primary);
+  overflow-wrap: anywhere;
+}
+.inv4-text {
+  color: var(--inv4-primary);
+}
+.inv4-text-soft {
+  color: var(--inv4-muted);
+}
+.inv4-accent {
+  color: var(--inv4-accent);
+}
+
+/* ---------- Surfaces ---------- */
+.inv4-glass {
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 1.25rem;
+  background: var(--inv4-surface);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 10px 34px rgba(60, 80, 120, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+.inv4-btn {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(135deg, #1c2a44 0%, #3a5385 100%);
+  box-shadow: 0 8px 20px rgba(28, 42, 68, 0.28);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.inv4-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px rgba(28, 42, 68, 0.34);
+}
+.inv4-btn--ghost {
+  color: var(--inv4-primary);
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--inv4-silver);
+  box-shadow: none;
+}
+.inv4-gallery-arrow {
+  border: 1px solid var(--inv4-silver);
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--inv4-primary);
+}
+
+/* ---------- Divider ---------- */
+.inv4-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 1.25rem auto;
+  color: var(--inv4-accent);
+}
+.inv4-divider::before,
+.inv4-divider::after {
+  content: "";
+  height: 1px;
+  width: clamp(2.5rem, 12vw, 5rem);
+  background: linear-gradient(90deg, transparent, var(--inv4-accent));
+}
+.inv4-divider::after {
+  background: linear-gradient(270deg, transparent, var(--inv4-accent));
+}
+
+/* ---------- Hero (photo with Ken Burns zoom) ---------- */
+.inv4-hero {
+  position: relative;
+  display: flex;
+  min-height: 100vh;
+  min-height: 100svh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 5rem 1.25rem 4rem;
+  text-align: center;
+  color: #fff;
+}
+.inv4-hero__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: inv4-kenburns 22s ease-in-out infinite alternate;
+}
+.inv4-hero__photo--none {
+  background: linear-gradient(160deg, #2c3e63 0%, #1c2a44 60%, #121b2e 100%);
+}
+.inv4-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(14, 24, 44, 0.5) 0%, rgba(14, 24, 44, 0.62) 50%, rgba(14, 24, 44, 0.82) 100%);
+}
+.inv4-hero__names {
+  margin: 0;
+  font-size: clamp(2.6rem, 13vw, 5rem);
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+  color: #fff;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+}
+.inv4-hero__amp {
+  display: block;
+  margin: 0.1em 0;
+  font-size: 0.45em;
+  color: var(--inv4-silver);
+}
+
+/* ---------- Pearl ornaments (cover and backdrop) ---------- */
+.inv4-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.inv4-orb {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 32% 28%, #ffffff 0%, #eef2f8 38%, #c9d3e3 100%);
+  box-shadow: inset -6px -8px 14px rgba(120, 140, 175, 0.28), 0 8px 18px rgba(60, 80, 120, 0.16);
+  animation: inv4-float 9s ease-in-out infinite;
+}
+.inv4-leaf {
+  position: absolute;
+  width: 1.4rem;
+  height: 0.8rem;
+  border-radius: 0 100% 0 100%;
+  background: linear-gradient(135deg, #7d97c0, #3f5a8c);
+  opacity: 0.8;
+  transform: rotate(var(--r, 0deg));
+  animation: inv4-float-leaf 11s ease-in-out infinite;
+}
+
+/* ---------- Cover card ---------- */
+.inv4-cover {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  padding-left: max(1.25rem, env(safe-area-inset-left));
+  padding-right: max(1.25rem, env(safe-area-inset-right));
+  overflow: hidden;
+  background: linear-gradient(165deg, #f8fafd 0%, #e6ecf6 50%, #d6e0f0 100%);
+}
+.inv4-cover__card {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 24rem);
+  padding: 2rem 1.25rem 1.75rem;
+  text-align: center;
+  animation: inv4-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ---------- Timeline ---------- */
+.inv4-timeline {
+  position: relative;
+  margin: 1.5rem auto 0;
+  max-width: 28rem;
+  text-align: left;
+}
+.inv4-timeline::before {
+  content: "";
+  position: absolute;
+  left: 1.2rem;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--inv4-accent), transparent);
+}
+.inv4-step {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.6rem 0;
+}
+.inv4-step__num {
+  z-index: 1;
+  display: flex;
+  height: 2.4rem;
+  width: 2.4rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 1px solid var(--inv4-silver);
+  background: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--inv4-accent);
+  box-shadow: 0 4px 12px rgba(60, 80, 120, 0.12);
+}
+
+/* ---------- Keyframes ---------- */
+@keyframes inv4-kenburns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.12);
+  }
+}
+@keyframes inv4-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(6deg);
+  }
+}
+@keyframes inv4-float-leaf {
+  0%,
+  100% {
+    transform: rotate(var(--r, 0deg)) translateY(0);
+  }
+  50% {
+    transform: rotate(calc(var(--r, 0deg) + 10deg)) translateY(-12px);
+  }
+}
+@keyframes inv4-rise {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes inv4-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(8px);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  /* gentler zoom on small screens, like the reference's mobile variant */
+  .inv4-hero__photo {
+    animation-name: inv4-kenburns-mobile;
+  }
+}
+@keyframes inv4-kenburns-mobile {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.07);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inv4-root *,
+  .inv4-root *::before,
+  .inv4-root *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

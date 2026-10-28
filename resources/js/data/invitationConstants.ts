@@ -42,6 +42,9 @@ export const CINEMATIC_TEMPLATE_KEY = "aradhana-cinematic";
 /** Template key for the Crimson Unveil design (invitation-v3). */
 export const CRIMSON_TEMPLATE_KEY = "crimson-unveil";
 
+/** Template key for the Silver Pearl design (invitation-v4). */
+export const SILVER_TEMPLATE_KEY = "silver-pearl";
+
 export const invitationTemplates: InvitationTemplate[] = [
   {
     // Key kept as "noir-aurelle" for backwards compatibility with weddings that
@@ -73,6 +76,16 @@ export const invitationTemplates: InvitationTemplate[] = [
     description: "A deep crimson cover with glowing gold accents, twinkling stars and an unveil-style opening. Ceremonial, warm and richly ornamented.",
     colors: ["#2A060C", "#681322", "#C9A227", "#F5E6C8"],
     bgStyle: "bg-[#2A060C]",
+    categoryKey: "solid",
+  },
+  {
+    id: "tmpl-9",
+    key: SILVER_TEMPLATE_KEY,
+    name: "Silver Pearl",
+    label: "Pearl White & Silver-Blue",
+    description: "A light, frosted-glass invitation with a pearl cover card, soft floating orbs, a lineup timeline and a table finder. Calm, modern and mobile-first.",
+    colors: ["#F8FAFD", "#C9D3E3", "#5B7AA6", "#1C2A44"],
+    bgStyle: "bg-[#EEF2F8]",
     categoryKey: "solid",
   },
 ];

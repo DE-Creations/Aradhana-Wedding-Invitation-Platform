@@ -17,11 +17,12 @@ interface FamilyColumnProps {
 function FamilyColumn({ label, names, from }: FamilyColumnProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, x: from === 'left' ? -60 : 60 }}
-      whileInView={{ opacity: 1, x: 0 }}
+      // Fade up instead of sliding in from the side: an off-screen x start widens the page on phones.
+      initial={{ opacity: 0, y: from === 'left' ? 36 : 56 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.4 }}
       transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-      style={{ flex: 1, textAlign: 'center', padding: '1rem 1.5rem' }}
+      style={{ flex: '1 1 240px', textAlign: 'center', padding: '1rem 1.5rem' }}
     >
       <p className="label-caps" style={{ fontSize: '0.8rem', letterSpacing: '0.2em' }}>
         {label}

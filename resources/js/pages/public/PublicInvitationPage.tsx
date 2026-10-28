@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getTypographyOption, CINEMATIC_TEMPLATE_KEY, CRIMSON_TEMPLATE_KEY } from "@/data/invitationConstants";
+import { getTypographyOption, CINEMATIC_TEMPLATE_KEY, CRIMSON_TEMPLATE_KEY, SILVER_TEMPLATE_KEY } from "@/data/invitationConstants";
 import { typographyStyle, useTypographyFonts } from "@/lib/typography";
 import { getSolidTheme } from "@/data/invitationThemes";
 import { MusicControl } from "@/components/invitation/MusicControl";
@@ -11,6 +11,8 @@ import type { WeddingData, CeremonyEvent, GuestData, TableInfo } from "@/compone
 import WeddingInvitation from "@/components/invitation-v2/WeddingInvitation";
 import CrimsonInvitation from "@/components/invitation-v3/WeddingInvitation";
 import { CRIMSON_ACCENT, CRIMSON_PETAL_COLORS } from "@/components/invitation-v3/theme";
+import SilverInvitation from "@/components/invitation-v4/WeddingInvitation";
+import { PearlCover } from "@/components/invitation-v4/components/PearlCover";
 
 interface PublicInvitationPageProps {
   onBack?: () => void;
@@ -82,8 +84,11 @@ export const PublicInvitationPage = ({
   }
 
   const isCrimson = templateKey === CRIMSON_TEMPLATE_KEY;
+  const isSilver = templateKey === SILVER_TEMPLATE_KEY;
 
-  const envelopeOverlay = !revealed ? (
+  const envelopeOverlay = !revealed ? (isSilver ? (
+    <PearlCover brideName={w.bride_name} groomName={w.groom_name} onReveal={handleReveal} />
+  ) : (
     <EnvelopeReveal
       brideName={w.bride_name}
       groomName={w.groom_name}
@@ -91,7 +96,7 @@ export const PublicInvitationPage = ({
       accent={isCrimson ? CRIMSON_ACCENT : solidTheme.accentHex}
       {...(isCrimson ? { background: "#2A060C", sealColor: "#8C1D2F" } : {})}
     />
-  ) : null;
+  )) : null;
 
   const backButton = onBack ? (
     <button
@@ -113,8 +118,18 @@ export const PublicInvitationPage = ({
       {envelopeOverlay}
       {backButton}
       {musicControl}
-      <FloatingPetals colors={isCrimson ? CRIMSON_PETAL_COLORS : solidTheme.petalColors} />
-      {isCrimson ? (
+      {!isSilver && <FloatingPetals colors={isCrimson ? CRIMSON_PETAL_COLORS : solidTheme.petalColors} />}
+      {isSilver ? (
+        <SilverInvitation
+          wedding={w}
+          guest={guest}
+          eventToken={eventToken}
+          coupleMainImage={coupleMainImage}
+          coupleGalleryImages={coupleGalleryImages}
+          ceremonyEvents={ceremonyEvents}
+          tableInfo={tableInfo}
+        />
+      ) : isCrimson ? (
         <CrimsonInvitation
           wedding={w}
           guest={guest}

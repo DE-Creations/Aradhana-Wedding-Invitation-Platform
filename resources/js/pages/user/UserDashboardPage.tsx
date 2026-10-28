@@ -159,12 +159,12 @@ export const UserDashboardPage = ({ onNavigate, wedding, stats, pendingGuests, r
           ) : (
             <div className="space-y-2">
               {pendingGuests.map((guest) => (
-                <div key={guest.id} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-muted/30 transition-colors">
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{guest.guest_name}</p>
-                    <p className="text-xs text-muted-foreground">{guest.phone}</p>
+                <div key={guest.id} className="flex items-center justify-between gap-3 py-2 px-3 rounded-lg hover:bg-muted/30 transition-colors">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-foreground">{guest.guest_name}</p>
+                    <p className="truncate text-xs text-muted-foreground">{guest.phone}</p>
                   </div>
-                  <StatusBadge status={guest.rsvp_status} />
+                  <StatusBadge status={guest.rsvp_status} className="shrink-0" />
                 </div>
               ))}
             </div>
