@@ -6,6 +6,7 @@ use App\Models\Guest;
 use App\Models\InvitationView;
 use App\Models\Rsvp;
 use App\Models\Wedding;
+use App\Support\TableInfoResolver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,7 +17,7 @@ class PublicInvitationController extends Controller
     {
         $wedding = Wedding::where('event_token', $token)
             ->where('status', '!=', 'draft')
-            ->with(['weddingType', 'sinhalaDetails', 'christianDetails', 'tamilDetails', 'muslimDetails', 'homecomingDetails'])
+            ->with(['user', 'weddingType', 'sinhalaDetails', 'christianDetails', 'tamilDetails', 'muslimDetails', 'homecomingDetails'])
             ->firstOrFail();
 
         $guestToken = $request->query('guest');
@@ -61,12 +62,11 @@ class PublicInvitationController extends Controller
                 'contact_number_1'         => $wedding->contact_number_1,
                 'contact_number_2'         => $wedding->contact_number_2,
                 'template_key'             => $wedding->template_key ?? 'noir-aurelle',
-                'typography_key'           => $wedding->typography_key ?? 'gilded-garamond',
+                'typography_key'           => $wedding->typography_key ?? 'professional-playfair-montserrat',
                 'background_music_url'     => $wedding->background_music_path
                     ? asset('storage/' . $wedding->background_music_path)
                     : null,
                 'background_music_label'   => $wedding->background_music_label,
-                'background_music_enabled' => (bool) $wedding->background_music_enabled,
             ],
             'ceremonyEvents'     => $this->buildCeremonyEvents($wedding),
             'googleMapsLink'     => null,
@@ -77,6 +77,11 @@ class PublicInvitationController extends Controller
                 'max_attendees' => $guest->max_attendees,
                 'rsvp_status'   => $guest->rsvp_status,
             ] : null,
+            'tableInfo'           => TableInfoResolver::forWedding(
+                $wedding,
+                $guest,
+                (bool) ($wedding->user?->table_management ?? false),
+            ),
             'eventToken'          => $wedding->event_token,
             'coupleMainImage'     => $wedding->main_image ? asset('storage/' . $wedding->main_image) : null,
             'coupleGalleryImages' => $galleryImages,

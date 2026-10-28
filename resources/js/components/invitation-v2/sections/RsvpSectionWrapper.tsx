@@ -14,7 +14,7 @@ interface RsvpSectionWrapperProps {
  */
 export default function RsvpSectionWrapper({ invitation, guest, eventToken }: RsvpSectionWrapperProps) {
   return (
-    <section className="section-pad bg-charcoal" style={{ paddingTop: 100, paddingBottom: 100 }}>
+    <section id="rsvp" className="section-pad bg-charcoal" style={{ paddingTop: 100, paddingBottom: 100 }}>
       <RsvpSection
         eventToken={eventToken}
         guest={guest}

@@ -32,18 +32,20 @@
 }
 
 /* ---------- Typography helpers ---------- */
+/* --t-heading / --t-body come from the typography chosen in Invitation Design
+   (set inline on .inv2-root); the literals are the original Gilded Rose fonts. */
 .inv2-root .font-script {
-  font-family: 'Great Vibes', cursive;
+  font-family: var(--t-heading, 'Great Vibes', cursive);
 }
 .inv2-root .font-serif-display {
-  font-family: 'Playfair Display', serif;
+  font-family: var(--t-heading, 'Playfair Display', serif);
 }
 .inv2-root .font-body {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: var(--t-body, 'Cormorant Garamond', serif);
 }
 
 .inv2-root .label-caps {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: var(--t-body, 'Cormorant Garamond', serif);
   text-transform: uppercase;
   letter-spacing: 0.25em;
   color: var(--inv2-gold);
@@ -127,7 +129,7 @@
   border: 1px solid var(--inv2-gold);
   background: transparent;
   color: var(--inv2-gold);
-  font-family: 'Cormorant Garamond', serif;
+  font-family: var(--t-body, 'Cormorant Garamond', serif);
   text-transform: uppercase;
   letter-spacing: 0.2em;
   font-size: 0.95rem;

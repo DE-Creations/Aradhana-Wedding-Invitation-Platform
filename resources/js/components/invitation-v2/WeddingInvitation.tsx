@@ -5,6 +5,7 @@ import { EnvelopeReveal } from '@/components/invitation/EnvelopeReveal';
 import { FloatingPetals } from '@/components/invitation/FloatingPetals';
 import { MusicControl } from '@/components/invitation/MusicControl';
 import { useSmoothScroll } from '@/components/invitation/hooks/useSmoothScroll';
+import { typographyStyle } from '@/lib/typography';
 
 import ScrollProgress from './components/ScrollProgress';
 import SafeBoundary from './components/SafeBoundary';
@@ -17,6 +18,7 @@ import CountdownSection from './sections/CountdownSection';
 import CeremonyDetails from './sections/CeremonyDetails';
 import GallerySection from './sections/GallerySection';
 import RsvpSectionWrapper from './sections/RsvpSectionWrapper';
+import TableSection from './sections/TableSection';
 import ContactSection from './sections/ContactSection';
 import FooterSection from './sections/FooterSection';
 
@@ -60,7 +62,10 @@ export default function WeddingInvitation(props: InvitationViewModelProps) {
   }, [invitation.groom_name, invitation.bride_name]);
 
   return (
-    <div className="inv2-root grain-overlay" style={{ position: 'relative' }}>
+    <div
+      className="inv2-root grain-overlay"
+      style={{ position: 'relative', ...(props.typography ? typographyStyle(props.typography) : {}) }}
+    >
       <AnimatePresence>
         {!revealed && (
           <EnvelopeReveal
@@ -88,11 +93,12 @@ export default function WeddingInvitation(props: InvitationViewModelProps) {
       )}
 
       <main style={{ position: 'relative', zIndex: 3 }}>
-        <HeroSection invitation={invitation} />
+        <HeroSection invitation={invitation} showFindTable={!!props.tableInfo?.enabled} />
         <GuestGreeting guestName={guest?.guest_name} />
         <ParentsSection invitation={invitation} />
         <CountdownSection invitation={invitation} />
         <CeremonyDetails events={invitation.ceremony_events} />
+        <TableSection tableInfo={props.tableInfo} />
         <GallerySection photos={invitation.gallery_photos.map((p) => p.photo_path)} />
         <RsvpSectionWrapper invitation={invitation} guest={guest} eventToken={eventToken} />
         <ContactSection invitation={invitation} />

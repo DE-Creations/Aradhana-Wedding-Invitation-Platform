@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { typographyOptions, CINEMATIC_TEMPLATE_KEY } from "@/data/invitationConstants";
+import { getTypographyOption, CINEMATIC_TEMPLATE_KEY, CRIMSON_TEMPLATE_KEY } from "@/data/invitationConstants";
+import { typographyStyle, useTypographyFonts } from "@/lib/typography";
 import { getSolidTheme } from "@/data/invitationThemes";
 import { MusicControl } from "@/components/invitation/MusicControl";
 import { EnvelopeReveal } from "@/components/invitation/EnvelopeReveal";
 import { FloatingPetals } from "@/components/invitation/FloatingPetals";
 import { SolidInvitation } from "@/components/invitation/SolidInvitation";
 import { useSmoothScroll } from "@/components/invitation/hooks/useSmoothScroll";
-import type { WeddingData, CeremonyEvent, GuestData } from "@/components/invitation/animated/types";
+import type { WeddingData, CeremonyEvent, GuestData, TableInfo } from "@/components/invitation/animated/types";
 import WeddingInvitation from "@/components/invitation-v2/WeddingInvitation";
+import CrimsonInvitation from "@/components/invitation-v3/WeddingInvitation";
+import { CRIMSON_ACCENT, CRIMSON_PETAL_COLORS } from "@/components/invitation-v3/theme";
 
 interface PublicInvitationPageProps {
   onBack?: () => void;
@@ -19,6 +22,7 @@ interface PublicInvitationPageProps {
   coupleMainImage?: string | null;
   coupleGalleryImages?: string[];
   ceremonyEvents?: CeremonyEvent[];
+  tableInfo?: TableInfo | null;
 }
 
 export const PublicInvitationPage = ({
@@ -31,9 +35,11 @@ export const PublicInvitationPage = ({
   coupleMainImage = "",
   coupleGalleryImages = [],
   ceremonyEvents = [],
+  tableInfo = null,
 }: PublicInvitationPageProps) => {
   const w = wedding;
-  const selectedTypography = typographyOptions.find((t) => t.key === typographyKey) || typographyOptions[0];
+  const selectedTypography = getTypographyOption(typographyKey);
+  useTypographyFonts([selectedTypography]);
   const solidTheme = getSolidTheme(templateKey);
 
   // ── Envelope reveal (shown once per session, skipped in preview) ────────────
@@ -69,16 +75,21 @@ export const PublicInvitationPage = ({
         coupleMainImage={coupleMainImage}
         coupleGalleryImages={coupleGalleryImages}
         ceremonyEvents={ceremonyEvents}
+        typography={selectedTypography}
+        tableInfo={tableInfo}
       />
     );
   }
+
+  const isCrimson = templateKey === CRIMSON_TEMPLATE_KEY;
 
   const envelopeOverlay = !revealed ? (
     <EnvelopeReveal
       brideName={w.bride_name}
       groomName={w.groom_name}
       onReveal={handleReveal}
-      accent={solidTheme.accentHex}
+      accent={isCrimson ? CRIMSON_ACCENT : solidTheme.accentHex}
+      {...(isCrimson ? { background: "#2A060C", sealColor: "#8C1D2F" } : {})}
     />
   ) : null;
 
@@ -92,28 +103,41 @@ export const PublicInvitationPage = ({
   ) : null;
 
   const musicControl =
-    revealed && w.background_music_url && w.background_music_enabled ? (
+    revealed && w.background_music_url ? (
       <MusicControl src={w.background_music_url} label={w.background_music_label} autoPlay />
     ) : null;
 
   // ── Solid designs: borderless, full-bleed, scroll-animated ──────────────────
   return (
-    <>
+    <div className="contents" style={typographyStyle(selectedTypography)}>
       {envelopeOverlay}
       {backButton}
       {musicControl}
-      <FloatingPetals colors={solidTheme.petalColors} />
-      <SolidInvitation
-        theme={solidTheme}
-        typography={selectedTypography}
-        wedding={w}
-        guest={guest}
-        eventToken={eventToken}
-        coupleMainImage={coupleMainImage}
-        coupleGalleryImages={coupleGalleryImages}
-        ceremonyEvents={ceremonyEvents}
-      />
-    </>
+      <FloatingPetals colors={isCrimson ? CRIMSON_PETAL_COLORS : solidTheme.petalColors} />
+      {isCrimson ? (
+        <CrimsonInvitation
+          wedding={w}
+          guest={guest}
+          eventToken={eventToken}
+          coupleMainImage={coupleMainImage}
+          coupleGalleryImages={coupleGalleryImages}
+          ceremonyEvents={ceremonyEvents}
+          tableInfo={tableInfo}
+        />
+      ) : (
+        <SolidInvitation
+          theme={solidTheme}
+          typography={selectedTypography}
+          wedding={w}
+          guest={guest}
+          eventToken={eventToken}
+          coupleMainImage={coupleMainImage}
+          coupleGalleryImages={coupleGalleryImages}
+          ceremonyEvents={ceremonyEvents}
+          tableInfo={tableInfo}
+        />
+      )}
+    </div>
   );
 };
 

@@ -3,12 +3,14 @@ import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { Calendar, Clock, MapPin, Phone } from "lucide-react";
 import type { SolidTheme } from "@/data/invitationThemes";
 import type { TypographyOption } from "@/data/invitationConstants";
-import type { WeddingData, CeremonyEvent, GuestData } from "./animated/types";
+import type { WeddingData, CeremonyEvent, GuestData, TableInfo } from "./animated/types";
 import { formatTime12 } from "./animated/types";
 import { Reveal } from "./Reveal";
 import { CountdownTimer } from "./CountdownTimer";
 import { GalleryCarousel } from "./GalleryCarousel";
 import { RsvpSection } from "./RsvpModal";
+import { HeroActions } from "./HeroActions";
+import { YourTableSection } from "./YourTableSection";
 
 interface SolidInvitationProps {
   theme: SolidTheme;
@@ -19,6 +21,7 @@ interface SolidInvitationProps {
   coupleMainImage?: string | null;
   coupleGalleryImages?: string[];
   ceremonyEvents?: CeremonyEvent[];
+  tableInfo?: TableInfo | null;
 }
 
 function buildGoogleCalendarUrl(w: WeddingData, ev?: CeremonyEvent): string {
@@ -64,6 +67,7 @@ export function SolidInvitation({
   coupleMainImage,
   coupleGalleryImages = [],
   ceremonyEvents = [],
+  tableInfo = null,
 }: SolidInvitationProps) {
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
@@ -125,6 +129,19 @@ export function SolidInvitation({
             <span className={`my-1 block text-2xl italic md:text-3xl ${theme.accentToneClassName}`}>&amp;</span>
             <span className="block">{w.groom_name}</span>
           </motion.h1>
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.55 }}
+            className="mt-6"
+          >
+            <HeroActions
+              showFindTable={!!tableInfo?.enabled}
+              fontClassName={typography.bodyFont}
+              primaryClassName={`shadow-lg ${theme.buttonClassName}`}
+              secondaryClassName="border border-white/40 bg-white/10 text-white backdrop-blur-sm"
+            />
+          </motion.div>
           {firstEvent && (
             <motion.p
               initial={{ opacity: 0 }}
@@ -248,6 +265,25 @@ export function SolidInvitation({
           </Reveal>
         )}
 
+        {/* ── Your Table (Table Management clients only) ── */}
+        {tableInfo?.enabled && (
+          <>
+            <Divider theme={theme} />
+            <Reveal animation="fadeUp" className="py-8">
+              <YourTableSection
+                tableInfo={tableInfo}
+                eyebrowClassName={`${typography.bodyFont} ${theme.subTextToneClassName}`}
+                headingFontClassName={typography.headingFont}
+                headingToneClassName={theme.textToneClassName}
+                cardClassName={theme.surfaceClassName}
+                textClassName={`${typography.bodyFont} ${theme.textToneClassName}`}
+                subTextClassName={`${typography.bodyFont} ${theme.subTextToneClassName}`}
+                accentClassName={theme.accentToneClassName}
+              />
+            </Reveal>
+          </>
+        )}
+
         {/* ── Gallery ── */}
         {coupleGalleryImages.length > 0 && (
           <>
@@ -273,6 +309,7 @@ export function SolidInvitation({
         <Divider theme={theme} />
 
         {/* ── RSVP ── */}
+        <div id="rsvp">
         <Reveal animation="scaleIn" className="py-8">
           <RsvpSection
             eventToken={eventToken}
@@ -287,6 +324,7 @@ export function SolidInvitation({
             modalTextClassName={theme.textToneClassName}
           />
         </Reveal>
+        </div>
 
         {/* ── Contact ── */}
         {(w.contact_number_1 || w.contact_number_2) && (

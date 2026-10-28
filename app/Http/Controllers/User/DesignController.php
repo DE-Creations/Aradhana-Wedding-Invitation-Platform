@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Wedding;
 use App\Models\WeddingGalleryImage;
+use App\Support\TableInfoResolver;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,16 +48,16 @@ class DesignController extends Controller
                 'contact_number_1'         => $wedding->contact_number_1,
                 'contact_number_2'         => $wedding->contact_number_2,
                 'template_key'             => $wedding->template_key ?? 'noir-aurelle',
-                'typography_key'           => $wedding->typography_key ?? 'gilded-garamond',
+                'typography_key'           => $wedding->typography_key ?? 'professional-playfair-montserrat',
                 'background_music_url'     => $wedding->background_music_path
                     ? asset('storage/' . $wedding->background_music_path)
                     : null,
                 'background_music_label'   => $wedding->background_music_label,
-                'background_music_enabled' => (bool) $wedding->background_music_enabled,
             ],
             'ceremonyEvents'      => $this->buildCeremonyEvents($wedding),
             'googleMapsLink'      => null,
             'guest'               => null,
+            'tableInfo'           => TableInfoResolver::forWedding($wedding, null, (bool) $user->table_management),
             'coupleMainImage'     => $mainImageUrl,
             'coupleGalleryImages' => $galleryImages,
             'eventToken'          => $wedding->event_token,
@@ -97,7 +98,6 @@ class DesignController extends Controller
                 ? asset('storage/' . $wedding->background_music_path)
                 : null,
             'backgroundMusicLabel'     => $wedding?->background_music_label,
-            'backgroundMusicEnabled'   => (bool) ($wedding?->background_music_enabled ?? true),
         ]);
     }
 
@@ -112,7 +112,6 @@ class DesignController extends Controller
         $validated = $request->validate([
             'template_key'             => ['required', 'string', 'max:120'],
             'typography_key'           => ['nullable', 'string', 'max:120'],
-            'background_music_enabled' => ['required', 'boolean'],
         ]);
 
         $wedding->update($validated);

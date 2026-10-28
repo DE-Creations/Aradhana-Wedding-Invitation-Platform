@@ -1,3 +1,6 @@
+import type { TypographyOption } from '@/data/invitationConstants';
+import type { TableInfo } from '@/components/invitation/animated/types';
+
 export interface CeremonyEventInput {
   label: string;
   date: string;
@@ -18,7 +21,6 @@ export interface WeddingInput {
   rsvp_deadline?: string | null;
   background_music_url?: string | null;
   background_music_label?: string | null;
-  background_music_enabled?: boolean;
 }
 
 export interface GuestInput {
@@ -36,6 +38,10 @@ export interface InvitationViewModelProps {
   coupleMainImage?: string | null;
   coupleGalleryImages?: string[];
   ceremonyEvents?: CeremonyEventInput[];
+  /** Typography pairing chosen in Invitation Design; falls back to the original Gilded Rose fonts when omitted. */
+  typography?: TypographyOption;
+  /** Table Management info for the "Your Table" section and the Find Table button. */
+  tableInfo?: TableInfo | null;
 }
 
 export interface GalleryPhoto {
@@ -74,7 +80,7 @@ export function buildInvitationViewModel(props: InvitationViewModelProps): Invit
     contact_number_2: w.contact_number_2 ?? '',
     couple_photo: props.coupleMainImage ?? null,
     gallery_photos: (props.coupleGalleryImages ?? []).map((url) => ({ photo_path: url, caption: '' })),
-    music_url: w.background_music_enabled ? w.background_music_url ?? '' : '',
+    music_url: w.background_music_url ?? '',
     ceremony_events: props.ceremonyEvents ?? [],
     rsvp_deadline: w.rsvp_deadline ?? null,
   };

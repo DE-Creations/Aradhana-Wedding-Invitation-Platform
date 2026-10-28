@@ -57,7 +57,6 @@ class WeddingSettingsController extends Controller
                     ? asset('storage/' . $wedding->background_music_path)
                     : null,
                 'background_music_label'   => $wedding->background_music_label,
-                'background_music_enabled' => (bool) $wedding->background_music_enabled,
             ];
 
             $eventDetails = $this->loadEventDetails($wedding);
@@ -100,7 +99,6 @@ class WeddingSettingsController extends Controller
             'rsvp_deadline'            => ['nullable', 'date'],
             'contact_number_1'         => ['nullable', 'string', 'max:10'],
             'contact_number_2'         => ['nullable', 'string', 'max:10'],
-            'background_music_enabled' => ['nullable', 'boolean'],
             'status'                   => ['required', 'in:draft,active,completed'],
         ]);
 

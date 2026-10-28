@@ -1,7 +1,8 @@
 import { useState, useRef } from "react";
-import { Eye, Save, Check, Smartphone, Monitor, Music, Upload, Trash2, Play, Pause, ChevronDown, ChevronUp, Layers } from "lucide-react";
-import { invitationTemplates, typographyOptions, CINEMATIC_TEMPLATE_KEY, type InvitationTemplate } from "@/data/invitationConstants";
-import { getSolidTheme, SOLID_THEMES } from "@/data/invitationThemes";
+import { Eye, Save, Check, Music, Upload, Trash2, Play, Pause, ChevronDown, ChevronUp, Layers } from "lucide-react";
+import { invitationTemplates, typographyOptions, typographyCategories, getTypographyOption, CINEMATIC_TEMPLATE_KEY, CRIMSON_TEMPLATE_KEY, type InvitationTemplate, type TypographyOption } from "@/data/invitationConstants";
+import { typographyStyle, useTypographyFonts } from "@/lib/typography";
+import { getSolidTheme } from "@/data/invitationThemes";
 import { SolidHeroPreview } from "@/components/invitation/SolidInvitation";
 import { motion, AnimatePresence } from "framer-motion";
 import { router } from "@inertiajs/react";
@@ -36,12 +37,11 @@ interface InvitationDesignPageProps {
   ceremonyEvents?: CeremonyEvent[];
   backgroundMusicUrl?: string | null;
   backgroundMusicLabel?: string | null;
-  backgroundMusicEnabled?: boolean;
   onSaved?: () => void;
 }
 
 /** Compact preview for the cinematic design (matches its envelope-reveal palette). */
-function CinematicHeroPreview({ brideName, groomName }: { brideName: string; groomName: string }) {
+function CinematicHeroPreview({ brideName, groomName, typography }: { brideName: string; groomName: string; typography: TypographyOption }) {
   return (
     <div
       className="relative flex h-full w-full flex-col items-center justify-center gap-1 px-3 text-center"
@@ -50,9 +50,29 @@ function CinematicHeroPreview({ brideName, groomName }: { brideName: string; gro
       <span className="text-[7px] uppercase tracking-[0.35em]" style={{ color: "#C9A96E" }}>
         Together Forever
       </span>
-      <p className="mt-1 text-lg leading-tight" style={{ color: "#FAF7F2", fontFamily: "'Great Vibes', cursive" }}>
+      <p className="mt-1 text-lg leading-tight" style={{ color: "#FAF7F2", fontFamily: typography.headingFamily }}>
         {brideName}
         <span style={{ color: "#C9A96E" }}> &amp; </span>
+        {groomName}
+      </p>
+    </div>
+  );
+}
+
+/** Compact preview for Crimson Unveil (crimson gradient, gold star motif). */
+function CrimsonHeroPreview({ brideName, groomName, typography }: { brideName: string; groomName: string; typography: TypographyOption }) {
+  return (
+    <div
+      className="relative flex h-full w-full flex-col items-center justify-center gap-1 px-3 text-center"
+      style={{ background: "linear-gradient(135deg, #2a060c 0%, #4a0f18 40%, #681322 70%, #2c0710 100%)" }}
+    >
+      <span className="text-[7px] uppercase tracking-[0.35em]" style={{ color: "#C9A227" }}>
+        A Wedding Invitation
+      </span>
+      <span className="text-[9px]" style={{ color: "#F8E6A6" }}>&#10022;</span>
+      <p className="mt-1 text-lg leading-tight" style={{ color: "#F5E6C8", fontFamily: typography.headingFamily }}>
+        {brideName}
+        <span style={{ color: "#C9A227" }}> &amp; </span>
         {groomName}
       </p>
     </div>
@@ -71,22 +91,14 @@ export const InvitationDesignPage = ({
   ceremonyEvents = [],
   backgroundMusicUrl,
   backgroundMusicLabel,
-  backgroundMusicEnabled = true,
   onSaved,
 }: InvitationDesignPageProps) => {
   void coupleGalleryImages;
   const brideName = weddingData?.bride_name ?? "Bride";
   const groomName = weddingData?.groom_name ?? "Groom";
-  const eventDate = weddingData?.event_date
-    ? new Date(weddingData.event_date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
-    : "";
-  const venueName = weddingData?.venue_name ?? "";
-  const eventToken = weddingData?.event_token;
-  const [previewMode, setPreviewMode] = useState<"mobile" | "desktop">("mobile");
 
   const [solidCollapsed, setSolidCollapsed] = useState(false);
 
-  const [musicEnabled, setMusicEnabled] = useState(backgroundMusicEnabled);
   const [isSaving, setIsSaving] = useState(false);
   const [musicUploading, setMusicUploading] = useState(false);
   const [musicDeleting, setMusicDeleting] = useState(false);
@@ -112,14 +124,11 @@ export const InvitationDesignPage = ({
     router.post("/settings/music/destroy", {}, { onFinish: () => setMusicDeleting(false) });
   };
 
-  const handleMusicEnabledToggle = () => setMusicEnabled((prev) => !prev);
-
   const handleSave = () => {
     setIsSaving(true);
     router.post("/design", {
       template_key: selectedTemplate,
       typography_key: selectedTypography,
-      background_music_enabled: musicEnabled,
     }, {
       preserveScroll: true,
       onSuccess: () => {
@@ -142,17 +151,18 @@ export const InvitationDesignPage = ({
     }
   };
 
-  const selectedTypographyConfig = typographyOptions.find((t) => t.key === selectedTypography) || typographyOptions[0];
+  const selectedTypographyConfig = getTypographyOption(selectedTypography);
+  useTypographyFonts(typographyOptions);
   const solidTemplates = invitationTemplates.filter((t) => t.categoryKey === "solid");
 
   const isCinematic = (key: string) => key === CINEMATIC_TEMPLATE_KEY;
-  const isSelectedSolid = !isCinematic(selectedTemplate) && !!SOLID_THEMES[selectedTemplate];
-  const selectedSolidTheme = getSolidTheme(selectedTemplate);
-  const previewCardWidthClass = previewMode === "mobile" ? "w-[320px]" : "w-full max-w-[560px]";
 
   const renderCardThumb = (template: InvitationTemplate) => {
     if (isCinematic(template.key)) {
-      return <CinematicHeroPreview brideName={brideName} groomName={groomName} />;
+      return <CinematicHeroPreview brideName={brideName} groomName={groomName} typography={selectedTypographyConfig} />;
+    }
+    if (template.key === CRIMSON_TEMPLATE_KEY) {
+      return <CrimsonHeroPreview brideName={brideName} groomName={groomName} typography={selectedTypographyConfig} />;
     }
     return (
       <SolidHeroPreview
@@ -203,7 +213,7 @@ export const InvitationDesignPage = ({
   };
 
   return (
-    <div className="animate-fade-in space-y-8">
+    <div className="animate-fade-in space-y-8" style={typographyStyle(selectedTypographyConfig)}>
       <div>
         <h1 className="font-display text-2xl font-bold text-foreground md:text-3xl">Invitation Design</h1>
         <p className="mt-1 text-sm text-muted-foreground">Choose your invitation style and typography</p>
@@ -253,45 +263,52 @@ export const InvitationDesignPage = ({
         </div>
       </section>
 
-      {/* Typography Selection — Gilded Rose uses its own fixed typography */}
-      {isCinematic(selectedTemplate) ? (
-        <section>
-          <h2 className="mb-4 font-display text-xl font-semibold text-foreground">Typography</h2>
-          <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-5 text-sm text-muted-foreground">
-            Gilded Rose uses its own fixed typography (Great Vibes &amp; Playfair Display) — typography selection doesn't apply to this design.
-          </div>
-        </section>
-      ) : (
+      {/* Typography Selection — applies to every design */}
       <section>
-        <h2 className="mb-4 font-display text-xl font-semibold text-foreground">Choose Typography</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {typographyOptions.map((typo, i) => {
-            const isSelected = selectedTypography === typo.key;
+        <h2 className="mb-1 font-display text-xl font-semibold text-foreground">Choose Typography</h2>
+        <p className="mb-5 text-sm text-muted-foreground">Pick a font pairing for names, headings and details. It applies to every design.</p>
+        <div className="space-y-6">
+          {typographyCategories.map((category) => {
+            const options = typographyOptions.filter((t) => t.category === category.key);
+            if (options.length === 0) return null;
             return (
-              <motion.div
-                key={typo.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className={`cursor-pointer rounded-xl border-2 p-5 transition-all ${isSelected ? "border-primary shadow-elevated ring-2 ring-primary/20" : "border-border shadow-card hover:border-primary/30"}`}
-                onClick={() => onTypographyChange(typo.key)}
-              >
-                <div className={`${typo.sampleClass} mb-3 text-2xl text-foreground`}>{brideName} &amp; {groomName}</div>
-                <div className={`${typo.bodyFont} mb-3 text-sm text-muted-foreground`}>Together with their families</div>
-                <div className="ornamental-line mb-3" />
-                <h4 className="text-sm font-semibold text-foreground">{typo.name}</h4>
-                <p className="mt-0.5 text-xs text-muted-foreground">{typo.label}</p>
-                {isSelected && (
-                  <div className="mt-3 flex items-center gap-1 text-xs font-medium text-primary">
-                    <Check className="h-3.5 w-3.5" /> Selected
-                  </div>
-                )}
-              </motion.div>
+              <div key={category.key}>
+                <div className="mb-3 flex flex-wrap items-baseline gap-x-3">
+                  <h3 className="font-display text-base font-semibold text-foreground">{category.name}</h3>
+                  <p className="text-xs text-muted-foreground">{category.description}</p>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {options.map((typo, i) => {
+                    const isSelected = selectedTypography === typo.key;
+                    return (
+                      <motion.div
+                        key={typo.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        style={typographyStyle(typo)}
+                        className={`cursor-pointer rounded-xl border-2 p-5 transition-all ${isSelected ? "border-primary shadow-elevated ring-2 ring-primary/20" : "border-border shadow-card hover:border-primary/30"}`}
+                        onClick={() => onTypographyChange(typo.key)}
+                      >
+                        <div className={`${typo.headingFont} mb-3 text-3xl leading-tight text-foreground`}>{brideName} &amp; {groomName}</div>
+                        <div className={`${typo.bodyFont} mb-3 text-sm text-muted-foreground`}>Together with their families</div>
+                        <div className="mb-3 h-px bg-border" />
+                        <h4 className="text-sm font-semibold text-foreground">{typo.name}</h4>
+                        <p className="mt-0.5 text-xs text-muted-foreground">{typo.label}</p>
+                        {isSelected && (
+                          <div className="mt-3 flex items-center gap-1 text-xs font-medium text-primary">
+                            <Check className="h-3.5 w-3.5" /> Selected
+                          </div>
+                        )}
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </div>
             );
           })}
         </div>
       </section>
-      )}
 
       {/* Background Music */}
       <section>
@@ -327,18 +344,6 @@ export const InvitationDesignPage = ({
                 </button>
               </div>
 
-              <label className="flex cursor-pointer items-center justify-between">
-                <span className="text-sm text-foreground">Enable on invitation</span>
-                <button
-                  role="switch"
-                  aria-checked={musicEnabled}
-                  onClick={handleMusicEnabledToggle}
-                  className={`relative h-6 w-11 rounded-full transition-colors ${musicEnabled ? "bg-primary" : "bg-muted-foreground/30"}`}
-                >
-                  <span className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${musicEnabled ? "translate-x-5" : "translate-x-0"}`} />
-                </button>
-              </label>
-
               <div className="flex items-center gap-2">
                 <span className="text-xs text-muted-foreground">Replace track:</span>
                 <label className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-dashed border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary">
@@ -363,57 +368,14 @@ export const InvitationDesignPage = ({
         </div>
       </section>
 
-      {/* Preview */}
-      <section>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-display text-xl font-semibold text-foreground">Preview</h2>
-          <div className="flex gap-2">
-            <button onClick={() => setPreviewMode("mobile")} className={`rounded-lg p-2 transition-colors ${previewMode === "mobile" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"}`}>
-              <Smartphone className="h-4 w-4" />
-            </button>
-            <button onClick={() => setPreviewMode("desktop")} className={`rounded-lg p-2 transition-colors ${previewMode === "desktop" ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted"}`}>
-              <Monitor className="h-4 w-4" />
-            </button>
-            <button onClick={() => onNavigate("invitation")} className="flex items-center gap-1.5 rounded-lg bg-gradient-gold px-3 py-1.5 text-sm font-medium text-primary-foreground hover:opacity-90">
-              <Eye className="h-3.5 w-3.5" /> Full Preview
-            </button>
-            <button onClick={handleSave} disabled={isSaving} className="flex items-center gap-1.5 rounded-lg bg-gradient-gold px-3 py-1.5 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-60">
-              <Save className="h-3.5 w-3.5" /> {isSaving ? "Saving..." : "Save"}
-            </button>
-          </div>
-        </div>
-        <div className="flex justify-center">
-          <div className={`overflow-hidden rounded-2xl border-2 border-border bg-card shadow-elevated transition-all ${previewMode === "mobile" ? "w-[375px]" : "w-full max-w-3xl"}`}>
-            <div className="flex items-center gap-2 border-b border-border bg-muted/50 px-4 py-2">
-              <div className="flex gap-1">
-                <div className="h-2.5 w-2.5 rounded-full bg-destructive/30" />
-                <div className="h-2.5 w-2.5 rounded-full bg-warning/30" />
-                <div className="h-2.5 w-2.5 rounded-full bg-success/30" />
-              </div>
-              <div className="flex-1 text-center text-[10px] text-muted-foreground">
-                {eventToken ? `${window.location.origin}/invitation/${eventToken}` : "aradhana.lk/invite/preview"}
-              </div>
-            </div>
-            <div className="bg-muted/20 p-5 md:p-8">
-              <div className={`relative mx-auto aspect-[9/16] overflow-hidden rounded-[1.4rem] ${previewCardWidthClass}`}>
-                {isCinematic(selectedTemplate) ? (
-                  <CinematicHeroPreview brideName={brideName} groomName={groomName} />
-                ) : isSelectedSolid ? (
-                  <SolidHeroPreview
-                    theme={selectedSolidTheme}
-                    typography={selectedTypographyConfig}
-                    coupleMainImage={coupleMainImage}
-                    brideName={brideName}
-                    groomName={groomName}
-                  />
-                ) : null}
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 p-4 text-center">
-                  <p className="text-[10px] text-white/80">{[eventDate, venueName].filter(Boolean).join(" · ")}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Actions */}
+      <section className="flex justify-end gap-2">
+        <button onClick={() => onNavigate("invitation")} className="flex items-center gap-1.5 rounded-lg bg-gradient-gold px-3 py-1.5 text-sm font-medium text-primary-foreground hover:opacity-90">
+          <Eye className="h-3.5 w-3.5" /> Full Preview
+        </button>
+        <button onClick={handleSave} disabled={isSaving} className="flex items-center gap-1.5 rounded-lg bg-gradient-gold px-3 py-1.5 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-60">
+          <Save className="h-3.5 w-3.5" /> {isSaving ? "Saving..." : "Save"}
+        </button>
       </section>
     </div>
   );
