@@ -26,7 +26,13 @@ export default function FooterSection({ invitation, showTableLink }: FooterSecti
           fontClassName="font-t-body"
           buttonClassName="border border-[#c9d3e3] bg-white/70 text-[#1c2a44] shadow-[0_4px_12px_rgba(60,80,120,0.12)]"
         />
-        <p className="inv4-text-soft font-t-body mt-8 text-xs">&copy; {year} Aradhana. All rights reserved.</p>
+        <p className="inv4-text-soft font-t-body mt-8 text-xs">
+          &copy; {year}{" "}
+          <a href="https://www.aradhana.vip" target="_blank" rel="noopener noreferrer" className="inv4-accent underline underline-offset-2">
+            Aradhana
+          </a>
+          . All rights reserved.
+        </p>
         <p className="inv4-text-soft font-t-body mt-1 text-xs">
           Designed &amp; developed by{" "}
           <a href="https://www.decreations.lk" target="_blank" rel="noopener noreferrer" className="inv4-accent underline underline-offset-2">

@@ -13,9 +13,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule): void {
-        $schedule->command('users:expire')->everyFiveMinutes();
-        $schedule->command('mail:big-day-wishes')->everyFiveMinutes();
-        $schedule->command('mail:expiry-reminder')->everyFiveMinutes();
+        // Expiry cleanup: once a day at 2 AM (app timezone, Asia/Colombo).
+        $schedule->command('users:expire')->dailyAt('02:00')->withoutOverlapping();
+
+        // Email tasks only exist while outgoing mail is switched on (config/features.php).
+        if (config('features.mail_enabled')) {
+            $schedule->command('mail:big-day-wishes')->everyFiveMinutes();
+            $schedule->command('mail:expiry-reminder')->everyFiveMinutes();
+        }
     })
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->validateCsrfTokens(except: [

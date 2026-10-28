@@ -151,7 +151,8 @@ class UserManagementController extends Controller
         // committed regardless of whether the email goes out.
         $newUserId = User::where('email', $validated['email'])->value('id');
         $emailSent = false;
-        if ($newUserId) {
+        $mailEnabled = (bool) config('features.mail_enabled');
+        if ($newUserId && $mailEnabled) {
             $createdUser = User::with('wedding')->find($newUserId);
             try {
                 Mail::to($createdUser->email, $createdUser->name)
@@ -163,7 +164,8 @@ class UserManagementController extends Controller
             }
         }
 
-        $message = $emailSent
+        // With email switched off nothing was attempted, so there is nothing to warn about.
+        $message = ($emailSent || ! $mailEnabled)
             ? 'User created successfully.'
             : 'User created successfully, but the welcome email could not be sent.';
 

@@ -17,6 +17,12 @@ class SendExpiryReminderCommand extends Command
 
     public function handle(): int
     {
+        if (! config('features.mail_enabled')) {
+            $this->warn('Email sending is disabled (MAIL_ENABLED=false). Nothing was sent.');
+
+            return self::SUCCESS;
+        }
+
         // Send when expire_date is exactly 72 hours away (±5 minute window).
         $windowStart = now()->addHours(72)->subMinutes(5);
         $windowEnd   = now()->addHours(72)->addMinutes(5);
