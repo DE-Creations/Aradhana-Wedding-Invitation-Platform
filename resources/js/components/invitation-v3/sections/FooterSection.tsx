@@ -21,7 +21,13 @@ export default function FooterSection({ invitation, showTable = false }: { invit
           fontClassName="font-t-body"
           buttonClassName="border border-[rgba(201,162,39,0.6)] bg-black/10 text-[#F8E6A6]"
         />
-        <p className="inv3-text-soft font-t-body text-xs">&copy; {year} Aradhana. All rights reserved.</p>
+        <p className="inv3-text-soft font-t-body text-xs">
+          &copy; {year}{" "}
+          <a href="https://www.aradhana.vip" target="_blank" rel="noopener noreferrer" className="inv3-gold underline underline-offset-2">
+            Aradhana
+          </a>
+          . All rights reserved.
+        </p>
         <p className="inv3-text-soft font-t-body mt-1 text-xs">
           Designed &amp; developed by{" "}
           <a href="https://www.decreations.lk" target="_blank" rel="noopener noreferrer" className="inv3-gold underline underline-offset-2">

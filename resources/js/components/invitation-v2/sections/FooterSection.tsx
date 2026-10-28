@@ -29,7 +29,16 @@ export default function FooterSection({ invitation, showTable = false }: { invit
           buttonClassName="border border-[rgba(201,169,110,0.6)] text-[#C9A96E]"
         />
         <p className="font-body" style={{ color: 'rgba(201,169,110,0.6)', fontSize: '0.85rem' }}>
-          &copy; {year} Aradhana. All rights reserved.
+          &copy; {year}{' '}
+          <a
+            href="https://www.aradhana.vip"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#C9A96E', textDecoration: 'underline', textUnderlineOffset: '2px' }}
+          >
+            Aradhana
+          </a>
+          . All rights reserved.
         </p>
         <p className="font-body" style={{ color: 'rgba(201,169,110,0.6)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
           Designed &amp; developed by{' '}

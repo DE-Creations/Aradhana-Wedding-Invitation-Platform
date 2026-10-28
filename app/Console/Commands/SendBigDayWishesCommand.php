@@ -17,6 +17,12 @@ class SendBigDayWishesCommand extends Command
 
     public function handle(): int
     {
+        if (! config('features.mail_enabled')) {
+            $this->warn('Email sending is disabled (MAIL_ENABLED=false). Nothing was sent.');
+
+            return self::SUCCESS;
+        }
+
         $tomorrow = now()->addDay()->toDateString();
 
         // Load all weddings with type-specific details and user.

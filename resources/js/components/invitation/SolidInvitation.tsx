@@ -363,7 +363,16 @@ export function SolidInvitation({
             buttonClassName={theme.chipClassName}
           />
           <p className={`mt-6 text-xs ${typography.bodyFont} ${theme.subTextToneClassName}`}>
-            &copy; {new Date().getFullYear()} Aradhana. All rights reserved.
+            &copy; {new Date().getFullYear()}{" "}
+            <a
+              href="https://www.aradhana.vip"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`underline underline-offset-2 hover:opacity-80 ${theme.accentToneClassName}`}
+            >
+              Aradhana
+            </a>
+            . All rights reserved.
           </p>
           <p className={`mt-1 text-xs ${typography.bodyFont} ${theme.subTextToneClassName}`}>
             Designed &amp; developed by{" "}

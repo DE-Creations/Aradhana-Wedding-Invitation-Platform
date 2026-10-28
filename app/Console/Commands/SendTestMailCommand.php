@@ -30,6 +30,12 @@ class SendTestMailCommand extends Command
 
     public function handle(): int
     {
+        if (! config('features.mail_enabled')) {
+            $this->warn('Email sending is disabled (MAIL_ENABLED=false). Nothing was sent.');
+
+            return self::SUCCESS;
+        }
+
         $type = $this->argument('type');
         $userId = $this->option('user');
         $toOverride = $this->option('to');

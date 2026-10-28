@@ -19,6 +19,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Safety net: with email switched off, any Mail:: call that was missed goes to the
+        // array mailer (discarded) instead of reaching SMTP.
+        if (! config('features.mail_enabled')) {
+            config(['mail.default' => 'array']);
+        }
     }
 }
